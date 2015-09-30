@@ -8,7 +8,6 @@ Author: hideokamoto
 Author URI: http://wp-kyoto.net/
 */
 require_once('vendor/autoload.php');
-require_once('c3-admin.php');
 use Aws\CloudFront\CloudFrontClient;
 use Aws\Common\Credentials\Credentials;
 

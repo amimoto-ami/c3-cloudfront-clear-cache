@@ -1,5 +1,10 @@
 {
     "require": {
         "aws/aws-sdk-php": "2.*"
+    },
+    "autoload": {
+        "files": [
+            "lib/c3-admin.php"
+        ]
     }
 }
