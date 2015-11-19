@@ -39,6 +39,10 @@ function c3_invalidation ( $new_status, $old_status, $post ) {
   if ( !c3_is_invalidation ( $new_status, $old_status ) )
     return;
 
+  $key = 'exclusion-process';
+  if (get_transient($key))
+    return;
+
   $c3_settings = c3_get_settings();
   if ( !$c3_settings )
     return;
@@ -50,7 +54,13 @@ function c3_invalidation ( $new_status, $old_status, $post ) {
   ));
 
   $args = c3_make_args( $c3_settings );
-  $result = $cloudFront->createInvalidation( $args );
+
+  set_transient($key, TRUE, 5 * 60);
+  try {
+    $result = $cloudFront->createInvalidation( $args );
+  } catch (Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e) {
+    error_log($e->__toString( ),0);
+  }
 }
 
 function c3_make_args( $c3_settings ) {
