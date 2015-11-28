@@ -1,10 +1,10 @@
 <?php
 
-class SampleTest extends WP_UnitTestCase {
-
-	function test_sample() {
+class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
+{
+	function test_sample()
+	{
 		// replace this with some actual testing code
 		$this->assertTrue( true );
 	}
 }
-
