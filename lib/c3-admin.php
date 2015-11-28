@@ -68,8 +68,9 @@ class CloudFront_Clear_Cache_Admin {
         <tr>
           <th>　<?php echo esc_html($title);?></th>
           <td>
+						<?php $name = "{$option_name}[{$key}]";?>
             <input
-              name="<?php echo esc_attr("{$option_name}[{$key}]"));?>"
+              name="<?php echo esc_attr($name);?>"
               type="text"
               id='<?php echo esc_attr($key);?>'
               value="<?php echo esc_attr($c3_settings[$key]);?>"
@@ -83,7 +84,7 @@ class CloudFront_Clear_Cache_Admin {
     <p class="submit">
       <input type="submit"
         class="button button-primary"
-        value="<?php __('Save Change',self::$text_domain);?>">
+        value="<?php _e('Save Change',self::$text_domain);?>">
     </p>
   </form>
 </div>
