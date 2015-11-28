@@ -49,7 +49,7 @@ class CloudFront_Clear_Cache_Admin {
 			);
 		}
 
-		$nonce_key = 'my-nonce-key';
+		$nonce_key =  CloudFront_Clear_Cache::OPTION_NAME;
 		$c3_settings_keys = array(
 			'distribution_id' => __('CloudFront Distribution ID',self::$text_domain),
 			'access_key'      => __('AWS Access Key',self::$text_domain),
@@ -93,6 +93,7 @@ class CloudFront_Clear_Cache_Admin {
 
 	public function c3_admin_init() {
 		$option_name = CloudFront_Clear_Cache::OPTION_NAME;
+		$nonce_key =  CloudFront_Clear_Cache::OPTION_NAME;
 		if( isset ( $_POST[self::MENU_ID]) && $_POST[self::MENU_ID] ){
 			if( check_admin_referer($nonce_key, self::MENU_ID)) {
 				$e = new WP_Error();
