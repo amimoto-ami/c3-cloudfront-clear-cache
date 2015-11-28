@@ -26,7 +26,7 @@ You can easy use CloudFront in front of WordPress.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
-= 1.1.1 =
+= 1.1.2 =
 * Auto deploy
 
 = 1.1 =
@@ -37,5 +37,5 @@ If post published,this plugin post invalidation request to CloudFront.
 * Initial released.
 
 == Upgrade Notice ==
-= 1.1.1 =
-* Auto deploy
+= 1.1.2 =
+* Fix Depoly code
