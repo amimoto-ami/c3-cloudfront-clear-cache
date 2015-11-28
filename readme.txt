@@ -26,6 +26,9 @@ You can easy use CloudFront in front of WordPress.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+= 1.1.1 =
+* Auto deploy
+
 = 1.1 =
 * code refactoring by wokamoto
 * Invalidation URL
@@ -34,6 +37,5 @@ If post published,this plugin post invalidation request to CloudFront.
 * Initial released.
 
 == Upgrade Notice ==
-= 1.1 =
-* code refactoring by wokamoto
-* Invalidation URL
+= 1.1.1 =
+* Auto deploy
