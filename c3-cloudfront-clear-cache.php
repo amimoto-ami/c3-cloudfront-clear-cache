@@ -8,8 +8,8 @@ Author: hideokamoto
 Author URI: http://wp-kyoto.net/
 Text Domain: c3_cloudfront_clear_cache
 */
-require_once(dirname(__FILE__).'/lib/c3-admin.php');
 require_once(dirname(__FILE__).'/aws.phar');
+require_once(dirname(__FILE__).'/lib/c3-admin.php');
 use Aws\CloudFront\CloudFrontClient;
 use Aws\Common\Credentials\Credentials;
 
