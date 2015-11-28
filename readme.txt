@@ -1,5 +1,5 @@
 === C3 Cloudfront Clear Cache ===
-Contributors: hideokamoto,megumithemes,wokamoto
+Contributors: hideokamoto,megumithemes,wokamoto,miyauchi
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
