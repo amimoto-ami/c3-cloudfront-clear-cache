@@ -58,10 +58,10 @@ class CloudFront_Clear_Cache {
 
 	private function c3_is_invalidation ( $new_status, $old_status ) {
 		if ( 'publish' === $new_status ) {
-			//記事公開または記事編集時
+			//if publish or update posts.
 			$result = true;
 		} elseif ( 'publish' === $old_status && $new_status !== $old_status ) {
-			//記事を非公開にした際
+			//if un-published post.
 			$result = true;
 		} else {
 			$result = false;
@@ -71,7 +71,7 @@ class CloudFront_Clear_Cache {
 
 	private function c3_get_settings() {
 		$c3_settings = get_option( self::OPTION_NAME );
-		//ひとつでも空の値があれば以降の処理を止める
+		//IF not complete setting param. stop working.
 		foreach ( $c3_settings as $key => $value ) {
 			if ( ! $value ) {
 				return false;
@@ -95,7 +95,6 @@ class CloudFront_Clear_Cache {
 			return;
 		}
 
-		//CloudFrontクラスを初期化
 		$credentials = new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) );
 		$cloudFront = CloudFrontClient::factory(array(
 			'credentials' => $credentials,
