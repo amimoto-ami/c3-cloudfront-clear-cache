@@ -1,10 +1,10 @@
 === C3 Cloudfront Clear Cache ===
-Contributors: hideokamoto,megumithemes
+Contributors: hideokamoto,megumithemes,wokamoto,miyauchi
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
-Tested up to: 4.3
-Stable tag: 4.3
+Tested up to: 4.3.1
+Stable tag: 4.3.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -26,10 +26,16 @@ You can easy use CloudFront in front of WordPress.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+= 2.0 =
+* Change AWS SDK
+* code refactoring by wokamoto
+* Invalidation URL
+
 = 1.0 =
 * Initial released.
 
 == Upgrade Notice ==
-
-= 1.0 =
-* Initial released.
+= 2.0 =
+* Change AWS SDK
+* code refactoring by wokamoto
+* Invalidation URL
