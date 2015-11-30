@@ -114,16 +114,32 @@ class CloudFront_Clear_Cache {
 		$parse_url = parse_url( $url );
 		return isset( $parse_url['path'] )
 			? $parse_url['path']
-		: preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
+			: preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
 	}
 
-	private function c3_make_args( $c3_settings, $post ) {
+	private function c3_make_args( $c3_settings, $post = null ) {
+		$items = array();
 		$post = get_post( $post );
-		$categories = wp_get_post_categories( $post->ID );
-		$items = array( '/' );
-		$items[] = $this->c3_make_invalidate_path( get_permalink( $post ) ) . '*';
-		foreach ( $categories as $category ) {
-			$items[] = $this->c3_make_invalidate_path( get_category_link( $category ) ) . '*';
+		if ( $post && !is_wp_error( $post ) ) {
+			// home
+			$items[] = $this->c3_make_invalidate_path( home_url( '/' ) );
+
+			// single page permalink
+			$items[] = $this->c3_make_invalidate_path( get_permalink( $post ) ) . '*';
+
+			// term archives permalink
+			$taxonomies = get_object_taxonomies( $post->post_type );
+			foreach ( $taxonomies as $taxonomy ) {
+				$terms = wp_get_post_terms( $post->ID, $taxonomy );
+				if ( is_wp_error($terms) )
+					continue;
+				foreach ( $terms as $term ) {
+					$items[] = $this->c3_make_invalidate_path( get_term_link( $term, $taxonomy ) ) . '*';
+				}
+			}
+		} else {
+			// ALL URL
+			$items[] = '/*';
 		}
 
 		return array(
