@@ -10,7 +10,7 @@ class CloudFront_Clear_Cache_Admin {
 
 	const MENU_ID = 'c3-admin-menu';
 	const MESSAGE_KEY = 'c3-admin-errors';
-	const FLUSH_CACHE = "c3-flush-cache";
+	const FLUSH_CACHE = 'c3-flush-cache';
 
 	private function __construct() {}
 

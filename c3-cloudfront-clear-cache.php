@@ -123,7 +123,7 @@ class CloudFront_Clear_Cache {
 	private function c3_make_args( $c3_settings, $post = null ) {
 		$items = array();
 		$post = get_post( $post );
-		if ( $post && !is_wp_error( $post ) ) {
+		if ( $post && ! is_wp_error( $post ) ) {
 			// home
 			$items[] = $this->c3_make_invalidate_path( home_url( '/' ) );
 
@@ -134,8 +134,9 @@ class CloudFront_Clear_Cache {
 			$taxonomies = get_object_taxonomies( $post->post_type );
 			foreach ( $taxonomies as $taxonomy ) {
 				$terms = wp_get_post_terms( $post->ID, $taxonomy );
-				if ( is_wp_error($terms) )
+				if ( is_wp_error( $terms ) ) {
 					continue;
+				}
 				foreach ( $terms as $term ) {
 					$items[] = $this->c3_make_invalidate_path( get_term_link( $term, $taxonomy ) ) . '*';
 				}
