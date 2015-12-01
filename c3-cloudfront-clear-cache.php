@@ -147,7 +147,7 @@ class CloudFront_Clear_Cache {
 			$items[] = '/*';
 		}
 
-		$items = apply_filters( 'c3_invalidation_items' , $items );
+		$items = apply_filters( 'c3_invalidation_items' , $items , 	$post );
 
 		return array(
 			'DistributionId' => esc_attr( $c3_settings['distribution_id'] ),
