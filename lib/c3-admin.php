@@ -10,6 +10,7 @@ class CloudFront_Clear_Cache_Admin {
 
 	const MENU_ID = 'c3-admin-menu';
 	const MESSAGE_KEY = 'c3-admin-errors';
+	const FLUSH_CACHE = "c3-flush-cache";
 
 	private function __construct() {}
 
@@ -26,6 +27,7 @@ class CloudFront_Clear_Cache_Admin {
 		add_action( 'admin_menu',    array( $this, 'c3_setting_menu' ) );
 		add_action( 'admin_init',    array( $this, 'c3_admin_init' ) );
 		add_action( 'admin_notices', array( $this, 'c3_admin_notices' ) );
+		add_action( 'c3_add_setting_before', array( $this, 'c3_manual_flush' ) );
 	}
 
 	public function c3_setting_menu() {
@@ -36,6 +38,22 @@ class CloudFront_Clear_Cache_Admin {
 			self::MENU_ID,
 			array( $this, 'c3_admin_menu' )
 		);
+	}
+
+	public function c3_manual_flush() {
+		$nonce_key = CloudFront_Clear_Cache::OPTION_NAME;
+		?>
+		<h3><?php _e( 'Flush CloudFront Cache' , self::$text_domain );?></h3>
+		<p><?php _e( 'Notice:This is clear every page cache.' , self::$text_domain );?></p>
+		<form method="post" action="" novalidate="novalidate">
+			<?php wp_nonce_field( $nonce_key, self::FLUSH_CACHE );?>
+			<p class="submit">
+				<input type="submit"
+					class="button button-primary"
+					value="<?php _e( 'Flush All Cache' , self::$text_domain );?>">
+			</p>
+		</form>
+<?php
 	}
 
 	public function c3_admin_menu() {
@@ -59,6 +77,7 @@ class CloudFront_Clear_Cache_Admin {
 ?>
 <div class="wrap">
   <h2><?php _e( 'C3 CloudFront Clear Cache' , self::$text_domain );?></h2>
+	<?php do_action( 'c3_add_setting_before' );?>
   <h3><?php _e( 'General Settings' , self::$text_domain );?></h3>
   <form method="post" action="" novalidate="novalidate">
     <?php wp_nonce_field( $nonce_key, self::MENU_ID );?>
@@ -87,6 +106,7 @@ class CloudFront_Clear_Cache_Admin {
         value="<?php _e( 'Save Change' , self::$text_domain );?>">
     </p>
   </form>
+	<?php do_action( 'c3_add_setting_after' );?>
 </div>
 <?php
 	}
@@ -103,6 +123,11 @@ class CloudFront_Clear_Cache_Admin {
 			}
 			wp_safe_redirect( menu_page_url( self::MENU_ID , false ) );
 		}
+		if ( isset ( $_POST[ self::FLUSH_CACHE ] ) && $_POST[ self::FLUSH_CACHE ] ) {
+			$c3 = CloudFront_Clear_Cache::get_instance();
+			$c3->c3_invalidation();
+		}
+
 	}
 
 	public function c3_admin_notices(){

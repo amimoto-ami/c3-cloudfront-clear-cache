@@ -33,7 +33,7 @@ class CloudFront_Clear_Cache {
 	}
 
 	public function add_hook() {
-		add_action( 'transition_post_status' , array( $this, 'c3_invalidation' ) , 10 , 3 );
+		add_action( 'transition_post_status' , array( $this, 'c3_start_invalidation' ) , 10 , 3 );
 	}
 
 	public static function version() {
@@ -80,11 +80,14 @@ class CloudFront_Clear_Cache {
 		return $c3_settings;
 	}
 
-	public function c3_invalidation ( $new_status, $old_status, $post ) {
+	public function c3_start_invalidation ( $new_status, $old_status, $post ) {
 		if ( ! $this->c3_is_invalidation( $new_status , $old_status ) ) {
 			return;
 		}
+		$this->c3_invalidation( $post );
+	}
 
+	public function c3_invalidation( $post = null ) {
 		$key = 'exclusion-process';
 		if ( get_transient( $key ) ) {
 			return;
