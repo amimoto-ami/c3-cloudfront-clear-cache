@@ -66,6 +66,7 @@ class CloudFront_Clear_Cache {
 		} else {
 			$result = false;
 		}
+		$result = apply_filters( 'c3_is_invalidation' , $result );
 		return $result;
 	}
 
@@ -145,6 +146,8 @@ class CloudFront_Clear_Cache {
 			// ALL URL
 			$items[] = '/*';
 		}
+
+		$items = apply_filters( 'c3_invalidation_items' , $items );
 
 		return array(
 			'DistributionId' => esc_attr( $c3_settings['distribution_id'] ),
