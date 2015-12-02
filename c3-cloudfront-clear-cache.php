@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: C3 Cloudfront Clear Cache
-Version: 2.0.2
+Version: 2.1.0
 Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
 Description:This is simple plugin that clear all cloudfront cache if you publish posts.
 Author: hideokamoto
@@ -33,7 +33,7 @@ class CloudFront_Clear_Cache {
 	}
 
 	public function add_hook() {
-		add_action( 'transition_post_status' , array( $this, 'c3_invalidation' ) , 10 , 3 );
+		add_action( 'transition_post_status' , array( $this, 'c3_start_invalidation' ) , 10 , 3 );
 	}
 
 	public static function version() {
@@ -66,6 +66,7 @@ class CloudFront_Clear_Cache {
 		} else {
 			$result = false;
 		}
+		$result = apply_filters( 'c3_is_invalidation' , $result );
 		return $result;
 	}
 
@@ -80,11 +81,14 @@ class CloudFront_Clear_Cache {
 		return $c3_settings;
 	}
 
-	public function c3_invalidation ( $new_status, $old_status, $post ) {
+	public function c3_start_invalidation ( $new_status, $old_status, $post ) {
 		if ( ! $this->c3_is_invalidation( $new_status , $old_status ) ) {
 			return;
 		}
+		$this->c3_invalidation( $post );
+	}
 
+	public function c3_invalidation( $post = null ) {
 		$key = 'exclusion-process';
 		if ( get_transient( $key ) ) {
 			return;
@@ -114,17 +118,36 @@ class CloudFront_Clear_Cache {
 		$parse_url = parse_url( $url );
 		return isset( $parse_url['path'] )
 			? $parse_url['path']
-		: preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
+			: preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
 	}
 
-	private function c3_make_args( $c3_settings, $post ) {
+	private function c3_make_args( $c3_settings, $post = null ) {
+		$items = array();
 		$post = get_post( $post );
-		$categories = wp_get_post_categories( $post->ID );
-		$items = array( '/' );
-		$items[] = $this->c3_make_invalidate_path( get_permalink( $post ) ) . '*';
-		foreach ( $categories as $category ) {
-			$items[] = $this->c3_make_invalidate_path( get_category_link( $category ) ) . '*';
+		if ( $post && ! is_wp_error( $post ) ) {
+			// home
+			$items[] = $this->c3_make_invalidate_path( home_url( '/' ) );
+
+			// single page permalink
+			$items[] = $this->c3_make_invalidate_path( get_permalink( $post ) ) . '*';
+
+			// term archives permalink
+			$taxonomies = get_object_taxonomies( $post->post_type );
+			foreach ( $taxonomies as $taxonomy ) {
+				$terms = wp_get_post_terms( $post->ID, $taxonomy );
+				if ( is_wp_error( $terms ) ) {
+					continue;
+				}
+				foreach ( $terms as $term ) {
+					$items[] = $this->c3_make_invalidate_path( get_term_link( $term, $taxonomy ) ) . '*';
+				}
+			}
+		} else {
+			// ALL URL
+			$items[] = '/*';
 		}
+
+		$items = apply_filters( 'c3_invalidation_items' , $items , 	$post );
 
 		return array(
 			'DistributionId' => esc_attr( $c3_settings['distribution_id'] ),
