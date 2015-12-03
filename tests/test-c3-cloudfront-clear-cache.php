@@ -19,51 +19,138 @@ class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 		$this->assertEquals( self::VERSION , $version );
 	}
 
+	function test_if_c3_settings_is_no_settings() {
+		$res = $this->get_c3_settings();
+		$this->assertFalse( $res );
+	}
+
 	function test_if_c3_settings_is_no_params() {
-		$reflection = new \ReflectionClass( $this->C3 );
-		$method = $reflection->getMethod( 'c3_get_settings' );
-		$method->setAccessible( true );
-		$res = $method->invoke( $this->C3 );
+		$param =  array(
+			'distribution_id' => '',
+			'access_key'      => '',
+			'secret_key'      => '',
+		);
+		update_option( 'c3_settings', $param );
+		$res = $this->get_c3_settings();
+		$this->assertFalse( $res );
+	}
+
+	function test_if_c3_settings_is_has_all_params() {
+		$param =  array(
+			'distribution_id' => 'SOME_DISTRIBUTION',
+			'access_key'      => 'SOME_ACCESS_KEY',
+			'secret_key'      => 'SOME_SECRET_KEY',
+		);
+		update_option( 'c3_settings', $param );
+		$res = $this->get_c3_settings();
+		$this->assertArrayHasKey( 'distribution_id' , $res );
+		$this->assertArrayHasKey( 'access_key' , $res );
+		$this->assertArrayHasKey( 'secret_key' , $res );
+	}
+
+	function test_if_c3_settings_is_has_lost_distribution_id_param() {
+		$param =  array(
+			'distribution_id' => '',
+			'access_key'      => 'SOME_ACCESS_KEY',
+			'secret_key'      => 'SOME_SECRET_KEY',
+		);
+		update_option( 'c3_settings', $param );
+		$res = $this->get_c3_settings();
+		$this->assertFalse( $res );
+	}
+
+	function test_if_c3_settings_is_has_lost_access_key_param() {
+		$param =  array(
+			'distribution_id' => 'SOME_DISTRIBUTION',
+			'access_key'      => '',
+			'secret_key'      => 'SOME_SECRET_KEY',
+		);
+		update_option( 'c3_settings', $param );
+		$res = $this->get_c3_settings();
+		$this->assertFalse( $res );
+	}
+
+	function test_if_c3_settings_is_has_lost_secret_key_param() {
+		$param =  array(
+			'distribution_id' => 'SOME_DISTRIBUTION',
+			'access_key'      => 'SOME_ACCESS_KEY',
+			'secret_key'      => '',
+		);
+		update_option( 'c3_settings', $param );
+		$res = $this->get_c3_settings();
 		$this->assertFalse( $res );
 	}
 
 	function test_check_invalidation_status_unpublish_to_publish() {
 		//should be true
-		$res = $this->init_get_c3_is_invalidation( 'unpublish' , 'publish' );
+		$res = $this->get_c3_is_invalidation( 'unpublish' , 'publish' );
 		$this->assertTrue( $res );
 	}
 
 	function test_check_invalidation_status_publish_to_unpublish() {
 		//should be true
-		$res = $this->init_get_c3_is_invalidation( 'publish' , 'unpublish' );
+		$res = $this->get_c3_is_invalidation( 'publish' , 'unpublish' );
 		$this->assertTrue( $res );
 	}
 
 	function test_check_invalidation_status_unpublish_to_unpublish() {
 		//should be false
-		$res = $this->init_get_c3_is_invalidation( 'unpublish' , 'unpublish' );
+		$res = $this->get_c3_is_invalidation( 'unpublish' , 'unpublish' );
 		$this->assertFalse( $res );
 	}
 
 	function test_check_invalidation_status_() {
 		//should be true
-		$res = $this->init_get_c3_is_invalidation( 'publish' , 'publish' );
+		$res = $this->get_c3_is_invalidation( 'publish' , 'publish' );
 		$this->assertTrue( $res );
 	}
 
 	function test_check_invalidation_status_filter_custome_true() {
 		add_filter( 'c3_is_invalidation' , array( $this, 'init_return_true' ) );
-		$res = $this->init_get_c3_is_invalidation( 'unpublish' , 'unpublish' );
+		$res = $this->get_c3_is_invalidation( 'unpublish' , 'unpublish' );
 		$this->assertTrue( $res );
 	}
 
 	function test_check_invalidation_status_filter_custome_false() {
 		add_filter( 'c3_is_invalidation' , array( $this, 'init_return_false' ) );
-		$res = $this->init_get_c3_is_invalidation( 'publish' , 'publish' );
+		$res = $this->get_c3_is_invalidation( 'publish' , 'publish' );
 		$this->assertFalse( $res );
 	}
 
-	function init_get_c3_is_invalidation( $new_status, $old_status ) {
+	function test_c3_make_args_if_no_post_params() {
+		 $c3_settings_param =  array(
+			'distribution_id' => 'SOME_DISTRIBUTION',
+			'access_key'      => 'SOME_ACCESS_KEY',
+			'secret_key'      => 'SOME_SECRET_KEY',
+		);
+		$res = $this->get_c3_make_args( $c3_settings_param );
+
+		$this->assertArrayHasKey( 'DistributionId', $res );
+		$this->assertArrayHasKey( 'Paths', $res );
+		$this->assertArrayHasKey( 'Quantity', $res['Paths'] );
+		$this->assertArrayHasKey( 'Items', $res['Paths'] );
+		$this->assertArrayHasKey( 'CallerReference', $res );
+		$this->assertEquals( '/*' ,  $res['Paths']['Items'][0] );
+		$this->assertCount( $res['Paths']['Quantity'], $res['Paths']['Items'] );
+	}
+
+	function get_c3_make_args( $c3_settings_param, $posts = null ) {
+		$reflection = new \ReflectionClass( $this->C3 );
+		$method = $reflection->getMethod( 'c3_make_args' );
+		$method->setAccessible( true );
+		$res = $method->invoke( $this->C3 , $c3_settings_param, $posts );
+		return $res;
+	}
+
+	function get_c3_settings() {
+		$reflection = new \ReflectionClass( $this->C3 );
+		$method = $reflection->getMethod( 'c3_get_settings' );
+		$method->setAccessible( true );
+		$res = $method->invoke( $this->C3 );
+		return $res;
+	}
+
+	function get_c3_is_invalidation( $new_status, $old_status ) {
 		$reflection = new \ReflectionClass( $this->C3 );
 		$method = $reflection->getMethod( 'c3_is_invalidation' );
 		$method->setAccessible( true );
