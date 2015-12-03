@@ -27,4 +27,56 @@ class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 		$this->assertFalse( $res );
 	}
 
+	function test_check_invalidation_status_unpublish_to_publish() {
+		//should be true
+		$res = $this->init_get_c3_is_invalidation( 'unpublish' , 'publish' );
+		$this->assertTrue( $res );
+	}
+
+	function test_check_invalidation_status_publish_to_unpublish() {
+		//should be true
+		$res = $this->init_get_c3_is_invalidation( 'publish' , 'unpublish' );
+		$this->assertTrue( $res );
+	}
+
+	function test_check_invalidation_status_unpublish_to_unpublish() {
+		//should be false
+		$res = $this->init_get_c3_is_invalidation( 'unpublish' , 'unpublish' );
+		$this->assertFalse( $res );
+	}
+
+	function test_check_invalidation_status_() {
+		//should be true
+		$res = $this->init_get_c3_is_invalidation( 'publish' , 'publish' );
+		$this->assertTrue( $res );
+	}
+
+	function test_check_invalidation_status_filter_custome_true() {
+		add_filter( 'c3_is_invalidation' , array( $this, 'init_return_true' ) );
+		$res = $this->init_get_c3_is_invalidation( 'unpublish' , 'unpublish' );
+		$this->assertTrue( $res );
+	}
+
+	function test_check_invalidation_status_filter_custome_false() {
+		add_filter( 'c3_is_invalidation' , array( $this, 'init_return_false' ) );
+		$res = $this->init_get_c3_is_invalidation( 'publish' , 'publish' );
+		$this->assertFalse( $res );
+	}
+
+	function init_get_c3_is_invalidation( $new_status, $old_status ) {
+		$reflection = new \ReflectionClass( $this->C3 );
+		$method = $reflection->getMethod( 'c3_is_invalidation' );
+		$method->setAccessible( true );
+		$res = $method->invoke( $this->C3 , $new_status, $old_status );
+		return $res;
+	}
+
+	function init_return_true( $result = null ) {
+		return true;
+	}
+
+	function init_return_false( $result = null ) {
+		return false;
+	}
+
 }
