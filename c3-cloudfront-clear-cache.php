@@ -72,6 +72,10 @@ class CloudFront_Clear_Cache {
 
 	private function c3_get_settings() {
 		$c3_settings = get_option( self::OPTION_NAME );
+		if ( ! is_array( $c3_settings ) ) {
+			return false;
+		}
+
 		//IF not complete setting param. stop working.
 		foreach ( $c3_settings as $key => $value ) {
 			if ( ! $value ) {
