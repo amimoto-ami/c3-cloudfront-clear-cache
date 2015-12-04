@@ -134,7 +134,6 @@ class CloudFront_Clear_Cache {
 
 			// single page permalink
 			$items[] = $this->c3_make_invalidate_path( get_permalink( $post ) ) . '*';
-
 			// term archives permalink
 			$taxonomies = get_object_taxonomies( $post->post_type );
 			foreach ( $taxonomies as $taxonomy ) {
@@ -143,7 +142,12 @@ class CloudFront_Clear_Cache {
 					continue;
 				}
 				foreach ( $terms as $term ) {
-					$items[] = $this->c3_make_invalidate_path( get_term_link( $term, $taxonomy ) ) . '*';
+					$parsed_url = parse_url(get_term_link( $term, $taxonomy ));
+					$url = $parsed_url["scheme"]."://". $parsed_url["host"]. $parsed_url["path"];
+					if ( trailingslashit( home_url() ) === $url ) {
+						continue;
+					}
+					$item = $items[] = $this->c3_make_invalidate_path( get_term_link( $term, $taxonomy ) ) . '*';
 				}
 			}
 		} else {
