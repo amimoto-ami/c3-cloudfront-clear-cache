@@ -142,8 +142,8 @@ class CloudFront_Clear_Cache {
 					continue;
 				}
 				foreach ( $terms as $term ) {
-					$parsed_url = parse_url(get_term_link( $term, $taxonomy ));
-					$url = $parsed_url["scheme"]."://". $parsed_url["host"]. $parsed_url["path"];
+					$parsed_url = parse_url( get_term_link( $term, $taxonomy ) );
+					$url = $parsed_url['scheme'] . '://' . $parsed_url['host']. $parsed_url['path'];
 					if ( trailingslashit( home_url() ) === $url ) {
 						continue;
 					}
