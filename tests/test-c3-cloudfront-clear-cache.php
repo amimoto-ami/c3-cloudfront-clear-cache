@@ -2,26 +2,11 @@
 require_once( 'c3-cloudfront-clear-cache.php' );
 class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 {
-	private $C3;
+	protected $C3;
 	const VERSION = '2.1.0';
 	function __construct() {
 		$this->C3 = CloudFront_Clear_Cache::get_instance();
 		$this->C3->add_hook();
-	}
-
-	function test_load_text_domain() {
-		$text_domain = $this->C3->text_domain();
-		$this->assertEquals( 'c3_cloudfront_clear_cache' , $text_domain );
-	}
-
-	function test_load_current_version() {
-		$version = $this->C3->version();
-		$this->assertEquals( self::VERSION , $version );
-	}
-
-	function test_if_c3_settings_is_no_settings() {
-		$res = $this->get_c3_settings();
-		$this->assertFalse( $res );
 	}
 
 	function test_if_c3_settings_is_no_params() {
@@ -115,31 +100,6 @@ class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 		add_filter( 'c3_is_invalidation' , array( $this, 'init_return_false' ) );
 		$res = $this->get_c3_is_invalidation( 'publish' , 'publish' );
 		$this->assertFalse( $res );
-	}
-
-	function test_c3_make_args_if_no_post_params() {
-		 $c3_settings_param =  array(
-			'distribution_id' => 'SOME_DISTRIBUTION',
-			'access_key'      => 'SOME_ACCESS_KEY',
-			'secret_key'      => 'SOME_SECRET_KEY',
-		);
-		$res = $this->get_c3_make_args( $c3_settings_param );
-
-		$this->assertArrayHasKey( 'DistributionId', $res );
-		$this->assertArrayHasKey( 'Paths', $res );
-		$this->assertArrayHasKey( 'Quantity', $res['Paths'] );
-		$this->assertArrayHasKey( 'Items', $res['Paths'] );
-		$this->assertArrayHasKey( 'CallerReference', $res );
-		$this->assertEquals( '/*' ,  $res['Paths']['Items'][0] );
-		$this->assertCount( $res['Paths']['Quantity'], $res['Paths']['Items'] );
-	}
-
-	function get_c3_make_args( $c3_settings_param, $posts = null ) {
-		$reflection = new \ReflectionClass( $this->C3 );
-		$method = $reflection->getMethod( 'c3_make_args' );
-		$method->setAccessible( true );
-		$res = $method->invoke( $this->C3 , $c3_settings_param, $posts );
-		return $res;
 	}
 
 	function get_c3_settings() {
