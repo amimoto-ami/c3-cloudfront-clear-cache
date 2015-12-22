@@ -73,7 +73,9 @@ class CloudFront_Clear_Cache_Admin {
 			'access_key'      => __( 'AWS Access Key', self::$text_domain ),
 			'secret_key'      => __( 'AWS Secret Key', self::$text_domain ),
 		);
-
+		
+		$c3_settings_keys = apply_filters( 'c3_setting', $c3_settings );
+		$c3_settings_keys = apply_filters( 'c3_setting_keys', $c3_settings_keys );
 ?>
 <div class="wrap">
   <h2><?php _e( 'C3 CloudFront Clear Cache' , self::$text_domain );?></h2>

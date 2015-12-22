@@ -8,6 +8,10 @@ Author: hideokamoto
 Author URI: http://wp-kyoto.net/
 Text Domain: c3_cloudfront_clear_cache
 */
+// start for aws customize functions !must remove before merge master branch
+require_once( dirname( __FILE__ ).'/c3-hook.php' );
+// end
+
 require_once( dirname( __FILE__ ).'/aws.phar' );
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
 use Aws\CloudFront\CloudFrontClient;
@@ -103,10 +107,11 @@ class CloudFront_Clear_Cache {
 			return;
 		}
 
-		$credentials = new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) );
-		$cloudFront = CloudFrontClient::factory(array(
-			'credentials' => $credentials,
-		));
+		$params = array(
+			'credentials' => new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) ),
+		);
+
+		$cloudFront = CloudFrontClient::factory( $params );
 
 		$args = $this->c3_make_args( $c3_settings, $post );
 
