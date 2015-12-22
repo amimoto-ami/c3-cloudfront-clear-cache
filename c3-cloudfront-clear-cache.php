@@ -155,6 +155,10 @@ class CloudFront_Clear_Cache {
 			$items[] = '/*';
 		}
 
+		if ( 10 < count( $items ) ) {
+			$items = array( '/*' );
+		}
+
 		$items = apply_filters( 'c3_invalidation_items' , $items , 	$post );
 
 		return array(
