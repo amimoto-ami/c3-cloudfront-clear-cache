@@ -3,8 +3,8 @@ Contributors: hideokamoto,megumithemes,wokamoto,miyauchi
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
-Tested up to: 4.3.1
-Stable tag: 2.1.0
+Tested up to: 4.4.0
+Stable tag: 2.1.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,6 +34,9 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
 
+= 2.1.1 =
+* Fix too many invalidation url error.
+
 = 2.1.0 =
 * Add hook to customize invalidation URL
 * support new invalidation url, terms.
@@ -54,7 +57,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 2.1.0 =
-* Add hook to customize invalidation URL
-* support new invalidation url, terms.
-* Manualy invalidation button added
+= 2.1.1 =
+* Fix too many invalidation url error.
