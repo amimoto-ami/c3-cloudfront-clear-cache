@@ -38,6 +38,7 @@ class CloudFront_Clear_Cache {
 
 	public function add_hook() {
 		add_action( 'transition_post_status' , array( $this, 'c3_start_invalidation' ) , 10 , 3 );
+		add_filter( 'c3_credential', array( $this, 'create_credentials' ), 10 );
 	}
 
 	public static function version() {
@@ -80,6 +81,7 @@ class CloudFront_Clear_Cache {
 			return false;
 		}
 
+		$c3_settings = apply_filters( 'c3_get_setting', $c3_settings );
 		//IF not complete setting param. stop working.
 		foreach ( $c3_settings as $key => $value ) {
 			if ( ! $value ) {
@@ -96,6 +98,14 @@ class CloudFront_Clear_Cache {
 		$this->c3_invalidation( $post );
 	}
 
+	public function create_credentials() {
+		$c3_settings = $this->c3_get_settings();
+		$credentials = array(
+			'credentials' => new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) ),
+		);
+		return $credentials;
+	}
+
 	public function c3_invalidation( $post = null ) {
 		$key = 'exclusion-process';
 		if ( get_transient( $key ) ) {
@@ -107,11 +117,10 @@ class CloudFront_Clear_Cache {
 			return;
 		}
 
-		$params = array(
-			'credentials' => new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) ),
-		);
+		$credential = null;
+		$credential = apply_filters( 'c3_credential', $credential );
 
-		$cloudFront = CloudFrontClient::factory( $params );
+		$cloudFront = CloudFrontClient::factory( $credential );
 
 		$args = $this->c3_make_args( $c3_settings, $post );
 

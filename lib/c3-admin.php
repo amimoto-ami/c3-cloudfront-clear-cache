@@ -73,8 +73,8 @@ class CloudFront_Clear_Cache_Admin {
 			'access_key'      => __( 'AWS Access Key', self::$text_domain ),
 			'secret_key'      => __( 'AWS Secret Key', self::$text_domain ),
 		);
-		
-		$c3_settings_keys = apply_filters( 'c3_setting', $c3_settings );
+
+		$c3_settings = apply_filters( 'c3_setting', $c3_settings );
 		$c3_settings_keys = apply_filters( 'c3_setting_keys', $c3_settings_keys );
 ?>
 <div class="wrap">
@@ -118,7 +118,6 @@ class CloudFront_Clear_Cache_Admin {
 		$nonce_key = CloudFront_Clear_Cache::OPTION_NAME;
 		if ( isset ( $_POST[ self::MENU_ID ] ) && $_POST[ self::MENU_ID ] ) {
 			if ( check_admin_referer( $nonce_key , self::MENU_ID ) ) {
-				$e = new WP_Error();
 				update_option( CloudFront_Clear_Cache::OPTION_NAME, $_POST[ $option_name ] );
 			} else {
 				update_option( CloudFront_Clear_Cache::OPTION_NAME, '' );
