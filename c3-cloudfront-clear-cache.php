@@ -6,7 +6,7 @@ Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
 Description:This is simple plugin that clear all cloudfront cache if you publish posts.
 Author: hideokamoto
 Author URI: http://wp-kyoto.net/
-Text Domain: c3_cloudfront_clear_cache
+Text Domain: c3-cloudfront-clear-cache
 */
 require_once( dirname( __FILE__ ).'/aws.phar' );
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
