@@ -114,7 +114,6 @@ class CloudFront_Clear_Cache_Admin {
 	public function c3_admin_init() {
 		$option_name = CloudFront_Clear_Cache::OPTION_NAME;
 		$nonce_key = CloudFront_Clear_Cache::OPTION_NAME;
-		load_plugin_textdomain( self::$text_domain );
 		if ( isset ( $_POST[ self::MENU_ID ] ) && $_POST[ self::MENU_ID ] ) {
 			if ( check_admin_referer( $nonce_key , self::MENU_ID ) ) {
 				$e = new WP_Error();
@@ -129,6 +128,8 @@ class CloudFront_Clear_Cache_Admin {
 			$c3 = CloudFront_Clear_Cache::get_instance();
 			$c3->c3_invalidation();
 		}
+
+		load_plugin_textdomain( self::$text_domain );
 
 	}
 
