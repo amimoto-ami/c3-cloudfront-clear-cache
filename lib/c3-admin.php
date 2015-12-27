@@ -123,10 +123,13 @@ class CloudFront_Clear_Cache_Admin {
 			}
 			wp_safe_redirect( menu_page_url( self::MENU_ID , false ) );
 		}
+
 		if ( isset ( $_POST[ self::FLUSH_CACHE ] ) && $_POST[ self::FLUSH_CACHE ] ) {
 			$c3 = CloudFront_Clear_Cache::get_instance();
 			$c3->c3_invalidation();
 		}
+
+		load_plugin_textdomain( self::$text_domain );
 
 	}
 
