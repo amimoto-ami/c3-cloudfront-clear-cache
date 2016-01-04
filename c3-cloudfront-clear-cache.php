@@ -119,8 +119,11 @@ class CloudFront_Clear_Cache {
 
 		$credential = null;
 		$credential = apply_filters( 'c3_credential', $credential );
-
-		$cloudFront = CloudFrontClient::factory( $credential );
+		if( $credential ) {
+			$cloudFront = CloudFrontClient::factory( $credential );
+		} else {
+			$cloudFront = CloudFrontClient::factory();
+		}
 
 		$args = $this->c3_make_args( $c3_settings, $post );
 
