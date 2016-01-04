@@ -1,10 +1,10 @@
 === C3 Cloudfront Clear Cache ===
-Contributors: hideokamoto,megumithemes,wokamoto,miyauchi
+Contributors: hideokamoto,megumithemes,wokamoto,miyauchi,hinaloe
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
 Tested up to: 4.4.0
-Stable tag: 2.1.1
+Stable tag: 2.2.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,6 +34,10 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
 
+= 2.2.0 =
+* Add Filter for using EC2 Instance Role.
+* Translationable in t.w.org
+
 = 2.1.1 =
 * Fix too many invalidation url error.
 
@@ -57,5 +61,6 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 2.1.1 =
-* Fix too many invalidation url error.
+= 2.2.0 =
+* Add Filter for using EC2 Instance Role.
+* Translationable in t.w.org

@@ -1,13 +1,14 @@
 <?php
 /*
 Plugin Name: C3 Cloudfront Clear Cache
-Version: 2.1.1
+Version: 2.2.0
 Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
 Description:This is simple plugin that clear all cloudfront cache if you publish posts.
 Author: hideokamoto
 Author URI: http://wp-kyoto.net/
-Text Domain: c3_cloudfront_clear_cache
+Text Domain: c3-cloudfront-clear-cache
 */
+
 require_once( dirname( __FILE__ ).'/aws.phar' );
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
 use Aws\CloudFront\CloudFrontClient;
@@ -34,6 +35,7 @@ class CloudFront_Clear_Cache {
 
 	public function add_hook() {
 		add_action( 'transition_post_status' , array( $this, 'c3_start_invalidation' ) , 10 , 3 );
+		add_filter( 'c3_credential', array( $this, 'create_credentials' ), 10 );
 	}
 
 	public static function version() {
@@ -76,6 +78,7 @@ class CloudFront_Clear_Cache {
 			return false;
 		}
 
+		$c3_settings = apply_filters( 'c3_get_setting', $c3_settings );
 		//IF not complete setting param. stop working.
 		foreach ( $c3_settings as $key => $value ) {
 			if ( ! $value ) {
@@ -92,6 +95,14 @@ class CloudFront_Clear_Cache {
 		$this->c3_invalidation( $post );
 	}
 
+	public function create_credentials() {
+		$c3_settings = $this->c3_get_settings();
+		$credentials = array(
+			'credentials' => new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) ),
+		);
+		return $credentials;
+	}
+
 	public function c3_invalidation( $post = null ) {
 		$key = 'exclusion-process';
 		if ( get_transient( $key ) ) {
@@ -103,10 +114,13 @@ class CloudFront_Clear_Cache {
 			return;
 		}
 
-		$credentials = new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) );
-		$cloudFront = CloudFrontClient::factory(array(
-			'credentials' => $credentials,
-		));
+		$credential = null;
+		$credential = apply_filters( 'c3_credential', $credential );
+		if( $credential ) {
+			$cloudFront = CloudFrontClient::factory( $credential );
+		} else {
+			$cloudFront = CloudFrontClient::factory();
+		}
 
 		$args = $this->c3_make_args( $c3_settings, $post );
 
