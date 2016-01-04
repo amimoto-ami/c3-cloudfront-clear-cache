@@ -8,9 +8,6 @@ Author: hideokamoto
 Author URI: http://wp-kyoto.net/
 Text Domain: c3_cloudfront_clear_cache
 */
-// start for aws customize functions !must remove before merge master branch
-require_once( dirname( __FILE__ ).'/c3-hook.php' );
-// end
 
 require_once( dirname( __FILE__ ).'/aws.phar' );
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
