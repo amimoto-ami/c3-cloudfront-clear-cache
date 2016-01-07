@@ -127,11 +127,16 @@ class CloudFront_Clear_Cache_Admin {
 
 		if ( isset ( $_POST[ self::FLUSH_CACHE ] ) && $_POST[ self::FLUSH_CACHE ] ) {
 			$c3 = CloudFront_Clear_Cache::get_instance();
+			add_filter( 'c3_invalidation_flag' , array( $this , 'force_invalidation') );
 			$c3->c3_invalidation();
 		}
 
 		load_plugin_textdomain( self::$text_domain );
 
+	}
+
+	public function force_invalidation( $flag ) {
+		return false;
 	}
 
 	public function c3_admin_notices(){
