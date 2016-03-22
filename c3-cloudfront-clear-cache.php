@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: C3 Cloudfront Clear Cache
-Version: 2.4.0
+Version: 2.4.1
 Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
 Description:This is simple plugin that clear all cloudfront cache if you publish posts.
 Author: hideokamoto

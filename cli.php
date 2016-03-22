@@ -108,7 +108,7 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 				break;
 		}
 
-		update_option( 'c3_settings', $param );
+		update_option( 'c3_settings', $options );
 		WP_CLI::success( "Update Option" );
 
 	}
