@@ -3,7 +3,7 @@ require_once( 'c3-cloudfront-clear-cache.php' );
 class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 {
 	protected $C3;
-	const VERSION = '2.3.0';
+	const VERSION = '2.4.0';
 	function __construct() {
 		$this->C3 = CloudFront_Clear_Cache::get_instance();
 		$this->C3->add_hook();
