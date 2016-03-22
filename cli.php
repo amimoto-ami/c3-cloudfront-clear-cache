@@ -17,8 +17,9 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
      *
      * ## EXAMPLES
      *
-     *     wp c3 flush all        : Flush All CloudFront Cache.
-	 *     wp c3 flush all --force : Flush All CloudFront Cache.( Force )
+     *     wp c3 flush <post_id>       : Flush <post_id>'s CloudFront Cache.
+     *     wp c3 flush all             : Flush All CloudFront Cache.
+	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
      *
 	 * @param string $args: WP-CLI Command Name
 	 * @param string $assoc_args: WP-CLI Command Option
