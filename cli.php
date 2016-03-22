@@ -54,6 +54,64 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 			WP_CLI::success( "Create Invalidation Request. Please wait few minutes to finished clear CloudFront Cache." );
 		}
 	}
+
+	/**
+	 * Update C3 CloudFront Clear Cache Settings
+	 *
+	 * ## OPTIONS
+	 * distribution_id
+	 *  Update Distribution ID
+	 *
+	 * access_key
+	 *  Update Access Key
+	 *
+	 * secret_key
+	 *  Update Secrete Key
+	 *
+	 * <Setting Param>
+	 *  Update Setting value
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp c3 update distribution_id <Setting Param>      :Default usage.
+	 *     wp c3 update access_key <Setting Param>      :Default usage.
+	 *     wp c3 update secret_key <Setting Param>      :Default usage.
+	 *
+	 * @param string $args: WP-CLI Command Name
+	 * @param string $assoc_args: WP-CLI Command Option
+	 * @since 2.4.0
+	 */
+	function update( $args, $assoc_args ) {
+		if ( 1 > count( $args ) ) {
+			WP_CLI::error( 'No type serected' );
+		} elseif ( 2 > count( $args ) ) {
+			WP_CLI::error( 'No value defined' );
+		}
+		list( $type, $value ) = $args;
+		$name = 'c3_settings';
+		$options = get_option( $name );
+		switch ( $type ) {
+			case 'distribution_id':
+				$options['distribution_id'] = esc_attr( $value );
+				break;
+
+			case 'access_key':
+				$options['access_key'] = esc_attr( $value );
+				break;
+
+			case 'secret_key':
+				$options['secret_key'] = esc_attr( $value );
+				break;
+
+			default:
+				WP_CLI::error( 'No Match Setting Type.' );
+				break;
+		}
+
+		update_option( 'c3_settings', $param );
+		WP_CLI::success( "Update Option" );
+
+	}
 }
 
 WP_CLI::add_command( 'c3', 'C3_CloudFront_Clear_Cache_Command' );
