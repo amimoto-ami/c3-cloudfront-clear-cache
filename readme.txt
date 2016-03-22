@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
 Tested up to: 4.4.0
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,9 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 2.4.0 =
+* Add WP-CLI Command ( Update Settings )
 
 = 2.3.0 =
 * Add WP-CLI Command
@@ -70,5 +73,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 2.3.0 =
-* Add WP-CLI Command
+= 2.4.0 =
+* Add WP-CLI Command ( Update Settings )
