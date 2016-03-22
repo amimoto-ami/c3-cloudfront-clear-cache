@@ -14,6 +14,13 @@
 class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
     /**
      * Flush All CloudFront Cache
+	 *
+	 * ## OPTIONS
+	 * <post_id>
+	 * post_id
+	 *
+	 * [--force]
+	 * Activate Force Clear Mode
      *
      * ## EXAMPLES
      *
