@@ -107,6 +107,15 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 				WP_CLI::error( 'No Match Setting Type.' );
 				break;
 		}
+		if ( ! isset( $options['distribution_id'] ) ) {
+			$options['distribution_id'] = '';
+		}
+		if ( ! isset( $options['access_key'] ) ) {
+			$options['access_key'] = '';
+		}
+		if ( ! isset( $options['secret_key'] ) ) {
+			$options['secret_key'] = '';
+		}
 
 		update_option( 'c3_settings', $options );
 		WP_CLI::success( "Update Option" );
