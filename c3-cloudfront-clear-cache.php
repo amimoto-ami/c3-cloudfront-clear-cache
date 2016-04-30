@@ -133,6 +133,10 @@ class CloudFront_Clear_Cache {
 			$result = $cloudFront->createInvalidation( $args );
 		} catch ( Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {
 			error_log( $e->__toString( ) , 0 );
+		} catch ( Aws\CloudFront\Exception\AccessDeniedException $e ) {
+			error_log( $e->__toString( ) , 0 );
+		} catch ( Exception $e ) {
+			error_log( $e->__toString( ) , 0 );
 		}
 	}
 
