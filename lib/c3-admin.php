@@ -78,7 +78,7 @@ class CloudFront_Clear_Cache_Admin {
 		$c3_settings_keys = apply_filters( 'c3_setting_keys', $c3_settings_keys );
 ?>
 <div class="wrap">
-  <h2><?php _e( 'C3 CloudFront Clear Cache' , self::$text_domain );?></h2>
+  <h2><?php _e( 'C3 Cloudfront Cache Controller' , self::$text_domain );?></h2>
 	<?php do_action( 'c3_add_setting_before' );?>
   <h3><?php _e( 'General Settings' , self::$text_domain );?></h3>
   <form method="post" action="" novalidate="novalidate">
