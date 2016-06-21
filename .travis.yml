@@ -32,4 +32,6 @@ before_script:
 
 script: phpunit
 
-after_success: curl -L https://raw.githubusercontent.com/miya0001/travis2wpplugin/master/deploy.sh | bash
+after_success: 
+  - bash <(curl -s https://codecov.io/bash)
+  - curl -L https://raw.githubusercontent.com/miya0001/travis2wpplugin/master/deploy.sh | bash
