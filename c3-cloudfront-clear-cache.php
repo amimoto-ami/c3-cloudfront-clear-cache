@@ -9,7 +9,9 @@ Author URI: http://wp-kyoto.net/
 Text Domain: c3-cloudfront-clear-cache
 */
 
-require_once( dirname( __FILE__ ).'/aws.phar' );
+if( ! defined("AWS-2.8.22.PHAR_PHAR") ){
+	require_once( dirname( __FILE__ ).'/aws.phar' );
+}
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
 if ( ! class_exists( 'CF_preview_fix' ) ) {
 	require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
