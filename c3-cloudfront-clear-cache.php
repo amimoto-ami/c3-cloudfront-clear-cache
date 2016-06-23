@@ -17,7 +17,7 @@ if ( 5.5 > (float) phpversion() ) {
 
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
 if ( ! class_exists( 'CF_preview_fix' ) ) {
-	require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
+	require_once( dirname( __FILE__ ).'/lib/cf-preview-fix.php' );
 }
 
 use Aws\CloudFront\CloudFrontClient;
