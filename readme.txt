@@ -1,4 +1,4 @@
-=== C3 Cloudfront Clear Cache ===
+=== C3 Cloudfront Cache Controller ===
 Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront

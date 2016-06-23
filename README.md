@@ -1,4 +1,4 @@
-# C3-Cloudfront-Clear-Cache
+# C3 Cloudfront Cache Controller
 
 [![Build Status](https://travis-ci.org/megumiteam/c3-cloudfront-clear-cache.svg)](https://travis-ci.org/megumiteam/c3-cloudfront-clear-cache)
 [![](https://img.shields.io/wordpress/plugin/dt/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/)
