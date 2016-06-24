@@ -4,10 +4,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once( 'base.php' );
+require_once( 'model/client-base.php' );
 
 // Model
 require_once( 'model/auth.php' );
 require_once( 'model/invalidation.php' );
+if ( c3_is_later_than_php_55() ) {
+	require_once( 'model/client-v3.php' );
+} else {
+	require_once( 'model/client-v2.php' );
+}
 
 
 // View

@@ -10,19 +10,27 @@
  * @package c3-cloudfront-clear-cache
  */
 
-if ( 5.5 > (float) phpversion() ) {
-	require_once( dirname( __FILE__ ).'/aws.phar' );
-} else {
+if ( c3_is_later_than_php_55() ) {
 	require_once( dirname( __FILE__ ).'/vendor/autoload.php' );
+} else {
+	require_once( dirname( __FILE__ ).'/aws.phar' );
 }
-
-require_once( dirname( __FILE__ ).'/module/includes.php' );
 define( 'C3_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'C3_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'C3_PLUGIN_ROOT', __FILE__ );
 
+require_once( dirname( __FILE__ ).'/module/includes.php' );
+
 $c3 = C3_Controller::get_instance();
 $c3->init();
+
+function c3_is_later_than_php_55() {
+	if ( 5.5 > (float) phpversion() ) {
+		return false;
+	} else {
+		return true;
+	}
+}
 
 class C3_Controller {
 	private $base;
@@ -42,14 +50,73 @@ class C3_Controller {
 	 * @access public
 	 * @param none
 	 * @return none
-	 * @since 0.0.1
+	 * @since 4.0.0
 	 */
 	public function init() {
-		$this->base =C3_Base::get_instance();
+		$this->base = C3_Base::get_instance();
 		$menu = C3_Menus::get_instance();
 		$menu->init();
-		//add_action( 'admin_init',    array( $this, 'update_settings' ) );
-		//add_action( 'admin_enqueue_scripts', array( $this, 'admin_theme_style' ) );
+		add_action( 'admin_init',    array( $this, 'update_settings' ) );
+	}
+
+	/**
+	 *  Controller of C3 plugin
+	 *
+	 * @access public
+	 * @param none
+	 * @return none
+	 * @since 4.0.0
+	 */
+	public function update_settings() {
+		if ( empty( $_POST ) ) {
+			return;
+		}
+		if ( $this->is_trust_post_param( C3_Base::C3_AUTHENTICATION ) ) {
+			$options = $this->_esc_setting_param( $_POST[ C3_Base::OPTION_NAME ] );
+			update_option( C3_Base::OPTION_NAME, $options );
+
+			$auth = C3_Auth::get_instance();
+			$result = $auth->auth( $options );
+			if ( is_wp_error( $result ) ) {
+				//@TODO Show WP Error message
+			}
+		}
+		if ( $this->is_trust_post_param( C3_Base::C3_INVALIDATION ) ) {
+			//@TODO Create Invalidation script
+		}
+
+	}
+
+	/**
+	 *  Check plugin nonce key
+	 *
+	 * @access public
+	 * @param none
+	 * @return none
+	 * @since 4.0.0
+	 */
+	private function is_trust_post_param( $key ) {
+		if ( isset( $_POST[ $key ] ) && $_POST[ $key ] ) {
+			if ( check_admin_referer( $key, $key ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Escape setting params
+	 *
+	 * @return array
+	 * @since 4.0.0
+	 * @access private
+	 */
+	private function _esc_setting_param( $param ) {
+		$esc_param = array();
+		foreach ( $param as $key => $value ) {
+			$esc_param[ $key ] = esc_attr( $value );
+		}
+		return $esc_param;
 	}
 
 }
@@ -64,8 +131,8 @@ if ( ! class_exists( 'CF_preview_fix' ) ) {
 use Aws\CloudFront\CloudFrontClient;
 use Aws\Common\Credentials\Credentials;
 
-$c3 = CloudFront_Clear_Cache::get_instance();
-$c3->add_hook();
+//$c3 = CloudFront_Clear_Cache::get_instance();
+//$c3->add_hook();
 
 if ( defined('WP_CLI') && WP_CLI ) {
 	include __DIR__ . '/cli.php';
@@ -150,11 +217,13 @@ class CloudFront_Clear_Cache {
 	}
 
 	public function create_credentials() {
+		/*
 		$c3_settings = $this->c3_get_settings();
 		$credentials = array(
 			'credentials' => new Credentials( esc_attr( $c3_settings['access_key'] ) , esc_attr( $c3_settings['secret_key'] ) ),
 		);
 		return $credentials;
+		*/
 	}
 
 	public function c3_invalidation( $post = null ) {
