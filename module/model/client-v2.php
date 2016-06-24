@@ -57,7 +57,6 @@ class C3_Client_V2 extends C3_Client_Base {
 		}
 		$credential = apply_filters( 'c3_credential', $credential );
 		if( $credential ) {
-			var_dump($credential);
 			$cf_client = CloudFrontClient::factory( $credential );
 		} else {
 			$cf_client = CloudFrontClient::factory();
