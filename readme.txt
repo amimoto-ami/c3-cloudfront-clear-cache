@@ -86,6 +86,8 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 3.0.0 =
-* Include CF Preview Fix plugin
-* Rename
+= 4.0.0 =
+* Remove action hook -> 'c3_add_setting_before'
+  use 'c3_after_title' filter hook instead.
+* Remove action hook -> 'c3_add_setting_after'
+  use 'c3_after_auth_form' filter hook instead.

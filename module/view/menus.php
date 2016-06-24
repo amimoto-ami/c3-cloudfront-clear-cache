@@ -58,17 +58,13 @@ class C3_Menus extends C3_Base {
 	 * @since 4.0.0
 	 */
 	public function define_menus() {
-		/*
-		$base = C3_Admin::get_instance();
+		$root = C3_Admin::get_instance();
 		add_menu_page(
-			__( 'Welcome to AMIMOTO Plugin Dashboard', self::$text_domain ),
-			__( 'AMIMOTO', self::$text_domain ),
+			__( 'CloudFront Settings', self::$text_domain ),
+			__( 'CloudFront Settings', self::$text_domain ),
 			'administrator',
-			self::PANEL_ROOT,
-			array( $base, 'init_panel' ),
-			'dashicons-admin-settings',
-			3
+			self::MENU_ID,
+			array( $root, 'init_panel' )
 		);
-		*/
 	}
 }

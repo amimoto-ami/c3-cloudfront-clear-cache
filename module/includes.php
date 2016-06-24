@@ -13,3 +13,4 @@ require_once( 'model/invalidation.php' );
 // View
 require_once( 'view/components.php' );
 require_once( 'view/root.php' );
+require_once( 'view/menus.php' );

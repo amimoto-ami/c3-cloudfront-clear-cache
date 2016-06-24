@@ -17,6 +17,44 @@ if ( 5.5 > (float) phpversion() ) {
 }
 
 require_once( dirname( __FILE__ ).'/module/includes.php' );
+define( 'C3_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'C3_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'C3_PLUGIN_ROOT', __FILE__ );
+
+$c3 = C3_Controller::get_instance();
+$c3->init();
+
+class C3_Controller {
+	private $base;
+	private static $instance;
+
+	public static function get_instance() {
+		if ( ! isset( self::$instance ) ) {
+			$c = __CLASS__;
+			self::$instance = new $c();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 *  Initialize Plugin
+	 *
+	 * @access public
+	 * @param none
+	 * @return none
+	 * @since 0.0.1
+	 */
+	public function init() {
+		$this->base =C3_Base::get_instance();
+		$menu = C3_Menus::get_instance();
+		$menu->init();
+		//add_action( 'admin_init',    array( $this, 'update_settings' ) );
+		//add_action( 'admin_enqueue_scripts', array( $this, 'admin_theme_style' ) );
+	}
+
+}
+
+// Old Version
 
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
 if ( ! class_exists( 'CF_preview_fix' ) ) {

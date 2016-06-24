@@ -20,12 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class C3_Admin extends C3_Component {
 	private static $instance;
 	private static $text_domain;
-	public $amimoto_plugins = array();
-	public $amimoto_uninstalled_plugins = array();
 
 	private function __construct() {
 		self::$text_domain = C3_Base::text_domain();
-		$this->amimoto_plugins = $this->get_amimoto_plugin_file_list();
 	}
 
 	/**
@@ -65,6 +62,69 @@ class C3_Admin extends C3_Component {
 	 */
 	public function get_content_html() {
 		$html = '';
+		$html .= $this->_get_header();
+		$html .= $this->_get_manual_invalidation_form();
+		$html .= $this->_get_auth_form();
 		return $html;
+	}
+
+	/**
+	 *  Get pugin root admin header HTML
+	 *
+	 * @access public
+	 * @param none
+	 * @return string(HTML)
+	 * @since 4.0.0
+	 */
+	private function _get_header() {
+		$html  = '';
+		$html .= '<h2>'.  __( 'C3 Cloudfront Cache Controller' , self::$text_domain ). '</h2>';
+		$html .= apply_filters( 'c3_after_title', $html );
+
+		return $html;
+	}
+
+	/**
+	 *  get CloudFront Auth Form HTML
+	 *
+	 * @access public
+	 * @param none
+	 * @return string(HTML)
+	 * @since 4.0.0
+	 */
+	private function _get_auth_form() {
+		$c3_settings = $this->get_c3_options();
+		$c3_settings_keys = $this->get_c3_options_name();
+		$html  = '';
+		$html .= '<h3>'. __( 'General Settings', self::$text_domain ). '</h3>';
+		$html .= "<form method='post' action='' >";
+		$html .= "<table class='widefat form-table'><tbody>";
+		foreach ( $c3_settings_keys as $key => $title ) {
+			$name = self::OPTION_NAME. esc_attr( "[{$key}]" );
+			$key  = esc_attr( $key );
+			$value = esc_attr( $c3_settings[ $key ] );
+			$input = "<input name='{$name}' type='text' id='{$key}' value='{$value}' class='regular-text code' / >";
+			$html .= '<tr>';
+			$html .= '<th>'. esc_html( $title ). '</th>';
+			$html .= "<td>{$input}</td>";
+			$html .= '</tr>';
+		}
+		$html .= '</tbody></table>';
+		$html .= get_submit_button( __( 'Save Change' , self::$text_domain ) , 'primary large' );
+		$html .= wp_nonce_field( self::C3_AUTHENTICATION , self::C3_AUTHENTICATION , true , false );
+		$html .= '</form>';
+		return apply_filters( 'c3_after_auth_form', $html );
+	}
+
+	/**
+	 *  get CloudFront invalidation form
+	 *
+	 * @access public
+	 * @param none
+	 * @return string(HTML)
+	 * @since 4.0.0
+	 */
+	private function _get_manual_invalidation_form() {
+
 	}
 }
