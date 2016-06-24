@@ -28,6 +28,7 @@ class C3_Base {
 
 	// Action key
 	const C3_AUTHENTICATION = 'c3_auth';
+	const C3_INVALIDATION = 'c3_invalidation';
 
 	private function __construct() {
 	}

@@ -26,34 +26,6 @@ class CloudFront_Clear_Cache_Admin {
 		self::$text_domain = CloudFront_Clear_Cache::text_domain();
 		add_action( 'admin_init',    array( $this, 'c3_admin_init' ) );
 		add_action( 'admin_notices', array( $this, 'c3_admin_notices' ) );
-		add_action( 'c3_add_setting_before', array( $this, 'c3_manual_flush' ) );
-	}
-
-	public function c3_manual_flush() {
-	}
-
-	public function c3_admin_menu() {
-    <table class="widefat form-table">
-      <tbody>
-<?php foreach ( $c3_settings_keys as $key => $title ) : ?>
-        <tr>
-          <th>　<?php echo esc_html( $title );?></th>
-          <td>
-						<?php $name = "{$option_name}[{$key}]";?>
-            <input
-              name="<?php echo esc_attr( $name );?>"
-              type="text"
-              id='<?php echo esc_attr( $key );?>'
-              value="<?php echo esc_attr( $c3_settings[ $key ] );?>"
-              class="regular-text code"
-            >
-          </td>
-        </tr>
-<?php endforeach; ?>
-      </tbody>
-    </table>
-</div>
-<?php
 	}
 
 	public function c3_admin_init() {
