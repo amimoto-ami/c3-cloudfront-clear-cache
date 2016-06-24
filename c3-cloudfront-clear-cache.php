@@ -1,19 +1,22 @@
 <?php
 /*
-Plugin Name: C3 Cloudfront Cache Controller
-Version: 3.0.0
-Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
-Description:This is simple plugin that clear all cloudfront cache if you publish posts.
-Author: hideokamoto
-Author URI: http://wp-kyoto.net/
-Text Domain: c3-cloudfront-clear-cache
-*/
+ * Plugin Name: C3 Cloudfront Cache Controller
+ * Version: 3.0.0
+ * Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
+ * Description:This is simple plugin that clear all cloudfront cache if you publish posts.
+ * Author: hideokamoto
+ * Author URI: http://wp-kyoto.net/
+ * Text Domain: c3-cloudfront-clear-cache
+ * @package c3-cloudfront-clear-cache
+ */
 
 if ( 5.5 > (float) phpversion() ) {
 	require_once( dirname( __FILE__ ).'/aws.phar' );
 } else {
 	require_once( dirname( __FILE__ ).'/vendor/autoload.php' );
 }
+
+require_once( dirname( __FILE__ ).'/module/includes.php' );
 
 require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
 if ( ! class_exists( 'CF_preview_fix' ) ) {
