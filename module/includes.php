@@ -14,6 +14,9 @@ if ( c3_is_later_than_php_55() ) {
 } else {
 	require_once( 'model/client-v2.php' );
 }
+if ( ! class_exists( 'CF_preview_fix' ) ) {
+	require_once( 'model/cf-preview-fix.php' );
+}
 
 
 // View

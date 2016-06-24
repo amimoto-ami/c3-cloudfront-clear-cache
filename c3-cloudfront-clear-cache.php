@@ -127,12 +127,6 @@ class C3_Controller {
 
 }
 
-// Old Version
-require_once( dirname( __FILE__ ).'/lib/c3-admin.php' );
-if ( ! class_exists( 'CF_preview_fix' ) ) {
-	require_once( dirname( __FILE__ ).'/lib/cf-preview-fix.php' );
-}
-
 // WP-CLI
 if ( defined('WP_CLI') && WP_CLI ) {
 	include __DIR__ . '/cli.php';
