@@ -56,7 +56,7 @@ class C3_Auth extends C3_Base {
 		} else {
 			$sdk = C3_Client_V2::get_instance();
 			//@TODO: for php ~5.4, do not Authenication now.
-			return true
+			return true;
 		}
 		$cf_client = $sdk->create_cloudfront_client( $options );
 		if ( is_wp_error( $cf_client ) ) {
@@ -76,6 +76,7 @@ class C3_Auth extends C3_Base {
 			} else {
 				$e = new WP_Error( 'C3 Auth Error', $e->getMessage() );
 			}
+			error_log( $e->get_error_messages() , 0 );
 			return $e;
 		}
 	}

@@ -62,7 +62,6 @@ class C3_Client_V3 extends C3_Client_Base {
 		if ( $credential ) {
 			$param = array_merge( $param, $credential );
 		}
-		var_dump($param);
 		$cf_client = new CloudFrontClient( $param );
 		return $cf_client;
 	}
@@ -80,13 +79,13 @@ class C3_Client_V3 extends C3_Client_Base {
 			$c3_settings = $this->get_c3_options();
 		}
 		if ( ! $c3_settings ) {
-			$e = new WP_Error( 'C3 Auth Error', 'General setting params not defined.' );
+			$e = new WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );
 		}
 		if ( ! isset( $c3_settings['access_key'] ) || ! $c3_settings['access_key'] ) {
-			$e = new WP_Error( 'C3 Auth Error', 'AWS Access Key is not found.' );
+			$e = new WP_Error( 'C3 Create Client Error', 'AWS Access Key is not found.' );
 		}
 		if ( ! isset( $c3_settings['secret_key'] ) || ! $c3_settings['secret_key'] ) {
-			$e = new WP_Error( 'C3 Auth Error', 'AWS Secret Key is not found.' );
+			$e = new WP_Error( 'C3 Create Client Error', 'AWS Secret Key is not found.' );
 		}
 		if ( is_wp_error( $e ) ) {
 			return $e;
@@ -98,5 +97,27 @@ class C3_Client_V3 extends C3_Client_Base {
 			),
 		);
 		return $credentials;
+	}
+
+	/**
+	 * Create Invalidation Query
+	 *
+	 * @return array
+	 * @since 4.0.0
+	 * @access public
+	 */
+	public function create_invalidation_query( $options, $post = false ) {
+		$items = $this->get_invalidation_items( $options, $post );
+
+		return array(
+			'DistributionId' => esc_attr( $options['distribution_id'] ),
+			'InvalidationBatch' => array(
+				'CallerReference' => uniqid(),
+				'Paths' => array(
+					'Items' => $items,
+					'Quantity' => count( $items ),
+				),
+			)
+		);
 	}
 }
