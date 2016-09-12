@@ -65,6 +65,7 @@ class C3_Invalidation extends C3_Base {
 		}
 		$cf_client = $sdk->create_cloudfront_client( $options );
 		if ( is_wp_error( $cf_client ) ) {
+			error_log( print_r( $cf_client, true ) );
 			return $cf_client;
 		}
 

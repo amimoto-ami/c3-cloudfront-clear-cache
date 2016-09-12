@@ -24,11 +24,11 @@ class CF_preview_fix{
 	}
 
 	public function add_hook() {
-		add_action( 'template_redirect', array($this, 'template_redirect') );
-		add_filter( 'post_link', array($this, 'post_link_fix'), 10, 3 );
-		add_filter( 'preview_post_link', array($this, 'preview_post_link_fix'), 10, 2 );
-		add_filter( 'the_guid', array($this,'the_guid') );
-		add_filter( 'sanitize_file_name', array($this,'sanitizeFileName') );
+		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
+		add_filter( 'post_link', array( $this, 'post_link_fix' ), 10, 3 );
+		add_filter( 'preview_post_link', array( $this, 'preview_post_link_fix' ), 10, 2 );
+		add_filter( 'the_guid', array( $this,'the_guid' ) );
+		add_filter( 'sanitize_file_name', array( $this,'sanitizeFileName' ) );
 	}
 
 	public function template_redirect() {
@@ -37,39 +37,39 @@ class CF_preview_fix{
 		}
 	}
 
-	public function post_link_fix( $permalink, $post, $leavename ){
+	public function post_link_fix( $permalink, $post, $leavename ) {
 		if ( !is_user_logged_in() || !is_admin() || is_feed() ) {
 			return $permalink;
 		}
 		$post = get_post( $post );
 		$post_time =
-			isset($post->post_modified)
-			? date('YmdHis', strtotime($post->post_modified))
-			: current_time('YmdHis');
+			isset( $post->post_modified )
+			? date( 'YmdHis', strtotime( $post->post_modified ) )
+			: current_time( 'YmdHis' );
 		$permalink = add_query_arg( 'post_date', $post_time, $permalink );
 		return $permalink;
 	}
 
-	public function preview_post_link_fix( $permalink, $post ){
+	public function preview_post_link_fix( $permalink, $post ) {
 		if ( is_feed() ) {
 			return $permalink;
 		}
 		$post = get_post( $post );
-		$preview_time = current_time('YmdHis');
+		$preview_time = current_time( 'YmdHis' );
 		$permalink = add_query_arg( 'preview_time', $preview_time, $permalink );
 		return $permalink;
 	}
 
-	public function the_guid($guid) {
+	public function the_guid( $guid ) {
 		$guid = preg_replace( '#\?post_date=[\d]+#', '', $guid );
 		return $guid;
 	}
 
-	public function sanitizeFileName( $filename ){
-		$info = pathinfo($filename);
-		$ext  = empty($info['extension']) ? '' : '.' . $info['extension'];
-		$name = basename($filename, $ext);
-		$finalFileName = $name.'-'.current_time('YmdHis');
+	public function sanitizeFileName( $filename ) {
+		$info = pathinfo( $filename );
+		$ext  = empty( $info['extension'] ) ? '' : '.' . $info['extension'];
+		$name = basename( $filename, $ext );
+		$finalFileName = $name. '-'. current_time( 'YmdHis' );
 
 		return $finalFileName.$ext;
 	}
