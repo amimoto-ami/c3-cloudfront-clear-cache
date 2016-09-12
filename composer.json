@@ -1,0 +1,13 @@
+{
+    "name": "dc_hideokamoto/c3-cloudfront-clear-cache",
+    "license": "GPL v3",
+    "authors": [
+        {
+            "name": "hideokamoto",
+            "email": "hide.okamoto@digitalcube.jp"
+        }
+    ],
+    "require": {
+        "aws/aws-sdk-php": "^3.18"
+    }
+}
