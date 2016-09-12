@@ -127,6 +127,28 @@ class C3_Controller {
 
 }
 
+/**
+ * Backward compatible ( Before version3.x)
+ *
+ * @class CloudFront_Clear_Cache
+ * @since 1.0.0
+ */
+class CloudFront_Clear_Cache {
+	private static $instance;
+	public static function get_instance() {
+		if ( ! isset( self::$instance ) ) {
+			$c = __CLASS__;
+			self::$instance = new $c();
+		}
+		return self::$instance;
+	}
+
+	public function c3_invalidation( $post = null ) {
+		$invalidator = C3_Invalidation::get_instance();
+		$result = $invalidator->invalidation( $post );
+	}
+}
+
 // WP-CLI
 if ( defined('WP_CLI') && WP_CLI ) {
 	include __DIR__ . '/cli.php';
