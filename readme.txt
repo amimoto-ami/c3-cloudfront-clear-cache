@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
 Tested up to: 4.5.3
-Stable tag: 4.0.1
+Stable tag: 4.0.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,10 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 4.0.2 =
+* Add WP-CLI param check ( wp c3 flush)
+* change transient_key
 
 = 4.0.1 =
 * Bug fix ( conflict Nephila Clavata )
@@ -96,5 +100,6 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.0.1 =
-* Bug fix ( conflict Nephila Clavata )
+= 4.0.2 =
+* Add WP-CLI param check ( wp c3 flush)
+* change transient_key

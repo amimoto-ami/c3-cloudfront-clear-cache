@@ -35,6 +35,10 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 	 */
 	function flush( $args, $assoc_args ) {
 		WP_CLI::line( 'Start to Clear CloudFront Cache...' );
+		if ( empty( $args ) ) {
+			WP_CLI::error( 'Please input parameter:post_id(numeric) or all' );
+			exit;
+		}
 		list( $type ) = $args;
 		$c3 = CloudFront_Clear_Cache::get_instance();
 		if ( array_search( 'force', $assoc_args ) ) {
