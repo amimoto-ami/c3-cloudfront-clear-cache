@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
 Tested up to: 4.5.3
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,9 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 4.0.1 =
+* Bug fix ( conflict Nephila Clavata )
 
 = 4.0.0 =
 * Support AWS SDK Version3
@@ -93,9 +96,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.0.0 =
-* Support AWS SDK Version3
-* Remove action hook -> 'c3_add_setting_before'
-  use 'c3_after_title' filter hook instead.
-* Remove action hook -> 'c3_add_setting_after'
-  use 'c3_after_auth_form' filter hook instead.
+= 4.0.1 =
+* Bug fix ( conflict Nephila Clavata )
