@@ -65,7 +65,7 @@ class C3_Admin extends C3_Component {
 		$html .= $this->_get_header();
 		$html .= $this->_get_auth_form();
 		$html .= $this->_get_manual_invalidation_form();
-		$html .= $this->_get_invalidation_logs();
+		$html .= $this->get_invalidation_logs();
 		return $html;
 	}
 
@@ -154,28 +154,37 @@ class C3_Admin extends C3_Component {
 	/**
 	 * Get Invalidation Logs
 	 *
-	 * @access private
+	 * @access public
 	 * @since 4.1.0
 	 * @return string
 	 **/
-	private function _get_invalidation_logs() {
+	public function get_invalidation_logs() {
 		$c3_settings = get_option( self::OPTION_NAME );
 		$html = '';
 		if ( ! $c3_settings ) {
 			return $html;
 		}
 		$logs = new C3_Logs();
-		$logs->list_invalidations();
+		$invalidations = $logs->list_invalidations();
 		$html .= "<table class='wp-list-table widefat plugins'>";
 		$html .= '<thead>';
-		$html .= "<tr><th colspan='2'><h2>" . __( 'CloudFront Invalidation Logs', self::$text_domain ). '</h2></th></tr>';
+		$html .= "<tr><th colspan='3'><h2>" . __( 'CloudFront Invalidation Logs', self::$text_domain ). '</h2></th></tr>';
+		$html .= '<tr>';
+		$html .= '<th><b>'. __( 'Invalidation Start Time (UTC)', self::$text_domain ). '</b></th>';
+		$html .= '<th><b>'. __( 'Invalidation Status', self::$text_domain ). '</b></th>';
+		$html .= '<th><b>'. __( 'Invalidation Id', self::$text_domain ). '</b></th>';
+		$html .= '</tr>';
 		$html .= '</thead>';
 		$html .= '<tbody>';
-		$html .= '<tr><th><b>'. __( 'Flush All Cache', self::$text_domain ). '</b><br/>';
-		$html .= '<small>'. __( "Notice: Every page's cache is removed." , self::$text_domain ). '</small></th>';
-		$html .= '<td>aaa';
-		$html .= '</td>';
-		$html .= '</tr>';
+		if ( $invalidations ) {
+			foreach ( $invalidations as $invalidation ) {
+				$time = date_i18n( 'y/n/j G:i:s', strtotime( $invalidation['CreateTime'] ) );
+				$html .= "<tr><td>{$time}</td>";
+				$html .= "<td>{$invalidation['Status']}</td><td>{$invalidation['Id']}</td></tr>";
+			}
+		} else {
+			$html .= "<tr><th colspan='3'>". __( 'There is no invalidations', self::$text_domain ). '</td></tr>';
+		}
 		$html .= '</tbody></table>';
 		return $html;
 	}
