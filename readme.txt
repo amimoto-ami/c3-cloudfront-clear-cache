@@ -34,6 +34,9 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
 
+= 4.0.3 =
+* Auto Deploy by Travis
+
 = 4.0.2 =
 * Add WP-CLI param check ( wp c3 flush)
 * change transient_key
@@ -100,6 +103,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.0.2 =
-* Add WP-CLI param check ( wp c3 flush)
-* change transient_key
+= 4.0.3 =
+* Auto Deploy by Travis
