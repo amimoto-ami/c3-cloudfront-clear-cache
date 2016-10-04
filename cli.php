@@ -6,14 +6,24 @@
  require_once( dirname( __FILE__ ).'/c3-cloudfront-clear-cache.php' );
 
 /**
+<<<<<<< HEAD
  * WP-CLI Command for control C3 CloudFront Cache Controller Plugins
+=======
+ * WP-CLI Command to control C3 CloudFront Cache Controller Plugins
+>>>>>>> wporg-release
  *
  * @class C3_CloudFront_Clear_Cache_Command
  * @since 2.3.0
  */
 class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
+<<<<<<< HEAD
 	 /**
 	 * Flush All CloudFront Cache
+=======
+
+ 	/**
+ 	 * Flush All CloudFront Cache
+>>>>>>> wporg-release
 	 *
 	 * ## OPTIONS
 	 * <post_id>
@@ -21,6 +31,7 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 	 *
 	 * [--force]
 	 * Activate Force Clear Mode
+<<<<<<< HEAD
 	 *
 	 * ## EXAMPLES
 	 *
@@ -28,12 +39,25 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 	 *     wp c3 flush all             : Flush All CloudFront Cache.
 	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
 	 *
+=======
+ 	 *
+ 	 * ## EXAMPLES
+ 	 *
+ 	 *     wp c3 flush <post_id>       : Flush <post_id>'s CloudFront Cache.
+	 *     wp c3 flush all             : Flush All CloudFront Cache.
+	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
+ 	 *
+>>>>>>> wporg-release
 	 * @param string $args: WP-CLI Command Name
 	 * @param string $assoc_args: WP-CLI Command Option
 	 * @since 2.3.0
 	 */
 	function flush( $args, $assoc_args ) {
 		WP_CLI::line( 'Start to Clear CloudFront Cache...' );
+		if ( empty( $args ) ) {
+			WP_CLI::error( 'Please input parameter:post_id(numeric) or all' );
+			exit;
+		}
 		list( $type ) = $args;
 		$c3 = CloudFront_Clear_Cache::get_instance();
 		if ( array_search( 'force', $assoc_args ) ) {
