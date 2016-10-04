@@ -3,8 +3,8 @@ Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
-Tested up to: 4.5.3
-Stable tag: 4.0.3
+Tested up to: 4.6.1
+Stable tag: 4.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,9 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 4.1.0 =
+* Show Invalidation Logs
 
 = 4.0.3 =
 * Auto Deploy by Travis
@@ -103,5 +106,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.0.3 =
-* Auto Deploy by Travis
+= 4.1.0 =
+* Show Invalidation Logs
