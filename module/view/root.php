@@ -65,6 +65,7 @@ class C3_Admin extends C3_Component {
 		$html .= $this->_get_header();
 		$html .= $this->_get_auth_form();
 		$html .= $this->_get_manual_invalidation_form();
+		$html .= $this->_get_invalidation_logs();
 		return $html;
 	}
 
@@ -147,6 +148,35 @@ class C3_Admin extends C3_Component {
 		$html .= '</tbody></table>';
 		$html .= '</form>';
 		$html .= '<hr/>';
+		return $html;
+	}
+
+	/**
+	 * Get Invalidation Logs
+	 *
+	 * @access private
+	 * @since 4.1.0
+	 * @return string
+	 **/
+	private function _get_invalidation_logs() {
+		$c3_settings = get_option( self::OPTION_NAME );
+		$html = '';
+		if ( ! $c3_settings ) {
+			return $html;
+		}
+		$logs = new C3_Logs();
+		$logs->list_invalidations();
+		$html .= "<table class='wp-list-table widefat plugins'>";
+		$html .= '<thead>';
+		$html .= "<tr><th colspan='2'><h2>" . __( 'CloudFront Invalidation Logs', self::$text_domain ). '</h2></th></tr>';
+		$html .= '</thead>';
+		$html .= '<tbody>';
+		$html .= '<tr><th><b>'. __( 'Flush All Cache', self::$text_domain ). '</b><br/>';
+		$html .= '<small>'. __( "Notice: Every page's cache is removed." , self::$text_domain ). '</small></th>';
+		$html .= '<td>aaa';
+		$html .= '</td>';
+		$html .= '</tr>';
+		$html .= '</tbody></table>';
 		return $html;
 	}
 }

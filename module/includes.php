@@ -18,6 +18,7 @@ if ( ! class_exists( 'CF_preview_fix' ) ) {
 	require_once( 'model/cf-preview-fix.php' );
 }
 
+require_once( 'model/class.logs.php' );
 
 // View
 require_once( 'view/components.php' );
