@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class C3_Base {
-	private static $instance;
 	private static $text_domain;
 	private static $version;
 
@@ -30,24 +29,6 @@ class C3_Base {
 	const C3_AUTHENTICATION = 'c3_auth';
 	const C3_INVALIDATION = 'c3_invalidation';
 	const C3_INVALIDATION_KEY = "c3_invalidation_key";
-
-	private function __construct() {
-	}
-
-	/**
-	 * Get Instance Class
-	 *
-	 * @return C3_Base
-	 * @since 4.0.0
-	 * @access public
-	 */
-	public static function get_instance() {
-		if ( ! isset( self::$instance ) ) {
-			$c = __CLASS__;
-			self::$instance = new $c();
-		}
-		return self::$instance;
-	}
 
 	/**
 	 * Get Plugin version

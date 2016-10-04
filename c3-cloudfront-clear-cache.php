@@ -54,7 +54,7 @@ class C3_Controller {
 	 * @since 4.0.0
 	 */
 	public function init() {
-		$this->base = C3_Base::get_instance();
+		$this->base = new C3_Base();
 		$menu = C3_Menus::get_instance();
 		$menu->init();
 		add_action( 'admin_init',    array( $this, 'update_settings' ) );
