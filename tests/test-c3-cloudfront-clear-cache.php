@@ -7,7 +7,7 @@ class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 		$this->C3 = C3_Controller::get_instance();
 		$this->C3->init();
 	}
-
+/*
 	function test_check_phpversion() {
 		$result = c3_is_later_than_php_55();
 		if ( 5.5 > (float) phpversion() ) {
@@ -26,4 +26,5 @@ class CloudFront_Clear_Cache_Test extends WP_UnitTestCase
 			$this->assertFalse( $result );
 		}
 	}
+	*/
 }
