@@ -6,24 +6,15 @@
  require_once( dirname( __FILE__ ).'/c3-cloudfront-clear-cache.php' );
 
 /**
-<<<<<<< HEAD
- * WP-CLI Command for control C3 CloudFront Cache Controller Plugins
-=======
  * WP-CLI Command to control C3 CloudFront Cache Controller Plugins
->>>>>>> wporg-release
  *
  * @class C3_CloudFront_Clear_Cache_Command
  * @since 2.3.0
  */
 class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
-<<<<<<< HEAD
-	 /**
-	 * Flush All CloudFront Cache
-=======
 
- 	/**
- 	 * Flush All CloudFront Cache
->>>>>>> wporg-release
+	/**
+	 * Flush All CloudFront Cache
 	 *
 	 * ## OPTIONS
 	 * <post_id>
@@ -31,15 +22,6 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 	 *
 	 * [--force]
 	 * Activate Force Clear Mode
-<<<<<<< HEAD
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     wp c3 flush <post_id>       : Flush <post_id>'s CloudFront Cache.
-	 *     wp c3 flush all             : Flush All CloudFront Cache.
-	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
-	 *
-=======
  	 *
  	 * ## EXAMPLES
  	 *
@@ -47,7 +29,6 @@ class C3_CloudFront_Clear_Cache_Command extends WP_CLI_Command {
 	 *     wp c3 flush all             : Flush All CloudFront Cache.
 	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
  	 *
->>>>>>> wporg-release
 	 * @param string $args: WP-CLI Command Name
 	 * @param string $assoc_args: WP-CLI Command Option
 	 * @since 2.3.0
