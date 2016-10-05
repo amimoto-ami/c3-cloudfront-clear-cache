@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
 Tested up to: 4.6.1
-Stable tag: 4.2.0
+Stable tag: 4.2.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,9 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 4.2.1 =
+* Fix 'c3_credential' filter position
 
 = 4.2.0 =
 * Support AMIMOT Dashboard
@@ -109,5 +112,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.2.0 =
-* Support AMIMOT Dashboard
+= 4.2.1 =
+* Fix 'c3_credential' filter position
