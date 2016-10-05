@@ -51,10 +51,10 @@ class C3_Client_V3 extends C3_Client_Base {
 	 */
 	public function create_cloudfront_client( $c3_settings = false ) {
 		$credential = $this->create_credentials( $c3_settings );
+		$credential = apply_filters( 'c3_credential', $credential );
 		if ( is_wp_error( $credential ) ) {
 			return $credential;
 		}
-		$credential = apply_filters( 'c3_credential', $credential );
 		$param = array(
 			'version' => '2016-01-28',
 			'region'  => 'us-east-1',

@@ -52,10 +52,10 @@ class C3_Client_V2 extends C3_Client_Base {
 	 */
 	public function create_cloudfront_client( $options = false ) {
 		$credential = $this->create_credentials( $options );
+		$credential = apply_filters( 'c3_credential', $credential );
 		if ( is_wp_error( $credential ) ) {
 			return $credential;
 		}
-		$credential = apply_filters( 'c3_credential', $credential );
 		if( $credential ) {
 			$cf_client = CloudFrontClient::factory( $credential );
 		} else {
