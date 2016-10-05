@@ -70,6 +70,19 @@ class C3_Admin extends C3_Component {
 	}
 
 	/**
+	 * Inject content to AMIMOTO Dashboard
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 * @return string
+	 **/
+	public function inject_to_amimoto_dashboard() {
+		$html  = '';
+		$html .= $this->get_invalidation_logs();
+		return $html;
+	}
+
+	/**
 	 *  Get pugin root admin header HTML
 	 *
 	 * @access public

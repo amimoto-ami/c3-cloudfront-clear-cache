@@ -60,6 +60,22 @@ class C3_Controller {
 		add_action( 'admin_init',    array( $this, 'update_settings' ) );
 		$invalidator = C3_Invalidation::get_instance();
 		add_action( 'transition_post_status' , array( $invalidator, 'post_invalidation' ) , 10 , 3 );
+		add_filter( 'amimoto_c3_add_settings', array( $this, 'inject_c3_admin_content' ) );
+	}
+
+	/**
+	 * Inject C3 Content to AMIMOTO Dashboard
+	 *
+	 * @access public
+	 * @since 4.2.0
+	 * @param string $html
+	 * @return string
+	 **/
+	public function inject_c3_admin_content( $html ) {
+		$root = C3_Admin::get_instance();
+		$html .= '<hr/>';
+		$html .= $root->inject_to_amimoto_dashboard();
+		return $html;
 	}
 
 	/**
