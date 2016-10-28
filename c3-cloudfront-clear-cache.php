@@ -61,6 +61,7 @@ class C3_Controller {
 		$invalidator = C3_Invalidation::get_instance();
 		add_action( 'transition_post_status' , array( $invalidator, 'post_invalidation' ) , 10 , 3 );
 		add_filter( 'amimoto_c3_add_settings', array( $this, 'inject_c3_admin_content' ) );
+		add_action( 'c3_cron_invalidation', array( $invalidator, 'cron_invalidation' ) );
 	}
 
 	/**
