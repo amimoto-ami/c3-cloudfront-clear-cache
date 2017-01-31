@@ -7,8 +7,12 @@ class C3_Woo_Test extends WP_UnitTestCase
 		$this->C3 = new C3_Woo();
 	}
 
-	function test_new_config_if_new_wc_site() {
-		$result = $this->C3->update_config();
+	function test_default_new_config() {
+
+		$reflection = new \ReflectionClass( $this->C3 );
+		$method = $reflection->getMethod( '_create_cloudfront_config' );
+		$method->setAccessible( true );
+		$result = $method->invoke( $this->C3 );
 		$default_links = [
 			'product-category',
 			'product-tag',
