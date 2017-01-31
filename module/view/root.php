@@ -65,7 +65,7 @@ class C3_Admin extends C3_Component {
 		$html .= $this->_get_header();
 		$html .= $this->_get_auth_form();
 		$html .= $this->_get_manual_invalidation_form();
-		$html .= $this->get_invalidation_logs();
+		$html .= $this->inject_to_amimoto_dashboard();
 		return $html;
 	}
 
@@ -78,6 +78,7 @@ class C3_Admin extends C3_Component {
 	 **/
 	public function inject_to_amimoto_dashboard() {
 		$html  = '';
+		$html .= $this->_get_woocommerece_settings();
 		$html .= $this->get_invalidation_logs();
 		return $html;
 	}
@@ -156,6 +157,39 @@ class C3_Admin extends C3_Component {
 		$html .= "<input type='hidden' name='invalidation_target' value='all' />";
 		$html .= wp_nonce_field( self::C3_INVALIDATION , self::C3_INVALIDATION , true , false );
 		$html .= get_submit_button( __( 'Flush All Cache', self::$text_domain ) );
+		$html .= '</td>';
+		$html .= '</tr>';
+		$html .= '</tbody></table>';
+		$html .= '</form>';
+		$html .= '<hr/>';
+		return $html;
+	}
+
+	/**
+	 * WooCommerce settings
+	 *
+	 * @access private
+	 * @since 4.4.0
+	 * @return string
+	 **/
+	private function _get_woocommerece_settings() {
+		$c3_settings = get_option( self::OPTION_NAME );
+		$html = '';
+		if ( ! $c3_settings ) {
+			return $html;
+		}
+		$html .= "<form method='post' action=''>";
+		$html .= "<table class='wp-list-table widefat plugins'>";
+		$html .= '<thead>';
+		$html .= "<tr><th colspan='2'><h2>" . __( 'CloudFront Configure', self::$text_domain ). '</h2></th></tr>';
+		$html .= '</thead>';
+		$html .= '<tbody>';
+		$html .= '<tr><th><b>'. __( 'WooCommerce Support', self::$text_domain ). '</b><br/>';
+		$html .= '<small>'. __( "Update Cache config for WooCommerce" , self::$text_domain ). '</small></th>';
+		$html .= '<td>';
+		$html .= "<input type='hidden' name='invalidation_target' value='all' />";
+		$html .= wp_nonce_field( self::C3_WOO_SUPPORT , self::C3_WOO_SUPPORT , true , false );
+		$html .= get_submit_button( __( 'Update Settings', self::$text_domain ) );
 		$html .= '</td>';
 		$html .= '</tr>';
 		$html .= '</tbody></table>';
