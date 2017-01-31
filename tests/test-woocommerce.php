@@ -14,6 +14,8 @@ class C3_Woo_Test extends WP_UnitTestCase
 			'product',
 			'my-account',
 			'checkout',
+			'product-category',
+			'product-tag',
 		];
 		$desired_result = $this->_create_distribution_config( $default_links );
 		$this->assertEquals( $result, $desired_result );
