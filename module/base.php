@@ -30,6 +30,8 @@ class C3_Base {
 	const C3_INVALIDATION = 'c3_invalidation';
 	const C3_INVALIDATION_KEY = "c3_invalidation_key";
 	const C3_CRON_INDALITATION_TARGET = "c3_cron_invalidation_target";
+	const C3_WOO_SUPPORT = 'c3_woo_support';
+
 	/**
 	 * Get Plugin version
 	 *

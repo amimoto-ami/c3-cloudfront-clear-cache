@@ -19,6 +19,7 @@ if ( ! class_exists( 'CF_preview_fix' ) ) {
 }
 
 require_once( 'model/class.logs.php' );
+require_once( 'model/class.woocommerce.php' );
 
 // View
 require_once( 'view/components.php' );

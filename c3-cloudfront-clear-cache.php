@@ -108,6 +108,10 @@ class C3_Controller {
 				//@TODO Show WP Error message
 			}
 		}
+		if ( $this->is_trust_post_param( C3_Base::C3_WOO_SUPPORT ) ) {
+			$C3 = new C3_Woo();
+			$result = $C3->update_config();
+		}
 
 	}
 
