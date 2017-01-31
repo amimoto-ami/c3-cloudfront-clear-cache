@@ -10,12 +10,13 @@ class C3_Woo_Test extends WP_UnitTestCase
 	function test_new_config_if_new_wc_site() {
 		$result = $this->C3->update_config();
 		$default_links = [
-			'cart',
-			'product',
-			'my-account',
-			'checkout',
 			'product-category',
 			'product-tag',
+			'product',
+			'shop',
+			'cart',
+			'checkout',
+			'my-account',
 		];
 		$desired_result = $this->_create_distribution_config( $default_links );
 		$this->assertEquals( $result, $desired_result );
@@ -61,7 +62,7 @@ class C3_Woo_Test extends WP_UnitTestCase
 			],
 			'MaxTTL' => 0,
 			'MinTTL' => 0,
-			'PathPattern' => "/{$path}/*'",
+			'PathPattern' => "/{$path}/*",
 			'SmoothStreaming' => false,
 			'TargetOriginId' => $origin_id,
 			'TrustedSigners' => [
