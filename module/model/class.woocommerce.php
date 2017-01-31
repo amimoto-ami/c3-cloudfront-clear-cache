@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.4.0
  */
 class C3_woo extends C3_Base {
+	private $cf_client;
+
 	/**
 	 * Get Woocommerce permalinks
 	 *
@@ -210,6 +212,126 @@ class C3_woo extends C3_Base {
 	}
 
 	/**
+	 *
+	 *
+	 * @access private
+	 * @since 4.4.0
+	 * @return array
+	 **/
+	private function _get_current_config() {
+		$options = $this->get_c3_options();
+		$result = $this->cf_client->getDistributionConfig([
+			'Id' => $options['distribution_id'], // REQUIRED
+		]);
+		return $result;
+	}
+
+	/**
+	 * Create CloudFront client
+	 *
+	 * @access private
+	 * @since 4.4.0
+	 **/
+	private function _create_client() {
+		$options = $this->get_c3_options();
+		if ( c3_is_later_than_php_55() ) {
+			$sdk = C3_Client_V3::get_instance();
+		} else {
+			$sdk = C3_Client_V2::get_instance();
+		}
+		$this->cf_client = $sdk->create_cloudfront_client( $options );
+	}
+
+	/**
+	 * Create update distribution config via AWS SDK v3
+	 *
+	 * @access private
+	 * @since 4.4.0
+	 * @return array
+	 **/
+	private function _v3_create_update_config() {
+		// @TODO need to test
+		$config = $this->_create_cloudfront_config();
+		$current_config = $this->_get_current_config();
+		$items = $current_config->get('CacheBehaviors');
+		if ( $items['Quantity'] !== '0' ) {
+			$merged_config = array_merge( $items['Items'], $config['CacheBehaviors']['Items'] );
+		} else {
+			$merged_config = $config['CacheBehaviors']['Items'];
+		}
+		$options = $this->get_c3_options();
+		$new_conf = [
+			'DistributionConfig' => [
+				'Aliases' => $current_config->get('Aliases'),
+				'CacheBehaviors' => [
+					'Items' => $merged_config,
+					'Quantity' => count( $merged_config ),
+				],
+				'CallerReference' => $current_config->get('CallerReference'),
+				'Comment' => $current_config->get('Comment'),
+				'CustomErrorResponses' => $current_config->get('CustomErrorResponses'),
+				'DefaultCacheBehavior' => $current_config->get('DefaultCacheBehavior'),
+				'DefaultRootObject' => $current_config->get('DefaultRootObject'),
+				'Enabled' => $current_config->get('Enabled'),
+				'HttpVersion' => $current_config->get('HttpVersion'),
+				'IsIPV6Enabled' => $current_config->get('IsIPV6Enabled'),
+				'Logging' => $current_config->get('Logging'),
+				'Origins' => $current_config->get('Origins'),
+				'PriceClass' => $current_config->get('PriceClass'),
+				'Restrictions' => $current_config->get('Restrictions'),
+				'ViewerCertificate' => $current_config->get('ViewerCertificate'),
+				'WebACLId' => $current_config->get('WebACLId'),
+			],
+			'Id' => $options['distribution_id'],
+			'IfMatch' => $current_config->get('ETag'),
+		];
+		return $new_conf;
+	}
+
+	/**
+	 * Create update distribution config via AWS SDK v2
+	 *
+	 * @access private
+	 * @since 4.4.0
+	 * @return array
+	 **/
+	private function _v2_create_update_config() {
+		$config = $this->_create_cloudfront_config();
+		$current_config = $this->_get_current_config();
+		$items = $current_config->get('CacheBehaviors');
+		if ( $items['Quantity'] !== '0' ) {
+			$merged_config = array_merge( $items['Items'], $config['CacheBehaviors']['Items'] );
+		} else {
+			$merged_config = $config['CacheBehaviors']['Items'];
+		}
+		$options = $this->get_c3_options();
+		$new_conf = [
+			'Aliases' => $current_config->get('Aliases'),
+			'CacheBehaviors' => [
+				'Items' => $merged_config,
+				'Quantity' => count( $merged_config ),
+			],
+			'CallerReference' => $current_config->get('CallerReference'),
+			'Comment' => $current_config->get('Comment'),
+			'CustomErrorResponses' => $current_config->get('CustomErrorResponses'),
+			'DefaultCacheBehavior' => $current_config->get('DefaultCacheBehavior'),
+			'DefaultRootObject' => $current_config->get('DefaultRootObject'),
+			'Enabled' => $current_config->get('Enabled'),
+			'HttpVersion' => $current_config->get('HttpVersion'),
+			'IsIPV6Enabled' => $current_config->get('IsIPV6Enabled'),
+			'Logging' => $current_config->get('Logging'),
+			'Origins' => $current_config->get('Origins'),
+			'PriceClass' => $current_config->get('PriceClass'),
+			'Restrictions' => $current_config->get('Restrictions'),
+			'ViewerCertificate' => $current_config->get('ViewerCertificate'),
+			'WebACLId' => $current_config->get('WebACLId'),
+			'Id' => $options['distribution_id'],
+			'IfMatch' => $current_config->get('ETag'),
+		];
+		return $new_conf;
+	}
+
+	/**
 	 * Update CloudFront config for WooCommerce
 	 *
 	 * @access public
@@ -217,8 +339,17 @@ class C3_woo extends C3_Base {
 	 * @return boolean | object
 	 **/
 	public function update_config() {
-		$config = $this->_create_cloudfront_config();
-		// @TODO Need to merge current CloudFront config
-		return $config;
+		$this->_create_client();
+		if ( c3_is_later_than_php_55() ) {
+			$new_conf = $this->_v3_create_update_config();
+		} else {
+			$new_conf = $this->_v2_create_update_config();
+		}
+		try {
+			$result = $this->cf_client->updateDistribution( $new_conf );
+		} catch (Exception $e) {
+			error_log( print_r( $e, true ) );
+		}
+		return $result;
 	}
 }
