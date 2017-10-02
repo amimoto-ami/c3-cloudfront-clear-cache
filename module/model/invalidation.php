@@ -51,9 +51,10 @@ class C3_Invalidation extends C3_Base {
 		if ( $query['Paths']['Items'][0] === '/*') {
 			return;
 		}
+		$interval_minutes = apply_filters( 'c3_invalidation_cron_interval', 1 );
 		$query = $this->_merge_transient_invalidation_query( $query );
-		set_transient( self::C3_CRON_INDALITATION_TARGET , $query , 5 * 60 );
-		$time = time() + MINUTE_IN_SECONDS * 5;
+		set_transient( self::C3_CRON_INDALITATION_TARGET , $query , $interval_minutes * 60 );
+		$time = time() + MINUTE_IN_SECONDS * $interval_minutes;
 		wp_schedule_single_event( $time, 'c3_cron_invalidation');
 	}
 
@@ -62,7 +63,6 @@ class C3_Invalidation extends C3_Base {
 	 *
 	 * @since 4.3.0
 	 * @access public
-	 * @param array $query
 	 **/
 	public function cron_invalidation() {
 		error_log('cron works');
@@ -92,7 +92,7 @@ class C3_Invalidation extends C3_Base {
 			$query['Paths']['Items'] = array_merge( $query_items, $current_items );
 			$query['Paths']['Items'] = array_merge( array_unique( $query['Paths']['Items'] ) );
 			$item_count = count( $query['Paths']['Items'] );
-			if ( 10 < $item_count ) {
+			if ( apply_filters( 'c3_invalidation_item_limits', 100) < $item_count ) {
 				$query['Paths'] = array(
 					'Quantity' => 1,
 					'Items' => array( '/* ' ),
@@ -165,7 +165,7 @@ class C3_Invalidation extends C3_Base {
 	 **/
 	private function _do_invalidation( $cf_client, $query ) {
 		try {
-			set_transient( self::C3_INVALIDATION_KEY , true , 5 * 60 );
+			set_transient( self::C3_INVALIDATION_KEY , true , apply_filters( 'c3_invalidation_interval', 1 ) * 60 );
 			$result = $cf_client->createInvalidation( $query );
 			return true;
 		} catch ( Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {

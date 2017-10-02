@@ -14,3 +14,39 @@ $ git clone git@github.com:amimoto-ami/c3-cloudfront-clear-cache.git
 $ cd c3-cloudfront-clear-cache
 $ composer install
 ```
+
+
+## Filters
+
+### Change Invalidation interval
+
+Default interval is 1 minutes.
+
+```
+add_filter('c3_invalidation_interval', function( $interval_minutes ) {
+    $custom_interval = 1;
+    return $custom_interval;
+} );
+```
+
+### Change Invalidation retry interval
+
+Default interval is 1 minutes.
+
+```
+add_filter('c3_invalidation_cron_interval', function( $interval_minutes ) {
+    $custom_interval = 1;
+    return $custom_interval;
+} );
+```
+
+### Change Invalidation items limit
+
+Default limit is 100.
+
+```
+add_filter( 'c3_invalidation_item_limits', function( $limits ) {
+    $custom_limit = 300;
+    return $custom_limit;
+} );
+```
