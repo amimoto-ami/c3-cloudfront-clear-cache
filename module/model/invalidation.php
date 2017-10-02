@@ -53,7 +53,7 @@ class C3_Invalidation extends C3_Base {
 		}
 		$interval_minutes = apply_filters( 'c3_invalidation_cron_interval', 1 );
 		$query = $this->_merge_transient_invalidation_query( $query );
-		set_transient( self::C3_CRON_INDALITATION_TARGET , $query , $interval_minutes * 60 );
+		set_transient( self::C3_CRON_INDALITATION_TARGET , $query , $interval_minutes * MINUTE_IN_SECONDS * 1.5 );
 		$time = time() + MINUTE_IN_SECONDS * $interval_minutes;
 		wp_schedule_single_event( $time, 'c3_cron_invalidation');
 	}
