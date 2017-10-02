@@ -3,8 +3,8 @@ Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.3.1
-Tested up to: 4.6.1
-Stable tag: 4.3.0
+Tested up to: 4.8.2
+Stable tag: 4.3.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,11 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 4.3.1 =
+* Fix cron interval
+* add filters `'c3_invalidation_interval`, `c3_invalidation_cron_interval`, `c3_invalidation_item_limits`.
+* update default invalidation interval & items.
 
 = 4.3.0 =
 * Schedule cron event if you published many post at the same time
@@ -115,5 +120,7 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.3.0 =
-* Schedule cron event if you published many post at the same time
+= 4.3.1 =
+* Fix cron interval
+* add filters `'c3_invalidation_interval`, `c3_invalidation_cron_interval`, `c3_invalidation_item_limits`.
+* update default invalidation interval & items.
