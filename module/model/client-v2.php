@@ -67,7 +67,7 @@ class C3_Client_V2 extends C3_Client_Base {
 	/**
 	 * Create Credentials Object
 	 *
-	 * @return Object (Aws\Common\Credentials\Credentials)
+	 * @return array (Aws\Common\Credentials\Credentials) | WP_Error
 	 * @since 4.0.0
 	 * @access public
 	 */
@@ -86,6 +86,9 @@ class C3_Client_V2 extends C3_Client_Base {
 			$e = new WP_Error( 'C3 Create Client Error', 'AWS Secret Key is not found.' );
 		}
 		if ( is_wp_error( $e ) ) {
+			if ( $this->is_amimoto_managed() ) {
+				return array();
+			}
 			return $e;
 		}
 		$credentials = array(

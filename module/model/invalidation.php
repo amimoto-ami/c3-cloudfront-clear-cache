@@ -181,13 +181,13 @@ class C3_Invalidation extends C3_Base {
 	 * @param array $query
 	 * @access private
 	 * @since 4.3.0
-	 * @return boolean | WP_Error
+	 * @return array | WP_Error
 	 **/
 	private function _do_invalidation( $cf_client, $query ) {
 		try {
 			set_transient( self::C3_INVALIDATION_KEY , true , apply_filters( 'c3_invalidation_interval', 1 ) * 60 );
 			$result = $cf_client->createInvalidation( $query );
-			return true;
+			return $result;
 		} catch ( Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {
 			error_log( $e->__toString( ) , 0 );
 			$e = new WP_Error( 'C3 Invalidation Error', $e->__toString() );
@@ -198,7 +198,7 @@ class C3_Invalidation extends C3_Base {
 			return $e;
 		} catch ( Exception $e ) {
 			$e = new WP_Error( 'C3 Invalidation Error', $e->getMessage() );
-			error_log( $e->get_error_messages() , 0 );
+			error_log( print_r( $e->get_error_messages(), true ) , 0 );
 			return $e;
 		}
 	}
