@@ -63,6 +63,19 @@ class C3_Base {
 	}
 
 	/**
+	 * Check is AMIMOTO Managed mode
+	 *
+	 * @return bool
+	 * @since 4.4.0
+	 */
+	public static function is_amimoto_managed() {
+		if ( isset( $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ) && $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ){
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Check is multisite
 	 *
 	 * @return boolean

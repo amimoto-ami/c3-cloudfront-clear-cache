@@ -91,6 +91,7 @@ class C3_Controller {
 		if ( empty( $_POST ) ) {
 			return;
 		}
+		$result = false;
 		if ( $this->is_trust_post_param( C3_Base::C3_AUTHENTICATION ) ) {
 			$options = $this->_esc_setting_param( $_POST[ C3_Base::OPTION_NAME ] );
 			update_option( C3_Base::OPTION_NAME, $options );
@@ -108,7 +109,36 @@ class C3_Controller {
 				//@TODO Show WP Error message
 			}
 		}
+		if ( $result ) {
+			if ( is_wp_error( $result ) ) {
+				$this->_show_error( $result );
+			} else {
+				// $this->_show_result( $result );
+			}
+		}
+	}
 
+	/**
+	 * Show error message on wp-admin
+	 *
+	 * @access private
+	 * @param WP_Error $error Wp_error object.
+	 * @since 4.4.0
+	 **/
+	private function _show_error( WP_Error $error ) {
+		$messages = $error->get_error_messages();
+		$codes = $error->get_error_codes();
+		$code = esc_html( $codes[0] );
+		?>
+		<div class='error'><ul>
+				<?php foreach ( $messages as $key => $message ) : ?>
+					<li>
+						<b><?php echo esc_html( $code );?></b>
+						: <?php echo esc_html( $message );?>
+					</li>
+				<?php endforeach; ?>
+			</ul></div>
+		<?php
 	}
 
 	/**
@@ -164,6 +194,7 @@ class CloudFront_Clear_Cache {
 	public function c3_invalidation( $post = null ) {
 		$invalidator = C3_Invalidation::get_instance();
 		$result = $invalidator->invalidation( $post );
+		return $result;
 	}
 }
 

@@ -104,6 +104,24 @@ class C3_Invalidation extends C3_Base {
 		return $query;
 	}
 
+	/*
+	 * Get CloudFront Distribution Id
+	 *
+	 * @return string | WP_Error
+	 * @since 4.4.0
+	 * @access private
+	 */
+	private function _get_dist_id() {
+		if ( $this->is_amimoto_managed() && defined( 'AMIMOTO_CDN_ID' ) ) {
+			return AMIMOTO_CDN_ID;
+		}
+		$options = $this->get_c3_options();
+		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
+			return new WP_Error( 'C3 Invalidation Error', 'Distribution ID is not defined.' );
+		}
+		return $options['distribution_id'];
+	}
+
 	/**
 	 * Create Invalidation Request
 	 *
@@ -112,6 +130,7 @@ class C3_Invalidation extends C3_Base {
 	 * @access public
 	 */
 	public function invalidation( $post = false ) {
+
 		$key = self::C3_INVALIDATION_KEY;
 		if ( c3_is_later_than_php_55() ) {
 			$sdk = C3_Client_V3::get_instance();
@@ -119,11 +138,12 @@ class C3_Invalidation extends C3_Base {
 			$sdk = C3_Client_V2::get_instance();
 		}
 
-		$options = $this->get_c3_options();
-		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
-			return new WP_Error( 'C3 Invalidation Error', 'Distribution ID is not defined.' );
+		$dist_id = $this->_get_dist_id();
+		if ( is_wp_error( $dist_id ) ) {
+			return $dist_id;
 		}
-		$query = $sdk->create_invalidation_query( $options, $post );
+		$options = $this->get_c3_options();
+		$query = $sdk->create_invalidation_query( $dist_id, $options, $post );
 		if ( apply_filters( 'c3_invalidation_flag', get_transient( $key ) ) ) {
 			$this->_register_cron_event( $query );
 			return;
@@ -161,13 +181,13 @@ class C3_Invalidation extends C3_Base {
 	 * @param array $query
 	 * @access private
 	 * @since 4.3.0
-	 * @return boolean | WP_Error
+	 * @return array | WP_Error
 	 **/
 	private function _do_invalidation( $cf_client, $query ) {
 		try {
 			set_transient( self::C3_INVALIDATION_KEY , true , apply_filters( 'c3_invalidation_interval', 1 ) * 60 );
 			$result = $cf_client->createInvalidation( $query );
-			return true;
+			return $result;
 		} catch ( Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {
 			error_log( $e->__toString( ) , 0 );
 			$e = new WP_Error( 'C3 Invalidation Error', $e->__toString() );
@@ -178,7 +198,7 @@ class C3_Invalidation extends C3_Base {
 			return $e;
 		} catch ( Exception $e ) {
 			$e = new WP_Error( 'C3 Invalidation Error', $e->getMessage() );
-			error_log( $e->get_error_messages() , 0 );
+			error_log( print_r( $e->get_error_messages(), true ) , 0 );
 			return $e;
 		}
 	}
