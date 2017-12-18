@@ -104,11 +104,11 @@ class C3_Client_V2 extends C3_Client_Base {
 	 * @since 4.0.0
 	 * @access public
 	 */
-	public function create_invalidation_query( $options, $post = false ) {
+	public function create_invalidation_query( $dist_id, $options, $post = false ) {
 		$items = $this->get_invalidation_items( $options, $post );
 
 		return array(
-			'DistributionId' => esc_attr( $options['distribution_id'] ),
+			'DistributionId' => esc_attr( $dist_id ),
 			'Paths' => array(
 				'Quantity' => count( $items ),
 				'Items'    => $items,

@@ -104,6 +104,21 @@ class C3_Invalidation extends C3_Base {
 		return $query;
 	}
 
+	/*
+	 * Get CloudFront Distribution Id
+	 *
+	 * @return string | WP_Error
+	 * @since 4.4.0
+	 * @access private
+	 */
+	private function _get_dist_id() {
+		$options = $this->get_c3_options();
+		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
+			return new WP_Error( 'C3 Invalidation Error', 'Distribution ID is not defined.' );
+		}
+		return $options['distribution_id'];
+	}
+
 	/**
 	 * Create Invalidation Request
 	 *
@@ -112,6 +127,7 @@ class C3_Invalidation extends C3_Base {
 	 * @access public
 	 */
 	public function invalidation( $post = false ) {
+
 		$key = self::C3_INVALIDATION_KEY;
 		if ( c3_is_later_than_php_55() ) {
 			$sdk = C3_Client_V3::get_instance();
@@ -119,11 +135,12 @@ class C3_Invalidation extends C3_Base {
 			$sdk = C3_Client_V2::get_instance();
 		}
 
-		$options = $this->get_c3_options();
-		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
-			return new WP_Error( 'C3 Invalidation Error', 'Distribution ID is not defined.' );
+		$dist_id = $this->_get_dist_id();
+		if ( is_wp_error( $dist_id ) ) {
+			return $dist_id;
 		}
-		$query = $sdk->create_invalidation_query( $options, $post );
+		$options = $this->get_c3_options();
+		$query = $sdk->create_invalidation_query( $dist_id, $options, $post );
 		if ( apply_filters( 'c3_invalidation_flag', get_transient( $key ) ) ) {
 			$this->_register_cron_event( $query );
 			return;
