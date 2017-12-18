@@ -112,6 +112,9 @@ class C3_Invalidation extends C3_Base {
 	 * @access private
 	 */
 	private function _get_dist_id() {
+		if ( $this->is_amimoto_managed() && defined( 'AMIMOTO_CDN_ID' ) ) {
+			return AMIMOTO_CDN_ID;
+		}
 		$options = $this->get_c3_options();
 		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
 			return new WP_Error( 'C3 Invalidation Error', 'Distribution ID is not defined.' );
