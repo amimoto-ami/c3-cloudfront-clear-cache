@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Fixture for CloudFront
  *
  * @return bool
- * @since 4.5.0
+ * @since 5.0.0
  **/
 add_filter( 'wp_is_mobile', function( $is_mobile ) {
     // CloudFront でスマートフォンと判定された場合、true を返す。

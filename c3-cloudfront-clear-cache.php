@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: C3 Cloudfront Cache Controller
- * Version: 4.4.0
- * Plugin URI:https://github.com/megumiteam/C3-Cloudfront-Clear-Cache
- * Description:This is simple plugin that clear all cloudfront cache if you publish posts.
+ * Version: 5.0.0
+ * Plugin URI:https://github.com/amimoto-ami/c3-cloudfront-clear-cache
+ * Description: Manage CloudFront Cache and provide some fixtures.
  * Author: hideokamoto
- * Author URI: http://wp-kyoto.net/
+ * Author URI: https://wp-kyoto.net/
  * Text Domain: c3-cloudfront-clear-cache
  * @package c3-cloudfront-clear-cache
  */

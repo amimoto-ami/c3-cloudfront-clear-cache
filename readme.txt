@@ -2,9 +2,9 @@
 Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
-Requires at least: 4.3.1
-Tested up to: 4.9.1
-Stable tag: 4.4.0
+Requires at least: 4.9.0
+Tested up to: 4.9.2
+Stable tag: 5.0.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -14,6 +14,16 @@ This is simple plugin that clear all cloudfront cache if you publish posts.
 
 This is simple plugin that clear all cloudfront cache if you publish posts.
 You can easy use CloudFront in front of WordPress.
+
+== Fixtures ==
+
+* wp_is_mobile()
+Check device viewer type by CloudFront header.
+Now supports `HTTP_CLOUDFRONT_IS_MOBILE_VIEWER` and `HTTP_CLOUDFRONT_IS_TABLET_VIEWER`.
+
+* preview url
+In preview page, plugin add `post_date` query to avoid CloudFront Cache.
+
 
 = Invalidation(Clear Cache) Page URL =
 This plugin send following page url to CloudFront Invalidation API.
@@ -33,6 +43,9 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 5.0.0 =
+* Support CloudFront viewer params on `wp_is_mobile()`.(4.9.0 or later)
 
 = 4.4.0 =
 * Fix small bug
@@ -124,6 +137,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 4.4.0 =
-* Fix small bug
-* Add some feature for AMIMOTO Managed hosting user
+= 5.0.0 =
+* Support CloudFront viewer params on `wp_is_mobile()`.(4.9.0 or later)
