@@ -3,10 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if( ! array_key_exists( 'wp_is_mobile' , $GLOBALS['wp_filter']) ) {
-  return;
-}
-
 /**
  * Fixture for CloudFront
  *
