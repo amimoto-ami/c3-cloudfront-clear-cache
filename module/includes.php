@@ -18,7 +18,7 @@ if ( ! class_exists( 'CF_preview_fix' ) ) {
 	require_once( 'model/cf-preview-fix.php' );
 }
 
-require_once( 'model//class.logs.php' );
+require_once( 'model/class.logs.php' );
 require_once( 'model/fixtures/wp_is_mobile.php' );
 
 // View
