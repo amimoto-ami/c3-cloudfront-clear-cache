@@ -20,6 +20,7 @@ if ( ! class_exists( 'CF_preview_fix' ) ) {
 
 require_once( 'model/class.logs.php' );
 require_once( 'model/fixtures/wp_is_mobile.php' );
+require_once( 'model/fixtures/avoid_preview_cache.php' );
 
 // View
 require_once( 'view/components.php' );
