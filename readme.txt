@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.2
-Stable tag: 5.0.0
+Stable tag: 5.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -22,8 +22,10 @@ Check device viewer type by CloudFront header.
 Now supports `HTTP_CLOUDFRONT_IS_MOBILE_VIEWER` and `HTTP_CLOUDFRONT_IS_TABLET_VIEWER`.
 
 * preview url
-In preview page, plugin add `post_date` query to avoid CloudFront Cache.
+In preview page, plugin add `post_date` query to avoid CloudFront cache.
+And set `wordpress_loginuser_last_visit` cookie for avoid CloudFront cache too.
 
+The `wordpress_loginuser_last_visit` cookie will be removed if user sign out.
 
 = Invalidation(Clear Cache) Page URL =
 This plugin send following page url to CloudFront Invalidation API.
@@ -43,6 +45,10 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 5.1.0 =
+* [Update preview fixture] Set cookie to avoid CloudFront cache if user sign in
+* [Update preview fixture] Unset cookie for avoide CloudFront cache if user sign out
 
 = 5.0.0 =
 * Support CloudFront viewer params on `wp_is_mobile()`.(4.9.0 or later)
@@ -137,5 +143,6 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 5.0.0 =
-* Support CloudFront viewer params on `wp_is_mobile()`.(4.9.0 or later)
+= 5.1.0 =
+* [Update preview fixture] Set cookie to avoid CloudFront cache if user sign in
+* [Update preview fixture] Unset cookie for avoide CloudFront cache if user sign out

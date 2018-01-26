@@ -10,6 +10,12 @@ add_action( 'init', function(){
 	$cf_fix->add_hook();
 });
 
+/**
+ * Fixture for post preview
+ *
+ * @class C3_Auth
+ * @since 4.0.0
+ */
 class CF_preview_fix{
 	private static $instance;
 
@@ -29,6 +35,30 @@ class CF_preview_fix{
 		add_filter( 'preview_post_link', array( $this, 'preview_post_link_fix' ), 10, 2 );
 		add_filter( 'the_guid', array( $this,'the_guid' ) );
 		add_filter( 'sanitize_file_name', array( $this,'sanitizeFileName' ) );
+		add_action( 'plugins_loaded', array( $this,'set_loginuser_cookie_for_preview' ) );
+		add_action( 'wp_logout', array( $this,'unset_loginuser_cookie_for_preview' ) );
+	}
+
+	/**
+	 * Set cookie to avoid CloudFront cache if user sign in
+	 *
+	 * @since 5.1.0
+	 * @access public
+	 */
+	public function set_loginuser_cookie_for_preview() {
+		if ( is_user_logged_in() ) {
+				setcookie( 'wordpress_loginuser_last_visit', time() );
+		}
+	}
+
+	/**
+	 * Unet cookie for avoid CloudFront cache when user sign out
+	 *
+	 * @since 5.1.0
+	 * @access public
+	 */
+	public function unset_loginuser_cookie_for_preview() {
+		setcookie('wordpress_loginuser_last_visit', '', time() - 1800);
 	}
 
 	public function template_redirect() {
@@ -67,7 +97,7 @@ class CF_preview_fix{
 
 	public function sanitizeFileName( $filename ) {
 		$info = pathinfo( $filename );
-		$ext  = empty( $info['extension'] ) ? '' : '.' . $info['extension'];
+		$ext	= empty( $info['extension'] ) ? '' : '.' . $info['extension'];
 		$name = basename( $filename, $ext );
 		$finalFileName = $name. '-'. current_time( 'YmdHis' );
 
