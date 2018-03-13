@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.2
-Stable tag: 5.1.0
+Stable tag: 5.2.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,6 +69,10 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 5.2.0 =
+* [Add filter] We can disable to register wp-cron that retry request invalidation.
+* [Readme] Update readme to see IAM Policy example.
 
 = 5.1.0 =
 * [Update preview fixture] Set cookie to avoid CloudFront cache if user sign in
@@ -167,6 +171,6 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 5.1.0 =
-* [Update preview fixture] Set cookie to avoid CloudFront cache if user sign in
-* [Update preview fixture] Unset cookie for avoide CloudFront cache if user sign out
+= 5.2.0 =
+* [Add filter] We can disable to register wp-cron that retry request invalidation.
+* [Readme] Update readme to see IAM Policy example.
