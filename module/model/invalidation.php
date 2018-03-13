@@ -51,6 +51,9 @@ class C3_Invalidation extends C3_Base {
 		if ( $query['Paths']['Items'][0] === '/*') {
 			return;
 		}
+		if (apply_filters( 'c3_disabled_cron_retry', false)) {
+			return;
+		}
 		$interval_minutes = apply_filters( 'c3_invalidation_cron_interval', 1 );
 		$query = $this->_merge_transient_invalidation_query( $query );
 		set_transient( self::C3_CRON_INDALITATION_TARGET , $query , $interval_minutes * MINUTE_IN_SECONDS * 1.5 );
@@ -65,6 +68,9 @@ class C3_Invalidation extends C3_Base {
 	 * @access public
 	 **/
 	public function cron_invalidation() {
+		if (apply_filters( 'c3_disabled_cron_retry', false)) {
+			return;
+		}
 		error_log('cron works');
 		$query = get_transient( self::C3_CRON_INDALITATION_TARGET );
 		if ( ! $query ) {
