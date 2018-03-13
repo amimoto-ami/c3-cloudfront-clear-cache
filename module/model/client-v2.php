@@ -86,8 +86,10 @@ class C3_Client_V2 extends C3_Client_Base {
 			$e = new WP_Error( 'C3 Create Client Error', 'AWS Secret Key is not found.' );
 		}
 		if ( is_wp_error( $e ) ) {
-			if ( $this->is_amimoto_managed() ) {
-				return array();
+			if ( $this->has_managed_cdn() ) {
+				if ( $this->is_amimoto_managed() || $this->is_wp_cli() ) {
+					return array();
+				}
 			}
 			return $e;
 		}

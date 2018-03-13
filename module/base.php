@@ -69,7 +69,30 @@ class C3_Base {
 	 * @since 4.4.0
 	 */
 	public static function is_amimoto_managed() {
-		if ( isset( $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ) && $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ){
+		if ( isset( $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ) && $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *  Has managed cdn dist id
+	 *
+	 * @return bool
+	 * @since 5.2.1
+	 */
+	public static function has_managed_cdn() {
+		return defined( 'AMIMOTO_CDN_ID' );
+	}
+
+	/**
+	 *  Check is WP-CLI
+	 *
+	 * @return bool
+	 * @since 5.2.1
+	 */
+	public static function is_wp_cli() {
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return true;
 		}
 		return false;
