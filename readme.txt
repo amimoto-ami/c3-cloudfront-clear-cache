@@ -37,6 +37,30 @@ This plugin send following page url to CloudFront Invalidation API.
 == Installation ==
 
 1. Activate the plugin through the 'Plugins' menu in WordPress
+2. Create IAM user to attach valid IAM Policy for AWS CloudFront
+3. Configure the plugin settings from wp-admin
+
+== AWS IAM Policy Example ==
+
+`
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "cloudfront:GetDistribution",
+                "cloudfront:ListInvalidations",
+                "cloudfront:GetStreamingDistribution",
+                "cloudfront:GetDistributionConfig",
+                "cloudfront:GetInvalidation",
+                "cloudfront:CreateInvalidation"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+`
 
 == Frequently Asked Questions ==
 
