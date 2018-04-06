@@ -42,13 +42,18 @@ class C3_Logs extends C3_Base {
 			error_log( print_r( $cf_client, true ) );
 			return $cf_client;
 		}
-		$lists = $cf_client->listInvalidations( array(
-			'DistributionId' =>  $options['distribution_id'],
-			'MaxItems' => apply_filters( 'c3_max_invalidation_logs', 25 ),
-		) );
-
-		$lists = $this->_parse_invalidations( $lists->toArray() );
-
+		try {
+			$lists = $cf_client->listInvalidations( array(
+				'DistributionId' => $options['distribution_id'],
+				'MaxItems'       => apply_filters( 'c3_max_invalidation_logs', 25 ),
+			) );
+			$lists = $this->_parse_invalidations( $lists->toArray() );
+		} catch ( Aws\CloudFront\Exception\NoSuchDistributionException $e ) {
+			error_log( $options['distribution_id'] . 'not found');
+			error_log( $e->__toString(), 0);
+		} catch ( Exception $e ) {
+			error_log( $e->__toString(), 0);
+		}
 		return $lists;
 	}
 
