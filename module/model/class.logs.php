@@ -10,7 +10,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-require_once( '../classes/class.logs.php' );
 
 /**
  * manage Logs
@@ -33,11 +32,11 @@ class C3_Logs extends C3_Base {
 			return $lists;
 		}
 
-		//if ( c3_is_later_than_php_55() ) {
+		if ( c3_is_later_than_php_55() ) {
 			$sdk = C3_Client_V3::get_instance();
-		//} else {
-		//	$sdk = C3_Client_V2::get_instance();
-		//}
+		} else {
+			$sdk = C3_Client_V2::get_instance();
+		}
 		$cf_client = $sdk->create_cloudfront_client( $options );
 		if ( is_wp_error( $cf_client ) ) {
 			error_log( print_r( $cf_client, true ) );

@@ -25,7 +25,6 @@ $c3 = C3_Controller::get_instance();
 $c3->init();
 
 function c3_is_later_than_php_55() {
-	return false;
 	if ( 5.5 > (float) phpversion() ) {
 		return false;
 	} else {

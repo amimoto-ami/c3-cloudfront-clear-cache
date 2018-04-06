@@ -54,7 +54,6 @@ class C3_Auth extends C3_Base {
 		if ( c3_is_later_than_php_55() ) {
 			$sdk = C3_Client_V3::get_instance();
 		} else {
-			$sdk = C3_Client_V2::get_instance();
 			//@TODO: for php ~5.4, do not Authenication now.
 			return true;
 		}
@@ -64,7 +63,7 @@ class C3_Auth extends C3_Base {
 		}
 
 		try {
-			$result = $cf_client->getDistribution( array(
+			$cf_client->getDistribution( array(
 				'Id' => $options['distribution_id'],
 			));
 			return true;
