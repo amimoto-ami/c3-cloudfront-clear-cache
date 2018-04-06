@@ -56,7 +56,7 @@ class C3_Client_V3 extends C3_Client_Base {
 			return $credential;
 		}
 		$param = array(
-			'version' => '2016-01-28',
+			'version' => '2017-10-30',
 			'region'  => 'us-east-1',
 		);
 		if ( $credential ) {
