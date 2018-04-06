@@ -10,6 +10,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+require_once( '../classes/class.logs.php' );
 
 /**
  * manage Logs
@@ -33,9 +34,9 @@ class C3_Logs extends C3_Base {
 		}
 
 		//if ( c3_is_later_than_php_55() ) {
-		//	$sdk = C3_Client_V3::get_instance();
+			$sdk = C3_Client_V3::get_instance();
 		//} else {
-			$sdk = C3_Client_V2::get_instance();
+		//	$sdk = C3_Client_V2::get_instance();
 		//}
 		$cf_client = $sdk->create_cloudfront_client( $options );
 		if ( is_wp_error( $cf_client ) ) {
@@ -47,7 +48,8 @@ class C3_Logs extends C3_Base {
 				'DistributionId' => $options['distribution_id'],
 				'MaxItems'       => apply_filters( 'c3_max_invalidation_logs', 25 ),
 			) );
-			$lists = $this->_parse_invalidations( $lists->toArray() );
+			$logs_utils = new C3_Log_Utils();
+			$lists = $logs_utils->parse_invalidation_lists( $lists->toArray() );
 		} catch ( Aws\CloudFront\Exception\NoSuchDistributionException $e ) {
 			error_log( $options['distribution_id'] . 'not found');
 			error_log( $e->__toString(), 0);
@@ -55,20 +57,5 @@ class C3_Logs extends C3_Base {
 			error_log( $e->__toString(), 0);
 		}
 		return $lists;
-	}
-
-	/**
-	 * Parse Invalidation lists
-	 *
-	 * @access private
-	 * @since 4.1.0
-	 * @return string
-	 * @param array $list_invaldiations
-	 **/
-	private function _parse_invalidations( $list_invaldiations ) {
-		if ( $list_invaldiations['Quantity'] < 0 ) {
-			return false;
-		}
-		return $list_invaldiations['Items'];
 	}
 }
