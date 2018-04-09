@@ -68,6 +68,25 @@ This plugin send following page url to CloudFront Invalidation API.
 
 If post published,this plugin post invalidation request to CloudFront.
 
+= Can we select AWS SDK version ? =
+
+You can select AWS SDK version to add a plugin like ...
+
+`
+<?php
+/*
+ * Plugin Name: Should use AWS SDK v2
+ * Version: 0.0.1
+ * Plugin URI:https://github.com/amimoto-ami/c3-cloudfront-clear-cache
+ * Description: To use aws sdk v2 for C3 Cloudfront Cache Controller
+ * Author: hideokamoto
+ * Author URI: https://wp-kyoto.net/
+ */
+add_filter( 'c3_select_aws_sdk', function() {
+	return true;
+} );
+`
+
 == Changelog ==
 
 = 5.3.0 =
