@@ -25,11 +25,11 @@ $c3 = C3_Controller::get_instance();
 $c3->init();
 
 function c3_is_later_than_php_55() {
+    $is_later_than_55 = true;
 	if ( 5.5 > (float) phpversion() ) {
-		return false;
-	} else {
-		return true;
+		$is_later_than_55 = false;
 	}
+	return apply_filters( 'c3_select_aws_sdk', $is_later_than_55 );
 }
 
 class C3_Controller {
