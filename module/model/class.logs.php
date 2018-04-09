@@ -32,38 +32,29 @@ class C3_Logs extends C3_Base {
 			return $lists;
 		}
 
-		//if ( c3_is_later_than_php_55() ) {
-		//	$sdk = C3_Client_V3::get_instance();
-		//} else {
+		if ( c3_is_later_than_php_55() ) {
+			$sdk = C3_Client_V3::get_instance();
+		} else {
 			$sdk = C3_Client_V2::get_instance();
-		//}
+		}
 		$cf_client = $sdk->create_cloudfront_client( $options );
 		if ( is_wp_error( $cf_client ) ) {
 			error_log( print_r( $cf_client, true ) );
 			return $cf_client;
 		}
-		$lists = $cf_client->listInvalidations( array(
-			'DistributionId' =>  $options['distribution_id'],
-			'MaxItems' => apply_filters( 'c3_max_invalidation_logs', 25 ),
-		) );
-
-		$lists = $this->_parse_invalidations( $lists->toArray() );
-
-		return $lists;
-	}
-
-	/**
-	 * Parse Invalidation lists
-	 *
-	 * @access private
-	 * @since 4.1.0
-	 * @return string
-	 * @param array $list_invaldiations
-	 **/
-	private function _parse_invalidations( $list_invaldiations ) {
-		if ( $list_invaldiations['Quantity'] < 0 ) {
-			return false;
+		try {
+			$lists = $cf_client->listInvalidations( array(
+				'DistributionId' => $options['distribution_id'],
+				'MaxItems'       => apply_filters( 'c3_max_invalidation_logs', 25 ),
+			) );
+			$logs_utils = new C3_Log_Utils();
+			$lists = $logs_utils->parse_invalidation_lists( $lists->toArray() );
+		} catch ( Aws\CloudFront\Exception\NoSuchDistributionException $e ) {
+			error_log( $options['distribution_id'] . 'not found');
+			error_log( $e->__toString(), 0);
+		} catch ( Exception $e ) {
+			error_log( $e->__toString(), 0);
 		}
-		return $list_invaldiations['Items'];
+		return $lists;
 	}
 }

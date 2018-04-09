@@ -17,8 +17,11 @@ if ( c3_is_later_than_php_55() ) {
 if ( ! class_exists( 'CF_preview_fix' ) ) {
 	require_once( 'model/cf-preview-fix.php' );
 }
-
+// class
+require_once( 'classes/class.logs.php' );
 require_once( 'model/class.logs.php' );
+
+// fixtures
 require_once( 'model/fixtures/wp_is_mobile.php' );
 require_once( 'model/fixtures/avoid_preview_cache.php' );
 

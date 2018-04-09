@@ -9,26 +9,10 @@ php:
   - 5.6
   - 7.0
 
-matrix:
-  include:
-    - php: 5.5
-      env: WP_VERSION=latest WP_MULTISITE=0 WP_PULUGIN_DEPLOY=1
-    - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=0 WP_PULUGIN_DEPLOY=1
-    - php: 7
-      env: WP_VERSION=latest WP_MULTISITE=0 WP_PULUGIN_DEPLOY=1
 env:
   matrix:
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=nightly WP_MULTISITE=0
-  global:
-    - SVN_REPO: https://plugins.svn.wordpress.org/c3-cloudfront-clear-cache/
-    - GH_REF: https://github.com/amimoto-ami/c3-cloudfront-clear-cache.git
-    - secure: "j5gxZ3X5DjEGYN720uYzd/1Kuf3WUzl87X81CjAulQNQhsBYxfnGicxRh0wj7V+OXLHNIMdWKq6wCqzpMDLcge+9NjEHJ5rsqdYr9SNDOXEdIez5St/eQtiZCondw2TeuNPOP6
-cJ2aNdqAIhc8O92du7AJr4CqqAlcg59C+XUKp4tuAmY9BUb+/nI8D9iEOVlHjV2DWjbuZiugri8C9cyANOlrAb5EypO8Fn5Am+pX5NcWSdrIC10atbjPEkhl6B1HZXFivT0imqba9/OksEOb0
-hl+91KvXs8Suk1DQ83m51v/1MOWFYYLWh4t42RczcfSSi/LXWx20LbcNDSsroDL8H1+G4rfqyvKMgWuDDn7C/i1mCu6o52gxYq6ux3K5vLajz49thoGgfArE3tLjPsk0x37BINb0TMVLmPgr2
-guZCmXNaZGwZwNQ1CmjBW+Zg/fnhqvLqJBAZjKT99hLo83vZPn2rJuXdPYLp/g0dxQzTfWe+mF2vtDdgkbjxgKdfDc9+AYiceMEBevsh+v5kC2XD9Ab30D60tusEnnwsSNLNiTHaZVYL6NxcM
-wNC4Biv9v7E73Ux/5OnGbHhqBfbdmh3d/DtOxrZghu81soYc3/GjEiWUVDjkQ3LaP+srVLRbym26Yoo0ejbIYHFL/N//MU1StvXc+wQpip6rAu7ONA="
 
 before_script:
   - composer install
@@ -36,7 +20,3 @@ before_script:
   - bash bin/build.sh
 
 script: phpunit
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-  - curl -L https://raw.githubusercontent.com/miya0001/travis2wpplugin/master/deploy.sh | bash
