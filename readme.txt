@@ -3,8 +3,8 @@ Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
-Tested up to: 4.9.2
-Stable tag: 5.2.1
+Tested up to: 4.9.5
+Stable tag: 5.3.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,6 +69,9 @@ This plugin send following page url to CloudFront Invalidation API.
 If post published,this plugin post invalidation request to CloudFront.
 
 == Changelog ==
+
+= 5.3.0 =
+* [Update SDK] Use AWS SDK v3 when you using php 5.6 or later
 
 = 5.2.1 =
 * [For AMIMOTO Managed] bug fix to run by WP-CLI
@@ -174,5 +177,5 @@ If post published,this plugin post invalidation request to CloudFront.
 
 == Upgrade Notice ==
 
-= 5.2.1 =
-* [For AMIMOTO Managed] bug fix to run by WP-CLI
+= 5.3.0 =
+* [Update SDK] Use AWS SDK v3 when you using php 5.6 or later
