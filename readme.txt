@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.5
-Stable tag: 5.3.0
+Stable tag: 5.3.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -88,6 +88,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+= 5.3.1 =
+* [Add filter] Can select AWS SDK version by filter
 
 = 5.3.0 =
 * [Update SDK] Use AWS SDK v3 when you using php 5.6 or later
@@ -196,5 +199,5 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Upgrade Notice ==
 
-= 5.3.0 =
-* [Update SDK] Use AWS SDK v3 when you using php 5.6 or later
+= 5.3.1 =
+* [Add filter] Can select AWS SDK version by filter
