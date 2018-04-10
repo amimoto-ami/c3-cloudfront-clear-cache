@@ -81,15 +81,18 @@ class C3_Client_V3 extends C3_Client_Base {
 		if ( ! $c3_settings ) {
 			$e = new WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );
 		}
-		/*
 		if ( ! isset( $c3_settings['access_key'] ) || ! $c3_settings['access_key'] ) {
 			$e = new WP_Error( 'C3 Create Client Error', 'AWS Access Key is not found.' );
 		}
 		if ( ! isset( $c3_settings['secret_key'] ) || ! $c3_settings['secret_key'] ) {
 			$e = new WP_Error( 'C3 Create Client Error', 'AWS Secret Key is not found.' );
 		}
-		*/
 		if ( is_wp_error( $e ) ) {
+			if ( $this->has_managed_cdn() ) {
+				if ( $this->is_amimoto_managed() || $this->is_wp_cli() ) {
+					return array();
+				}
+			}
 			return $e;
 		}
 		$credentials = array(
