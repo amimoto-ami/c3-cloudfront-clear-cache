@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.5
-Stable tag: 5.3.1
+Stable tag: 5.3.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -88,6 +88,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+= 5.3.2 =
+* [Bug fix] Use EC2 role if using as AMIMOTO Managed hosting
 
 = 5.3.1 =
 * [Add filter] Can select AWS SDK version by filter
@@ -199,5 +202,5 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Upgrade Notice ==
 
-= 5.3.1 =
-* [Add filter] Can select AWS SDK version by filter
+= 5.3.2 =
+* [Bug fix] Use EC2 role if using as AMIMOTO Managed hosting
