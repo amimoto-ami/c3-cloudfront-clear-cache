@@ -2,4 +2,3 @@
 
 set -e
 rm -f .gitignore
-composer install
