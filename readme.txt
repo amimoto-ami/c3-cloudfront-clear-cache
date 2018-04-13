@@ -89,6 +89,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Changelog ==
 
+= 5.3.3 =
+* [Change SDK] replace sdk
+
 = 5.3.2 =
 * [Bug fix] Use EC2 role if using as AMIMOTO Managed hosting
 
@@ -202,5 +205,5 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Upgrade Notice ==
 
-= 5.3.2 =
-* [Bug fix] Use EC2 role if using as AMIMOTO Managed hosting
+= 5.3.3 =
+* [Change SDK] replace sdk
