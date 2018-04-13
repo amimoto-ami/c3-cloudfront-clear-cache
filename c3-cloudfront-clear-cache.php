@@ -11,9 +11,9 @@
  */
 
 if ( c3_is_later_than_php_55() ) {
-	require_once( dirname( __FILE__ ).'/vendor/autoload.php' );
+	require_once( dirname( __FILE__ ).'/libs/aws.v3.phar' );
 } else {
-	require_once( dirname( __FILE__ ).'/aws.phar' );
+	require_once( dirname( __FILE__ ).'/libs/aws.v2.phar' );
 }
 define( 'C3_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'C3_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
