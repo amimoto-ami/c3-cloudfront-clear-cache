@@ -32,7 +32,7 @@ class C3_Logs extends C3_Base {
 			return $lists;
 		}
 
-		if ( c3_is_later_than_php_55() ) {
+		if ( 'v2' !== c3_get_aws_sdk_version() ) {
 			$sdk = C3_Client_V3::get_instance();
 		} else {
 			$sdk = C3_Client_V2::get_instance();

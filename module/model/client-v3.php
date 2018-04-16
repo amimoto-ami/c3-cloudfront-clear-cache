@@ -62,7 +62,7 @@ class C3_Client_V3 extends C3_Client_Base {
 		if ( $credential ) {
 			$param = array_merge( $param, $credential );
 		}
-		$cf_client = new CloudFrontClient( $param );
+		$cf_client = CloudFrontClient::factory( $param );
 		return $cf_client;
 	}
 
