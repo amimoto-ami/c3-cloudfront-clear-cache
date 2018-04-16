@@ -58,7 +58,7 @@ class C3_Controller {
 	 * @since 5.3.4
 	 */
 	public function plugins_loaded() {
-		if ( ! class_exists('Aws') ) {
+		if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
 			if ( c3_is_later_than_php_55() ) {
 				require_once( dirname( __FILE__ ).'/libs/aws.v3.phar' );
 			} else {
