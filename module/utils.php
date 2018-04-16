@@ -6,8 +6,8 @@ function c3_get_loaded_aws_sdk_version() {
 }
 
 function c3_check_aws_sdk_version($constants) {
-	if (preg_grep('/AWS-3/', array_keys($constants['user']))) {
-		return 'v3';
+	if (preg_grep('/AWS-2/', array_keys($constants['user']))) {
+		return 'v2';
 	}
-	return 'v2';
+	return 'v3';
 }

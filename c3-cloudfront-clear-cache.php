@@ -18,7 +18,7 @@ $c3 = C3_Controller::get_instance();
 $c3->init();
 
 function c3_get_aws_sdk_version() {
-	if ( class_exists('Aws') ) {
+	if ( class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
 	    return c3_get_loaded_aws_sdk_version();
     }
     if ( c3_is_later_than_php_55() ) {
@@ -68,11 +68,13 @@ class C3_Controller {
 	 * @since 5.3.4
 	 */
 	public function plugins_loaded() {
-	    if ( 'v2' === c3_get_aws_sdk_version() ) {
-		    require_once( dirname( __FILE__ ).'/libs/aws.v2.phar' );
-        } else {
-		    require_once( dirname( __FILE__ ).'/libs/aws.v3.phar' );
-        }
+	    if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
+		    if ( 'v2' === c3_get_aws_sdk_version() ) {
+			    require_once( dirname( __FILE__ ) . '/libs/aws.v2.phar' );
+		    } else {
+			    require_once( dirname( __FILE__ ) . '/libs/aws.v3.phar' );
+		    }
+	    }
 		require_once( dirname( __FILE__ ).'/module/includes.php' );
 
 		$this->base = new C3_Base();
