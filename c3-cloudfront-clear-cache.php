@@ -17,9 +17,19 @@ define( 'C3_PLUGIN_ROOT', __FILE__ );
 $c3 = C3_Controller::get_instance();
 $c3->init();
 
+function c3_get_aws_sdk_version() {
+	if ( class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
+	    return c3_get_loaded_aws_sdk_version();
+    }
+    if ( c3_is_later_than_php_55() ) {
+	    return 'v3';
+    }
+    return 'v2';
+}
+
 function c3_is_later_than_php_55() {
 	$is_later_than_55 = true;
-	if ( version_compare(phpversion(), '5.5', '<') ) {
+	if ( version_compare( phpversion(), '5.5', '<') ) {
 		$is_later_than_55 = false;
 	}
 	return apply_filters( 'c3_select_aws_sdk', $is_later_than_55 );
@@ -46,7 +56,7 @@ class C3_Controller {
 	 * @since 4.0.0
 	 */
 	public function init() {
-		add_action( 'plugins_loaded',array( $this, 'plugins_loaded' ) );
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 	}
 
 	/**
@@ -58,13 +68,13 @@ class C3_Controller {
 	 * @since 5.3.4
 	 */
 	public function plugins_loaded() {
-		if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
-			if ( c3_is_later_than_php_55() ) {
-				require_once( dirname( __FILE__ ).'/libs/aws.v3.phar' );
-			} else {
-				require_once( dirname( __FILE__ ).'/libs/aws.v2.phar' );
-			}
-		}
+	    if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
+		    if ( 'v2' === c3_get_aws_sdk_version() ) {
+			    require_once( dirname( __FILE__ ) . '/libs/aws.v2.phar' );
+		    } else {
+			    require_once( dirname( __FILE__ ) . '/libs/aws.v3.phar' );
+		    }
+	    }
 		require_once( dirname( __FILE__ ).'/module/includes.php' );
 
 		$this->base = new C3_Base();
