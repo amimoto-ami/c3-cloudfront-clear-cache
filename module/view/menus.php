@@ -40,7 +40,7 @@ class C3_Menus extends C3_Base {
 	}
 
 	/**
-	 *  Init plugin menu.
+	 * Init plugin menu.
 	 *
 	 * @access public
 	 * @param none
@@ -51,7 +51,7 @@ class C3_Menus extends C3_Base {
 	}
 
 	/**
-	 *  Define C3 plugin menus
+	 * Define C3 plugin menus
 	 *
 	 * @access public
 	 * @param none
