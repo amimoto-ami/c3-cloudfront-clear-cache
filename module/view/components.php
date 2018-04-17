@@ -41,7 +41,7 @@ class C3_Component extends C3_Base {
 	}
 
 	/**
-	 *  Show C3 Plugin admin page html
+	 * Show C3 Plugin admin page html
 	 *
 	 * @access public
 	 * @param none
@@ -54,7 +54,7 @@ class C3_Component extends C3_Base {
 	}
 
 	/**
-	 *  Create C3 Plugin's admin page html
+	 * Create C3 Plugin's admin page html
 	 *
 	 * @access public
 	 * @param none

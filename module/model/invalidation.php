@@ -79,7 +79,7 @@ class C3_Invalidation extends C3_Base {
 		$cf_client = $this->_create_cf_client();
 		$result = $this->_do_invalidation( $cf_client, $query );
 		error_log( print_r( $result, true ) );
-		delete_transient( self::C3_CRON_INDALITATION_TARGET  );
+		delete_transient( self::C3_CRON_INDALITATION_TARGET );
 	}
 
 	/**

@@ -19,12 +19,12 @@ $c3->init();
 
 function c3_get_aws_sdk_version() {
 	if ( class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
-	    return c3_get_loaded_aws_sdk_version();
-    }
-    if ( c3_is_later_than_php_55() ) {
-	    return 'v3';
-    }
-    return 'v2';
+			return c3_get_loaded_aws_sdk_version();
+		}
+		if ( c3_is_later_than_php_55() ) {
+			return 'v3';
+		}
+		return 'v2';
 }
 
 function c3_is_later_than_php_55() {
@@ -48,7 +48,7 @@ class C3_Controller {
 	}
 
 	/**
-	 *  Initialize Plugin
+	 * Initialize Plugin
 	 *
 	 * @access public
 	 * @param none
@@ -60,7 +60,7 @@ class C3_Controller {
 	}
 
 	/**
-	 *  Initialize Plugin
+	 * Initialize Plugin
 	 *
 	 * @access public
 	 * @param none
@@ -68,19 +68,19 @@ class C3_Controller {
 	 * @since 5.3.4
 	 */
 	public function plugins_loaded() {
-	    if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
-		    if ( 'v2' === c3_get_aws_sdk_version() ) {
-			    require_once( dirname( __FILE__ ) . '/libs/aws.v2.phar' );
-		    } else {
-			    require_once( dirname( __FILE__ ) . '/libs/aws.v3.phar' );
-		    }
-	    }
+			if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
+				if ( 'v2' === c3_get_aws_sdk_version() ) {
+					require_once( dirname( __FILE__ ) . '/libs/aws.v2.phar' );
+				} else {
+					require_once( dirname( __FILE__ ) . '/libs/aws.v3.phar' );
+				}
+			}
 		require_once( dirname( __FILE__ ).'/module/includes.php' );
 
 		$this->base = new C3_Base();
 		$menu = C3_Menus::get_instance();
 		$menu->init();
-		add_action( 'admin_init',    array( $this, 'update_settings' ) );
+		add_action( 'admin_init', array( $this, 'update_settings' ) );
 		$invalidator = C3_Invalidation::get_instance();
 		add_action( 'transition_post_status' , array( $invalidator, 'post_invalidation' ) , 10 , 3 );
 		add_filter( 'amimoto_c3_add_settings', array( $this, 'inject_c3_admin_content' ) );
@@ -103,7 +103,7 @@ class C3_Controller {
 	}
 
 	/**
-	 *  Controller of C3 plugin
+	 * Controller of C3 plugin
 	 *
 	 * @access public
 	 * @param none
@@ -165,7 +165,7 @@ class C3_Controller {
 	}
 
 	/**
-	 *  Check plugin nonce key
+	 * Check plugin nonce key
 	 *
 	 * @access public
 	 * @param none
