@@ -65,7 +65,7 @@ class C3_Controller {
 	 * @access public
 	 * @param none
 	 * @return none
-	 * @since 5.3.4
+	 * @since 5.3.3
 	 */
 	public function plugins_loaded() {
 			if ( ! class_exists('\\Aws\\CloudFront\\CloudFrontClient') ) {
