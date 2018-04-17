@@ -140,7 +140,7 @@ class C3_Invalidation extends C3_Base {
 	public function invalidation( $post = false ) {
 
 		$key = self::C3_INVALIDATION_KEY;
-		if ( c3_is_later_than_php_55() ) {
+		if ( 'v2' !== c3_get_aws_sdk_version() ) {
 			$sdk = C3_Client_V3::get_instance();
 		} else {
 			$sdk = C3_Client_V2::get_instance();
@@ -173,7 +173,7 @@ class C3_Invalidation extends C3_Base {
 	 **/
 	private function _create_cf_client() {
 		$options = $this->get_c3_options();
-		if ( c3_is_later_than_php_55() ) {
+		if ( 'v2' !== c3_get_aws_sdk_version() ) {
 			$sdk = C3_Client_V3::get_instance();
 		} else {
 			$sdk = C3_Client_V2::get_instance();
