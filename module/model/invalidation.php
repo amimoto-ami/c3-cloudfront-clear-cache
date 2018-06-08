@@ -83,6 +83,37 @@ class C3_Invalidation extends C3_Base {
 	}
 
 	/**
+	 * Normalize invalidation query
+	 *
+	 * @param $query
+	 * @since 5.3.4
+	 * @return array
+	 */
+	public function query_normalize( $query ) {
+		$default_query = array(
+			'Paths' => array(
+				'Quantity' => 0,
+				'Items' => array(),
+			)
+		);
+		if ( ! is_array( $query ) || ! isset( $query['Paths'] ) ) {
+			return $default_query;
+		}
+
+		if ( ! isset( $query['Paths']['Items'] ) && ! isset( $query['Paths']['Quantity'] ) ) {
+			return $default_query;
+		}
+		if ( ! isset( $query['Paths']['Items'] ) || ! is_array( $query['Paths']['Items'] ) ) {
+			$query['Paths']['Items'] = $default_query['Paths']['Items'];
+			$query['Paths']['Quantity'] = count($query['Paths']['Items']);
+		}
+		if ( ! isset( $query['Paths']['Quantity'] ) ) {
+			$query['Paths']['Quantity'] = count($query['Paths']['Items']);
+		}
+		return $query;
+	}
+
+	/**
 	 * Merge transiented invalidation query
 	 *
 	 * @param array $query
@@ -91,8 +122,10 @@ class C3_Invalidation extends C3_Base {
 	 * @since 4.3.0
 	 **/
 	private function _merge_transient_invalidation_query( $query ) {
+		$query = $this->query_normalize( $query );
 		$current_transient = get_transient( self::C3_CRON_INDALITATION_TARGET );
 		if ( $current_transient ) {
+			$current_transient = $this->query_normalize( $current_transient );
 			$query_items = $query['Paths']['Items'];
 			$current_items = $current_transient['Paths']['Items'];
 			$query['Paths']['Items'] = array_merge( $query_items, $current_items );
