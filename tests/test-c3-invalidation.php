@@ -7,7 +7,7 @@ class C3_Invalidation_test extends WP_UnitTestCase {
 		$this->class = C3_Invalidation::get_instance();;
 	}
 	function test_should_return_empty_array_when_given_string() {
-		$query = $this->class->query_normalyze( '' );
+		$query = $this->class->query_normalize( '' );
 		$this->assertEquals( $query, array(
 			'Paths' => array(
 				'Quantity' => 0,
@@ -16,7 +16,7 @@ class C3_Invalidation_test extends WP_UnitTestCase {
 		));
 	}
 	function test_should_return_empty_array_when_given_empqy_array() {
-		$query = $this->class->query_normalyze( array() );
+		$query = $this->class->query_normalize( array() );
 		$this->assertEquals( $query, array(
 			'Paths' => array(
 				'Quantity' => 0,
@@ -25,7 +25,7 @@ class C3_Invalidation_test extends WP_UnitTestCase {
 		));
 	}
 	function test_should_return_empty_array_when_given_invalid_array() {
-		$query = $this->class->query_normalyze( array(
+		$query = $this->class->query_normalize( array(
 			'Paths' => array()
 		) );
 		$this->assertEquals( $query, array(
@@ -36,7 +36,7 @@ class C3_Invalidation_test extends WP_UnitTestCase {
 		));
 	}
 	function test_should_return_empty_array_when_given_array_without_items() {
-		$query = $this->class->query_normalyze( array(
+		$query = $this->class->query_normalize( array(
 			'Paths' => array(
 				'Quantity' => 100,
 			)
@@ -49,7 +49,7 @@ class C3_Invalidation_test extends WP_UnitTestCase {
 		), $query);
 	}
 	function test_should_return_empty_array_when_given_array_without_quantity() {
-		$query = $this->class->query_normalyze( array(
+		$query = $this->class->query_normalize( array(
 			'Paths' => array(
 				'Items' => array('1')
 			)
@@ -62,7 +62,7 @@ class C3_Invalidation_test extends WP_UnitTestCase {
 		), $query);
 	}
 	function test_should_return_empty_array_when_given_valid_array() {
-		$query = $this->class->query_normalyze( array(
+		$query = $this->class->query_normalize( array(
 			'Paths' => array(
 				'Quantity' => 1,
 				'Items' => array('1')
