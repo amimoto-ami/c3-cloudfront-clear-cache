@@ -89,6 +89,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Changelog ==
 
+= 5.3.4 =
+* [Bug fix] Small bug fix
+
 = 5.3.3 =
 * [Change SDK] replace sdk
 
@@ -205,5 +208,5 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Upgrade Notice ==
 
-= 5.3.3 =
-* [Change SDK] replace sdk
+= 5.3.4 =
+* [Bug fix] Small bug fix
