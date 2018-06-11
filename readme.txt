@@ -62,6 +62,11 @@ This plugin send following page url to CloudFront Invalidation API.
 }
 `
 
+== Cookie ==
+This plugin set a Cookie named `wordpress_loginuser_last_visit` to the user.
+It prevents CDN caching when the user is previewing his posts or contents.
+Once logging out from Dashboard, plugin removes this cookie from user.
+
 == Frequently Asked Questions ==
 
 = When it send invalidation request？ =
