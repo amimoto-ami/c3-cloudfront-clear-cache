@@ -14,16 +14,9 @@ if ( 'v2' === c3_get_aws_sdk_version() ) {
 } else {
 	require_once( 'model/client-v3.php' );
 }
-if ( ! class_exists( 'CF_preview_fix' ) ) {
-	require_once( 'model/cf-preview-fix.php' );
-}
 // class
 require_once( 'classes/class.logs.php' );
 require_once( 'model/class.logs.php' );
-
-// fixtures
-require_once( 'model/fixtures/wp_is_mobile.php' );
-require_once( 'model/fixtures/avoid_preview_cache.php' );
 
 // View
 require_once( 'view/components.php' );
