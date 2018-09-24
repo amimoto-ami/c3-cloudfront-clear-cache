@@ -48,7 +48,7 @@ class C3_Invalidation extends C3_Base {
 	 * @access private
 	 **/
 	private function _register_cron_event( $query ) {
-		if ( $query['Paths']['Items'][0] === '/*') {
+		if (isset( $query['Paths'] ) && isset( $query['Paths']['Items'] ) && $query['Paths']['Items'][0] === '/*') {
 			return;
 		}
 		if (apply_filters( 'c3_disabled_cron_retry', false)) {

@@ -1,10 +1,10 @@
 === C3 Cloudfront Cache Controller ===
-Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle
+Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.7
-Stable tag: 5.4.0
+Stable tag: 5.4.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -93,6 +93,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+= 5.4.1 =
+* [Bug fix] Undefined Paths index in invalidation query cron event
 
 = 5.4.0 =
 * [Update] Update preview fix plugin
