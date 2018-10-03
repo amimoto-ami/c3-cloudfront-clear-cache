@@ -3,6 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+if ( ! defined( 'C3_AVOID_CACHE_COOKEY_KEY' ) ) {
+	define( 'C3_AVOID_CACHE_COOKEY_KEY', 'wordpress_loginuser_last_visit' );
+}
+
 /**
  * Set cookie to avoid CloudFront cache if user sign in
  *
@@ -11,7 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 add_action( 'plugins_loaded', function() {
 	if ( is_user_logged_in() ) {
-		setcookie( 'wordpress_loginuser_last_visit', time() );
+		$cookie_path = preg_replace( '#^https?://[^/]+/?#','/',home_url( '/' ) );
+		setcookie( C3_AVOID_CACHE_COOKEY_KEY, time(), 0, $cookie_path );
 	}
 } );
 
@@ -36,5 +41,6 @@ register_deactivation_hook( C3_PLUGIN_ROOT, 'c3_unset_avoid_cache_cookie' );
  * @since 5.1.0
  */
 function c3_unset_avoid_cache_cookie() {
-	setcookie('wordpress_loginuser_last_visit', '', time() - 1800);
+	$cookie_path = preg_replace( '#^https?://[^/]+/?#','/',home_url( '/' ) );
+	setcookie( C3_AVOID_CACHE_COOKEY_KEY, '', time() - 1800, $cookie_path );
 }
