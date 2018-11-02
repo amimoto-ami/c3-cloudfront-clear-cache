@@ -130,11 +130,23 @@ class C3_Base {
 		return apply_filters( 'c3_setting', $c3_settings );
 	}
 
+	/**
+	 * Get the key of the settings field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
 	public static function get_c3_option($key) {
 		$options = get_option( self::OPTION_NAME );
 		return $options[$key] ?: '';
 	}
 
+	/**
+	 * Get the distribution_id field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
 	public static function get_distribution_id() {
 		if(defined('C3_DISTRIBUTION_ID')) {
 			return C3_DISTRIBUTION_ID;
@@ -144,6 +156,12 @@ class C3_Base {
 		}
 	}
 
+	/**
+	 * Get the access_key field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
 	public static function get_access_key() {
 		if(defined('AWS_ACCESS_KEY_ID')) {
 			return AWS_ACCESS_KEY_ID;
@@ -153,6 +171,12 @@ class C3_Base {
 		}
 	}
 
+	/**
+	 * Get the secret_key field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
 	public static function get_secret_key() {
 		if(defined('AWS_SECRET_ACCESS_KEY')) {
 			return AWS_SECRET_ACCESS_KEY;
@@ -162,6 +186,12 @@ class C3_Base {
 		}
 	}
 
+	/**
+	 * Returns true or false if all settings are from env vars
+	 * @return bool
+	 * @since 4.5.0
+	 * @access public
+	 */
 	public static function are_key_constants_set() {
 		return defined( 'C3_DISTRIBUTION_ID' ) && defined( 'AWS_ACCESS_KEY_ID' ) && defined( 'AWS_SECRET_ACCESS_KEY' );
 	}

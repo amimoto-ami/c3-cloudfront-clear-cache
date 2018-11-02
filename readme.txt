@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.7
-Stable tag: 5.4.2
+Stable tag: 5.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -61,6 +61,14 @@ This plugin send following page url to CloudFront Invalidation API.
     ]
 }
 `
+
+## Adding your configuration through env vars
+
+The plugin can be configured by defining the following environment variables:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `C3_DISTRIBUTION_ID`
 
 == Cookie ==
 This plugin set a Cookie named `wordpress_loginuser_last_visit` to the user.
