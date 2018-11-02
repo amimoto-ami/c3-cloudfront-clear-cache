@@ -145,7 +145,7 @@ class C3_Admin extends C3_Component {
 	 * @since 4.0.0
 	 */
 	private function _get_manual_invalidation_form() {
-		$c3_settings = get_option( self::OPTION_NAME );
+		$c3_settings = self::get_c3_options();
 		$html = '';
 		if ( ! $c3_settings ) {
 			return $html;
