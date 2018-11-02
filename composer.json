@@ -4,8 +4,5 @@
   "type": "wordpress-plugin",
   "require": {
     "php": ">=5.5"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^6.2"
   }
 }
