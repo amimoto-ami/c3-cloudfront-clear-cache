@@ -107,7 +107,13 @@ class C3_Admin extends C3_Component {
 	 * @since 4.0.0
 	 */
 	private function _get_auth_form() {
-		$c3_settings = $this->get_c3_options();
+		$html  = '';
+
+		if(self::are_key_constants_set())  {
+			$html .= "<p>You’ve already defined your configuration in your wp-config.php.</p>";
+			return $html;
+		}
+		$c3_settings = self::get_c3_options();
 		$c3_settings_keys = $this->get_c3_options_name();
 		$html  = '';
 		$html .= '<h3>'. __( 'General Settings', self::$text_domain ). '</h3>';
@@ -139,7 +145,7 @@ class C3_Admin extends C3_Component {
 	 * @since 4.0.0
 	 */
 	private function _get_manual_invalidation_form() {
-		$c3_settings = get_option( self::OPTION_NAME );
+		$c3_settings = self::get_c3_options();
 		$html = '';
 		if ( ! $c3_settings ) {
 			return $html;
@@ -172,7 +178,7 @@ class C3_Admin extends C3_Component {
 	 * @return string
 	 **/
 	public function get_invalidation_logs() {
-		$c3_settings = get_option( self::OPTION_NAME );
+		$c3_settings = self::get_c3_options();
 		$html = '';
 		if ( ! $c3_settings ) {
 			return $html;
