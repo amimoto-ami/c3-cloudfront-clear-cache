@@ -76,7 +76,7 @@ class C3_Client_V3 extends C3_Client_Base {
 	public function create_credentials( $c3_settings = false ) {
 		$e = true;
 		if ( ! $c3_settings ) {
-			$c3_settings = $this->get_c3_options();
+			$c3_settings = self::get_c3_options();
 		}
 		if ( ! $c3_settings ) {
 			$e = new WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );

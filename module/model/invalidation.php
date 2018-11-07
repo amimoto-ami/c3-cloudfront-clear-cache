@@ -156,7 +156,7 @@ class C3_Invalidation extends C3_Base {
 				return AMIMOTO_CDN_ID;
 			}
 		}
-		$options = $this->get_c3_options();
+		$options = self::get_c3_options();
 		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
 			return new WP_Error( 'C3 Invalidation Error', 'Distribution ID is not defined.' );
 		}
@@ -183,7 +183,7 @@ class C3_Invalidation extends C3_Base {
 		if ( is_wp_error( $dist_id ) ) {
 			return $dist_id;
 		}
-		$options = $this->get_c3_options();
+		$options = self::get_c3_options();
 		$query = $sdk->create_invalidation_query( $dist_id, $options, $post );
 		if ( apply_filters( 'c3_invalidation_flag', get_transient( $key ) ) ) {
 			$this->_register_cron_event( $query );
@@ -205,7 +205,7 @@ class C3_Invalidation extends C3_Base {
 	 * @return object
 	 **/
 	private function _create_cf_client() {
-		$options = $this->get_c3_options();
+		$options = self::get_c3_options();
 		if ( 'v2' !== c3_get_aws_sdk_version() ) {
 			$sdk = C3_Client_V3::get_instance();
 		} else {

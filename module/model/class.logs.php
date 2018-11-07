@@ -27,7 +27,7 @@ class C3_Logs extends C3_Base {
 	 **/
 	public function list_invalidations() {
 		$lists = array();
-		$options = $this->get_c3_options();
+		$options = self::get_c3_options();
 		if ( ! isset( $options['distribution_id'] ) || ! $options['distribution_id'] ) {
 			return $lists;
 		}

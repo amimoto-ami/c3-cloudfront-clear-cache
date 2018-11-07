@@ -116,16 +116,84 @@ class C3_Base {
 	 * @since 4.0.0
 	 * @access public
 	 */
-	public function get_c3_options() {
-		$c3_settings = get_option( self::OPTION_NAME );
-		if ( ! $c3_settings ) {
-			$c3_settings = array(
-				'distribution_id' => '',
-				'access_key'      => '',
-				'secret_key'      => '',
-			);
-		}
+	public static function get_c3_options() {
+
+		$distribution_id = self::get_distribution_id();
+		$access_key = self::get_access_key();
+		$secret_key = self::get_secret_key();
+		$c3_settings = array(
+			'distribution_id' => $distribution_id,
+			'access_key'      => $access_key,
+			'secret_key'      => $secret_key,
+		);
+
 		return apply_filters( 'c3_setting', $c3_settings );
+	}
+
+	/**
+	 * Get the key of the settings field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
+	public static function get_c3_option($key) {
+		$options = get_option( self::OPTION_NAME );
+		return $options[$key] ?: '';
+	}
+
+	/**
+	 * Get the distribution_id field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
+	public static function get_distribution_id() {
+		if(defined('C3_DISTRIBUTION_ID')) {
+			return C3_DISTRIBUTION_ID;
+		} else {
+			$option = self::get_c3_option('distribution_id');
+			return $option;
+		}
+	}
+
+	/**
+	 * Get the access_key field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
+	public static function get_access_key() {
+		if(defined('AWS_ACCESS_KEY_ID')) {
+			return AWS_ACCESS_KEY_ID;
+		} else {
+			$option = self::get_c3_option('access_key');
+			return $option;
+		}
+	}
+
+	/**
+	 * Get the secret_key field
+	 * @return string
+	 * @since 4.5.0
+	 * @access public
+	 */
+	public static function get_secret_key() {
+		if(defined('AWS_SECRET_ACCESS_KEY')) {
+			return AWS_SECRET_ACCESS_KEY;
+		} else {
+			$option = self::get_c3_option('secret_key');
+			return $option;
+		}
+	}
+
+	/**
+	 * Returns true or false if all settings are from env vars
+	 * @return bool
+	 * @since 4.5.0
+	 * @access public
+	 */
+	public static function are_key_constants_set() {
+		return defined( 'C3_DISTRIBUTION_ID' ) && defined( 'AWS_ACCESS_KEY_ID' ) && defined( 'AWS_SECRET_ACCESS_KEY' );
 	}
 
 	/**
