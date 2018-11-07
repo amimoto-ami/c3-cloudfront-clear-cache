@@ -1,10 +1,10 @@
 === C3 Cloudfront Cache Controller ===
-Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski
+Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski,jepser
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 4.9.7
-Stable tag: 5.5
+Stable tag: 5.5.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -64,11 +64,19 @@ This plugin send following page url to CloudFront Invalidation API.
 
 ## Adding your configuration through env vars
 
-The plugin can be configured by defining the following environment variables:
+The plugin can be configured by defining the following variables:
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `C3_DISTRIBUTION_ID`
+
+You can put these variables like the code into the wp-config.php
+
+`php
+define( 'AWS_ACCESS_KEY_ID', '' );
+define( 'AWS_SECRET_ACCESS_KEY', '' );
+define( 'C3_DISTRIBUTION_ID', '' );
+`
 
 == Cookie ==
 This plugin set a Cookie named `wordpress_loginuser_last_visit` to the user.
@@ -101,6 +109,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+= 5.5.0 =
+* [Update] Can use defined variables for AWS Credentials
 
 = 5.4.2 =
 * [Bug fix] Set cookie path in preview page
@@ -230,5 +241,5 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Upgrade Notice ==
 
-= 5.4.0 =
-* [Update] Update preview fix plugin
+= 5.5.0 =
+* [Update] Can use defined variables for AWS Credentials
