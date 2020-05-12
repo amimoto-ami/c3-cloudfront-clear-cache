@@ -59,7 +59,7 @@ class C3_Menus extends C3_Base {
 	 */
 	public function define_menus() {
 		$root = C3_Admin::get_instance();
-		add_menu_page(
+		add_options_page(
 			__( 'CloudFront Settings', self::$text_domain ),
 			__( 'CloudFront Settings', self::$text_domain ),
 			'administrator',
