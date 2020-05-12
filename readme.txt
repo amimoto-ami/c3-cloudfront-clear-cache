@@ -1,10 +1,10 @@
 === C3 Cloudfront Cache Controller ===
-Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski,jepser
+Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski,jepser,johnbillion
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 5.2.3
-Stable tag: 5.5.0
+Stable tag: 5.5.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+== 5.5.1 ==
+* [Update] Replace the top level menu with a Settings submenu
 
 = 5.5.0 =
 * [Update] Can use defined variables for AWS Credentials
