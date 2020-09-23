@@ -48,6 +48,7 @@ class C3_Menus extends C3_Base {
 	 */
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'define_menus' ) );
+		add_action( 'admin_init', array( $this, 'define_caps' ) );
 	}
 
 	/**
@@ -62,9 +63,21 @@ class C3_Menus extends C3_Base {
 		add_options_page(
 			__( 'CloudFront Settings', self::$text_domain ),
 			__( 'CloudFront Settings', self::$text_domain ),
-			'administrator',
+			'cloudfront_clear_cache',
 			self::MENU_ID,
 			array( $root, 'init_panel' )
 		);
+	}
+	
+	/**
+	 * Define C3 plugin capabilities
+	 *
+	 * @access public
+	 * @param none
+	 * @since 4.0.0
+	 */
+	public function define_caps() {
+		$role = get_role( 'administrator' );
+		$role->add_cap( 'cloudfront_clear_cache' ); 
 	}
 }
