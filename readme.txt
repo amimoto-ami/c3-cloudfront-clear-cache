@@ -66,15 +66,15 @@ This plugin send following page url to CloudFront Invalidation API.
 
 The plugin can be configured by defining the following variables:
 
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
+- `C3_AWS_ACCESS_KEY_ID`
+- `C3_AWS_SECRET_ACCESS_KEY`
 - `C3_DISTRIBUTION_ID`
 
 You can put these variables like the code into the wp-config.php
 
 `php
-define( 'AWS_ACCESS_KEY_ID', '' );
-define( 'AWS_SECRET_ACCESS_KEY', '' );
+define( 'C3_AWS_ACCESS_KEY_ID', '' );
+define( 'C3_AWS_SECRET_ACCESS_KEY', '' );
 define( 'C3_DISTRIBUTION_ID', '' );
 `
 

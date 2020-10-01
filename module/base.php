@@ -163,8 +163,8 @@ class C3_Base {
 	 * @access public
 	 */
 	public static function get_access_key() {
-		if(defined('AWS_ACCESS_KEY_ID')) {
-			return AWS_ACCESS_KEY_ID;
+		if(defined('C3_AWS_ACCESS_KEY_ID')) {
+			return C3_AWS_ACCESS_KEY_ID;
 		} else {
 			$option = self::get_c3_option('access_key');
 			return $option;
@@ -178,8 +178,8 @@ class C3_Base {
 	 * @access public
 	 */
 	public static function get_secret_key() {
-		if(defined('AWS_SECRET_ACCESS_KEY')) {
-			return AWS_SECRET_ACCESS_KEY;
+		if(defined('C3_AWS_SECRET_ACCESS_KEY')) {
+			return C3_AWS_SECRET_ACCESS_KEY;
 		} else {
 			$option = self::get_c3_option('secret_key');
 			return $option;

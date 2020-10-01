@@ -18,8 +18,8 @@ $ cd c3-cloudfront-clear-cache
 
 The plugin can be configured by defining the following environment variables:
 
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
+- `C3_AWS_ACCESS_KEY_ID`
+- `C3_AWS_SECRET_ACCESS_KEY`
 - `C3_DISTRIBUTION_ID`
 
 ## Filters
