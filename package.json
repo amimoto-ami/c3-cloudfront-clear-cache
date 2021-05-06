@@ -1,0 +1,28 @@
+{
+  "devDependencies": {
+    "@wordpress/env": "^4.0.3"
+  },
+  "name": "trunk",
+  "description": "[![Build Status](https://travis-ci.org/amimoto-ami/c3-cloudfront-clear-cache.svg)](https://travis-ci.org/amimoto-ami/c3-cloudfront-clear-cache) [![](https://img.shields.io/wordpress/plugin/dt/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/) [![](https://img.shields.io/wordpress/v/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/) [![](https://img.shields.io/wordpress/plugin/r/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/)",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "wp-env start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amimoto-ami/c3-cloudfront-clear-cache.git"
+  },
+  "keywords": [],
+  "author": "Hidetaka Okamoto",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues"
+  },
+  "homepage": "https://github.com/amimoto-ami/c3-cloudfront-clear-cache#readme"
+}
