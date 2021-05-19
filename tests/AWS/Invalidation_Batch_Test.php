@@ -30,5 +30,4 @@ class Invalidation_Batch_Test extends \WP_UnitTestCase {
 		];
 	}
 
-    
 }
