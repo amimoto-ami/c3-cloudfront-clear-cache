@@ -36,6 +36,14 @@ class Invalidation_Batch_Service {
      * Invalidate 
      */
     public function create_batch_by_post( string $home_url, string $distribution_id, \WP_Post $post = null ) {
+        /**
+         * @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/pull/54/files
+         */
+		if ( 'trash' === $post->post_status ) {
+			// For trashed post, get the permalink when it was published.
+			$post->post_status = 'publish';
+		}
+
         if ( $post ) $this->set_post( $post );
         $this->invalidation_batch = new Invalidation_Batch();
         $this->invalidation_batch->put_invalidation_path( $home_url );
