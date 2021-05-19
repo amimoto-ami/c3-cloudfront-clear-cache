@@ -72,11 +72,24 @@ class C3_Client_Base extends C3_Base {
 	 * @access private
 	 */
 	private function _get_invalidation_items_from_post( $post ) {
+		$items = [];
+		if ( ! $post || is_wp_error($post) ) {
+			return $items;
+		}
+
 		// home
 		$items[] = $this->_make_invalidate_path( home_url( '/' ) );
 
 		// single page permalink
-		$items[] = $this->_make_invalidate_path( get_permalink( $post ) ) . '*';
+		if ( 'trash' === $post->post_status ) {
+			// For trashed post, get the permalink when it was published.
+			$post->post_status = 'publish';
+		}
+		$invalidate_path = $this->_make_invalidate_path( get_permalink( $post ) ) . '*';
+		if ( ! in_array( $invalidate_path, $items, true ) && '/*' !== $invalidate_path ) {
+			$items[] = $invalidate_path;
+		}
+
 		// term archives permalink
 		$taxonomies = get_object_taxonomies( $post->post_type );
 		foreach ( $taxonomies as $taxonomy ) {
@@ -90,7 +103,10 @@ class C3_Client_Base extends C3_Base {
 				if ( trailingslashit( home_url() ) === $url ) {
 					continue;
 				}
-				$items[] = $this->_make_invalidate_path( get_term_link( $term, $taxonomy ) ) . '*';
+				$invalidate_path = $this->_make_invalidate_path( $url ) . '*';
+				if ( ! in_array( $invalidate_path, $items, true ) ) {
+					$items[] = $invalidate_path;
+				}
 			}
 		}
 		return $items;
