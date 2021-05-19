@@ -3,7 +3,6 @@
     "@wordpress/env": "^4.0.3"
   },
   "name": "trunk",
-  "description": "[![Build Status](https://travis-ci.org/amimoto-ami/c3-cloudfront-clear-cache.svg)](https://travis-ci.org/amimoto-ami/c3-cloudfront-clear-cache) [![](https://img.shields.io/wordpress/plugin/dt/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/) [![](https://img.shields.io/wordpress/v/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/) [![](https://img.shields.io/wordpress/plugin/r/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/)",
   "version": "1.0.0",
   "main": "index.js",
   "directories": {
@@ -11,8 +10,9 @@
   },
   "dependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "wp-env start"
+    "test": "wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/trunk/phpunit.xml --verbose\"",
+    "dev": "wp-env start",
+    "wpenv": "wp-env"
   },
   "repository": {
     "type": "git",

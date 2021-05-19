@@ -1,8 +1,29 @@
 {
-  "name": "c3-cloudfront-clear-cache",
+  "name": "digitalcube/c3-cloudfront-clear-cache",
   "version": "0.0.0",
   "type": "wordpress-plugin",
   "require": {
     "php": ">=5.5"
-  }
+  },
+  "require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "*",
+		"phpcompatibility/phpcompatibility-wp": "*",
+		"squizlabs/php_codesniffer": "*",
+		"wp-coding-standards/wpcs": "*",
+		"wp-phpunit/wp-phpunit": "^5.4",
+		"phpunit/phpunit": "^7.5.20"
+  },
+	"autoload": {
+		"psr-4": {
+			"C3_CloudFront_Cache_Controller\\" : "classes/",
+			"C3_CloudFront_Cache_Controller\\WP\\" : "classes/WP/",
+			"C3_CloudFront_Cache_Controller\\Test\\" : "tests/"
+		}
+	},
+	"scripts": {
+		"test": "phpunit",
+		"format": "phpcbf --standard=./.phpcs.xml.dist --report-summary --report-source",
+		"lint": "phpcs --standard=./.phpcs.xml.dist",
+		"phpcs": "phpcs --standard=./.phpcs.xml.dist"
+	}
 }
