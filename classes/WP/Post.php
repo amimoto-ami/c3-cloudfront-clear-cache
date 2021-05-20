@@ -39,12 +39,19 @@ class Post {
 			foreach ( $terms as $term ) {
 				$parsed_url = parse_url( get_term_link( $term, $taxonomy ) );
 				$url = $parsed_url['scheme'] . '://' . $parsed_url['host']. $parsed_url['path'];
+                error_log(print_r(array(
+                    'parsed_url' => $parsed_url,
+                    'url' => $url,
+                    'home_url' => home_url(),
+                    'result' => trailingslashit( home_url() ) === $url,
+                ),true));
 				if ( trailingslashit( home_url() ) === $url ) {
 					continue;
 				}
 				$links[] = get_term_link( $term, $taxonomy ) . '*';
 			}
 		}
+        error_log(print_r($links, true));
         return $links;
 
     }
