@@ -49,6 +49,7 @@ class Invalidation_Batch_Service {
         $this->invalidation_batch->put_invalidation_path( $home_url );
         $this->invalidation_batch->put_invalidation_path( $this->post->get_permalink() . '*' );
         $term_links = $this->post->get_the_post_term_links();
+        error_log( print_r( $term_links, true ) );
         foreach ( $term_links as $key => $url ) {
             $this->invalidation_batch->put_invalidation_path( $url );
         }
