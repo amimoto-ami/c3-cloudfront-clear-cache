@@ -25,6 +25,9 @@ class Post {
         $post = $this->post;
 		$taxonomies = get_object_taxonomies( $post->post_type );
 
+        error_log( print_r( $post->post_type , true ) );
+        error_log( print_r( $taxonomies , true ) );
+
         $links = [];
 
 		foreach ( $taxonomies as $taxonomy ) {
