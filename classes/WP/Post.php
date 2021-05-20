@@ -20,11 +20,10 @@ class Post {
 
     public function parse_url( string $url ) {
         $parsed_url = parse_url( $url );
-        error_log( print_r( array(
-            'parsed_url' => $parsed_url,
-            'url' => $url,
-        ), true));
-        $url = $parsed_url['scheme'] . '://' . $parsed_url['host']. $parsed_url['path'];
+        $url = $parsed_url['scheme'] . '://' . $parsed_url['host'];
+        if ( isset( $parsed_url['path'] ) ) {
+            $url .= $parsed_url['path'];
+        }
         return $url;
     }
     
