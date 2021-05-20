@@ -15,6 +15,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
          */
 		$wp_rewrite->init();
 		$wp_rewrite->set_permalink_structure( '/%postname%/' );
+		$wp_rewrite->flush_rules();
     }
 
     public function test_get_the_published_post_invalidation_paths() {
