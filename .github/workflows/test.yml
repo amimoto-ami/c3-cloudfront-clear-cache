@@ -24,16 +24,10 @@ jobs:
           #  experimental: true
           - php: 7.4
             wp: latest
-          #- php: 7.3
-          #  wp: latest
-          #- php: 7.2
-          #  wp: latest
-          #- php: 7.2
-          #  wp: 5.1
-          #- php: 7.0
-          #  wp: '5.0'
-          #- php: 5.6
-          #  wp: 4.7
+          - php: 7.3
+            wp: latest
+          - php: 7.2
+            wp: latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -52,6 +46,7 @@ jobs:
         run: |
           composer global require "phpunit/phpunit=5.7.*|6.*.*|7.*.*"
           phpunit --version
+
       - name: Cache composer packages
         uses: actions/cache@v2
         with:
