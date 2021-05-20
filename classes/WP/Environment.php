@@ -61,6 +61,7 @@ class Environment {
 
 	/**
 	 * Get the access_key field
+	 *
 	 * @return string
 	 * @since 6.0.0
 	 * @access public
@@ -74,6 +75,7 @@ class Environment {
 
 	/**
 	 * Get the secret_key field
+	 *
 	 * @return string
 	 * @since 6.0.0
 	 * @access public
@@ -84,5 +86,5 @@ class Environment {
 		}
 		return null;
 	}
-    
+
 }

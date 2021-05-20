@@ -18,7 +18,7 @@ class Amimoto_Managed_Test extends \WP_UnitTestCase {
 	public function test_return_null_array_even_if_parameter_has_been_saved() {
 		$target = new WP\Options_Service(
 			new Environment('amimoto_managed'),
-            new Options(),
+            new Options()
 		);
 		$this->assertEquals( $target->get_options(), array(
 			'distribution_id' => null,

@@ -56,3 +56,21 @@ add_filter( 'c3_invalidation_item_limits', function( $limits ) {
     return $custom_limit;
 } );
 ```
+
+## Local testing
+
+### wp-env
+
+#### Unit test
+
+```bash
+$ yarn dev
+$ yarn test
+```
+
+### GitHub Action(WIP)
+Using act to execute the workflow in your local.
+
+```bash
+$ act -P ubuntu-latest=shivammathur/node:latest
+```

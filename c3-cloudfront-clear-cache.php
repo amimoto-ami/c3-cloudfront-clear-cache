@@ -6,11 +6,12 @@
  * Description: Manage CloudFront Cache and provide some fixtures.
  * Author: hideokamoto
  * Author URI: https://wp-kyoto.net/
+ * Requires PHP: 7.0
  * Text Domain: c3-cloudfront-clear-cache
  * @package c3-cloudfront-clear-cache
  */
 
-require_once( __DIR__. '/classes/Class_Loader.php');
+require_once( __DIR__ . '/classes/Class_Loader.php' );
 define( 'C3_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'C3_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'C3_PLUGIN_ROOT', __FILE__ );
@@ -38,6 +39,6 @@ function c3_init() {
 add_action( 'plugins_loaded', 'c3_init' );
 
 // WP-CLI
-if ( defined('WP_CLI') && WP_CLI ) {
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'c3', 'C3_CloudFront_Cache_Controller\\WP\\WP_CLI_Command' );
 }
