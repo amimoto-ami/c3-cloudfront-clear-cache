@@ -17,6 +17,12 @@ class Post {
         }
         return get_permalink( $this->post );
     }
+
+    public function parse_url( string $url ) {
+        $parsed_url = parse_url( $url );
+        $url = $parsed_url['scheme'] . '://' . $parsed_url['host']. $parsed_url['path'];
+        return $url;
+    }
     
     public function get_the_post_term_links() {
         if ( ! $this->post ) {
@@ -24,34 +30,24 @@ class Post {
         }
         $post = $this->post;
 		$taxonomies = get_object_taxonomies( $post->post_type );
-
-        error_log( print_r( $post->post_type , true ) );
-        error_log( print_r( $taxonomies , true ) );
+        $home_url = $this->parse_url( home_url() );
 
         $links = [];
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = wp_get_post_terms( $post->ID, $taxonomy );
-            error_log( print_r( $terms , true ) );
 			if ( is_wp_error( $terms ) ) {
 				continue;
 			}
 			foreach ( $terms as $term ) {
-				$parsed_url = parse_url( get_term_link( $term, $taxonomy ) );
-				$url = $parsed_url['scheme'] . '://' . $parsed_url['host']. $parsed_url['path'];
-                error_log(print_r(array(
-                    'parsed_url' => $parsed_url,
-                    'url' => $url,
-                    'home_url' => home_url(),
-                    'result' => trailingslashit( home_url() ) === $url,
-                ),true));
-				if ( trailingslashit( home_url() ) === $url ) {
+				$url = $this->parse_url( get_term_link( $term, $taxonomy ) );
+
+				if ( trailingslashit( $home_url ) === $url ) {
 					continue;
 				}
 				$links[] = get_term_link( $term, $taxonomy ) . '*';
 			}
 		}
-        error_log(print_r($links, true));
         return $links;
 
     }
