@@ -36,6 +36,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         error_log(print_r($this->category, true));
         wp_set_object_terms( $post->ID, $this->category->slug, $this->category->taxonomy );
         $post = get_post( $post->ID );
+		do_action( 'wp_loaded' );
 		$target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( $result[ 'InvalidationBatch' ][ 'Paths'], array(
