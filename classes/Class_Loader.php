@@ -15,10 +15,8 @@ class Class_Loader {
 	 * @param $base_dir
 	 */
 	public function __construct( $base_dir ) {
-
 		$this->base_dir = $base_dir;
 		$this->register_autoloader();
-
 	}
 
 	private function register_autoloader() {
@@ -29,13 +27,13 @@ class Class_Loader {
 	 * @param $class_name
 	 */
 	public function autoloader( $class_name ) {
-		$dir       = $this->base_dir;
+		$dir = $this->base_dir;
 
-        preg_match( "/(?<=\\\)([^\\\]+$)/", $class_name, $matches );
-        
-        if ( ! $matches || empty( $matches) || ! $matches[0] ) {
-            return;
-        }
+		preg_match( '/(?<=\\\)([^\\\]+$)/', $class_name, $matches );
+
+		if ( ! $matches || empty( $matches ) || ! $matches[0] ) {
+			return;
+		}
 		$file_name = $matches[0] . '.php';
 
 		$file_path = $dir . '/' . $file_name;

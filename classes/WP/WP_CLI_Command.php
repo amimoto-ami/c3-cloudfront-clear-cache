@@ -2,6 +2,7 @@
 namespace C3_CloudFront_Cache_Controller\WP;
 /**
  * Control C3_CloudFront_Clear_Cache.
+ *
  * @author hideokamoto
  */
 
@@ -25,13 +26,13 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *
 	 * [--force]
 	 * Activate Force Clear Mode
- 	 *
- 	 * ## EXAMPLES
- 	 *
- 	 *     wp c3 flush <post_id>       : Flush <post_id>'s CloudFront Cache.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp c3 flush <post_id>       : Flush <post_id>'s CloudFront Cache.
 	 *     wp c3 flush all             : Flush All CloudFront Cache.
 	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
- 	 *
+	 *
 	 * @param string $args: WP-CLI Command Name
 	 * @param string $assoc_args: WP-CLI Command Option
 	 * @since 2.3.0
@@ -46,22 +47,22 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		$invalidation_service = new Invalidation_Service();
 		if ( array_search( 'force', $assoc_args ) ) {
-			WP_CLI::line( 'Force Clear Mode');
+			WP_CLI::line( 'Force Clear Mode' );
 			add_filter( 'c3_invalidation_flag', '__return_false' );
 		}
 		if ( 'all' == $type ) {
-			WP_CLI::line( 'Clear Item = All');
+			WP_CLI::line( 'Clear Item = All' );
 			$result = $invalidation_service->invalidate_all();
 		} elseif ( is_numeric( $type ) ) {
 			WP_CLI::line( "Clear Item = (post_id={$type})" );
-			$post = get_post( $type );
+			$post   = get_post( $type );
 			$result = $invalidation_service->invalidate_post_cache( $post );
 		} else {
 			WP_CLI::error( 'Please input parameter:post_id(numeric) or all' );
 			exit;
 		}
 		if ( ! is_wp_error( $result ) ) {
-			WP_CLI::success( "Create Invalidation Request. Please wait few minutes to finished clear CloudFront Cache." );
+			WP_CLI::success( 'Create Invalidation Request. Please wait few minutes to finished clear CloudFront Cache.' );
 		}
 	}
 
@@ -98,8 +99,8 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			WP_CLI::error( 'No value defined' );
 		}
 		list( $type, $value ) = $args;
-		$name = Constants::OPTION_NAME;
-		$options = get_option( $name );
+		$name                 = Constants::OPTION_NAME;
+		$options              = get_option( $name );
 		switch ( $type ) {
 			case 'distribution_id':
 				$options['distribution_id'] = esc_attr( $value );
@@ -128,7 +129,6 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		}
 
 		update_option( Constants::OPTION_NAME, $options );
-		WP_CLI::success( "Update Option" );
-
+		WP_CLI::success( 'Update Option' );
 	}
 }

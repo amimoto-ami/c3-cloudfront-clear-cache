@@ -10,31 +10,37 @@ use Aws\CloudFront\CloudFrontClient;
 
 class CloudFront_Service {
 
-    private $env;
+	private $env;
 	private $options_service;
-    private $hook_service;
-    /**
-     * Inject a external services
-     */
-    function __construct(...$args) {
-        if ( $args && ! empty( $args ) ) {
-            foreach ( $args as $key => $value ) {
-                if ( $value instanceof WP\Options_Service) {
+	private $hook_service;
+	/**
+	 * Inject a external services
+	 */
+	function __construct( ...$args ) {
+		if ( $args && ! empty( $args ) ) {
+			foreach ( $args as $key => $value ) {
+				if ( $value instanceof WP\Options_Service ) {
 					$this->options_service = $value;
-				} else if ( $value instanceof WP\Hooks ) {
-                    $this->hook_service = $value;
-                } else if ( $value instanceof Environment ) {
-                    $this->env = $value;
-                }
-            }
-        }
-        if ( ! $this->hook_service ) $this->hook_service = new WP\Hooks();
-        if ( ! $this->env ) $this->env = new WP\Environment();
-        if ( ! $this->options_service) $this->options_service = new WP\Options_Service();
-    }
+				} elseif ( $value instanceof WP\Hooks ) {
+					$this->hook_service = $value;
+				} elseif ( $value instanceof Environment ) {
+					$this->env = $value;
+				}
+			}
+		}
+		if ( ! $this->hook_service ) {
+			$this->hook_service = new WP\Hooks();
+		}
+		if ( ! $this->env ) {
+			$this->env = new WP\Environment();
+		}
+		if ( ! $this->options_service ) {
+			$this->options_service = new WP\Options_Service();
+		}
+	}
 
 	public function create_credential( string $access_key = null, string $secret_key = null ) {
-		$key = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
+		$key    = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
 		$secret = isset( $secret_key ) ? $secret_key : $this->env->get_aws_secret_key();
 		if ( ! isset( $key ) || ! isset( $secret ) ) {
 			return null;
@@ -48,31 +54,32 @@ class CloudFront_Service {
 	 */
 	public function try_to_call_aws_api( string $distribution_id, string $access_key = null, string $secret_key = null ) {
 		$credentials = $this->create_credential( $access_key, $secret_key );
-		$params =  array(
+		$params      = array(
 			'version' => 'latest',
-			'region' => 'us-east-1',
+			'region'  => 'us-east-1',
 		);
 		if ( isset( $credentials ) ) {
 			$params['credentials'] = $credentials;
 		}
 		$cloudfront = CloudFrontClient::factory( $params );
 		try {
-			$cloudfront->getDistribution( array(
-				'Id' => $distribution_id,
-			) );
+			$cloudfront->getDistribution(
+				array(
+					'Id' => $distribution_id,
+				)
+			);
 			return true;
 		} catch ( \Exception $e ) {
 			if ( 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
 				$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
 			} elseif ( 'InvalidClientTokenId' == $e->getAwsErrorCode() ) {
-				$e = new \WP_Error( 'C3 Auth Error', "AWS AWS Access Key or AWS Secret Key is invalid." );
+				$e = new \WP_Error( 'C3 Auth Error', 'AWS AWS Access Key or AWS Secret Key is invalid.' );
 			} else {
 				$e = new \WP_Error( 'C3 Auth Error', $e->getMessage() );
 			}
-			error_log( $e->get_error_messages() , 0 );
+			error_log( $e->get_error_messages(), 0 );
 			throw $e;
 		}
-
 	}
 
 	/**
@@ -85,23 +92,26 @@ class CloudFront_Service {
 		 */
 		$options = $this->options_service->get_options();
 		if ( ! $options ) {
-			return new \WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );;
+			return new \WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );
 		}
-		
+
 		/**
 		 * You can overwrite the AWS API credentials.
 		 */
-		$credentials = $this->hook_service->apply_filters( 'c3_credential', array(
-			'key' => $options['access_key'],
-			'secret' => $options['secret_key'],
-		) );
+		$credentials = $this->hook_service->apply_filters(
+			'c3_credential',
+			array(
+				'key'    => $options['access_key'],
+				'secret' => $options['secret_key'],
+			)
+		);
 
 		/**
 		 * Should use us-east-1 region, because CloudFront resources are always in there.
 		 */
-		$params =  array(
+		$params = array(
 			'version' => 'latest',
-			'region' => 'us-east-1',
+			'region'  => 'us-east-1',
 		);
 
 		/**
@@ -128,7 +138,9 @@ class CloudFront_Service {
 		 * Try to find the id from the defined values.
 		 */
 		$from_defined_value = $this->env->get_distribution_id();
-		if ( $from_defined_value ) return $from_defined_value;
+		if ( $from_defined_value ) {
+			return $from_defined_value;
+		}
 
 		/**
 		 * Then, load the wp_option table to get the saved id
@@ -146,19 +158,19 @@ class CloudFront_Service {
 			$result = $client->createInvalidation( $params );
 			return $result;
 		} catch ( \Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {
-			error_log( $e->__toString( ) , 0 );
+			error_log( $e->__toString(), 0 );
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->__toString() );
 			return $e;
 		} catch ( \Aws\CloudFront\Exception $e ) {
-			error_log( $e->__toString( ) , 0 );
+			error_log( $e->__toString(), 0 );
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->__toString() );
 			return $e;
 		} catch ( \Exception $e ) {
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
-			error_log( print_r( $e->get_error_messages(), true ) , 0 );
+			error_log( print_r( $e->get_error_messages(), true ), 0 );
 			return $e;
 		} catch ( \Error $e ) {
-			error_log( $e->__toString(), 0);
+			error_log( $e->__toString(), 0 );
 			return $e;
 		}
 	}
@@ -168,24 +180,26 @@ class CloudFront_Service {
 	 */
 	public function list_invalidations() {
 		try {
-			$client = $this->create_client();
+			$client          = $this->create_client();
 			$distribution_id = $this->get_distribution_id();
-			$lists = $client->listInvalidations( array(
-				'DistributionId' => $distribution_id,
-				'MaxItems'       => $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 ),
-			) );
-			if ( $lists["InvalidationList"] && $lists["InvalidationList"]['Quantity'] > 0 ) {
-				return $lists["InvalidationList"]['Items'];
+			$lists           = $client->listInvalidations(
+				array(
+					'DistributionId' => $distribution_id,
+					'MaxItems'       => $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 ),
+				)
+			);
+			if ( $lists['InvalidationList'] && $lists['InvalidationList']['Quantity'] > 0 ) {
+				return $lists['InvalidationList']['Items'];
 			}
-			return [];
+			return array();
 		} catch ( \Aws\CloudFront\Exception\NoSuchDistributionException $e ) {
-			error_log( $options['distribution_id'] . 'not found');
-			error_log( $e->__toString(), 0);
+			error_log( $options['distribution_id'] . 'not found' );
+			error_log( $e->__toString(), 0 );
 		} catch ( \Exception $e ) {
-			error_log( $e->__toString(), 0);
+			error_log( $e->__toString(), 0 );
 		} catch ( \Error $e ) {
-			error_log( $e->__toString(), 0);
+			error_log( $e->__toString(), 0 );
 		}
-		return [];
+		return array();
 	}
 }

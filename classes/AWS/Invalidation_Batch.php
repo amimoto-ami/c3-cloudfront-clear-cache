@@ -6,25 +6,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Invalidation_Batch {
-    private $items = [];
+	private $items = array();
 
-    public function put_invalidation_path( string $path ) {
-        $result = $this->make_invalidate_path( $path );
-        
-        if ( ! $result || ! isset( $result ) ) {
-            return;
-        }
+	public function put_invalidation_path( string $path ) {
+		$result = $this->make_invalidate_path( $path );
 
-        $this->items[] = $result;
-        $this->items = array_unique( $this->items );
-    }
+		if ( ! $result || ! isset( $result ) ) {
+			return;
+		}
 
-    public function get_invalidation_path_items() {
-        if ( 1 > count( $this->items ) || 10 < count( $this->items ) ) {
-            return [ '/*' ];
-        }
-        return $this->items; 
-    }
+		$this->items[] = $result;
+		$this->items   = array_unique( $this->items );
+	}
+
+	public function get_invalidation_path_items() {
+		if ( 1 > count( $this->items ) || 10 < count( $this->items ) ) {
+			return array( '/*' );
+		}
+		return $this->items;
+	}
 
 	/**
 	 * Create Invalidation path from url
@@ -41,21 +41,21 @@ class Invalidation_Batch {
 			: preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
 	}
 
-    public function get_invalidation_batch() {
-        return array(
-            'CallerReference' => uniqid(),
-            'Paths' => array(
-                'Items' => $this->items,
-                'Quantity' => count( $this->items ),
-            ),
-        );
-    }
-
-    public function get_invalidation_request_parameter( string $distribution_id ) {
+	public function get_invalidation_batch() {
 		return array(
-			'DistributionId' => esc_attr( $distribution_id ),
-			'InvalidationBatch' => $this->get_invalidation_batch()
+			'CallerReference' => uniqid(),
+			'Paths'           => array(
+				'Items'    => $this->items,
+				'Quantity' => count( $this->items ),
+			),
 		);
-    }
+	}
+
+	public function get_invalidation_request_parameter( string $distribution_id ) {
+		return array(
+			'DistributionId'    => esc_attr( $distribution_id ),
+			'InvalidationBatch' => $this->get_invalidation_batch(),
+		);
+	}
 
 }
