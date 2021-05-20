@@ -9,7 +9,13 @@ class Invalidation_Batch {
     private $items = [];
 
     public function put_invalidation_path( string $path ) {
-        $this->items[] = $this->make_invalidate_path( $path );
+        $result = $this->make_invalidate_path( $path );
+        
+        if ( ! $result || ! isset( $result ) ) {
+            return;
+        }
+
+        $this->items[] = $result;
         $this->items = array_unique( $this->items );
     }
 
