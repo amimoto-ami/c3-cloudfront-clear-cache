@@ -19,7 +19,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 
         $category = get_category( 1 );
 
-        error_log( $category );
+        error_log( print_r( $category, true ) );
 
         if ( isset( $category ) ) {
             $this->cat_id = 1;
