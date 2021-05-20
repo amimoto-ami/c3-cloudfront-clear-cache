@@ -19,9 +19,6 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 		$wp_rewrite->flush_rules();
 
         $category = get_category( 1 );
-
-        error_log( print_r( $category, true ) );
-
         if ( isset( $category ) ) {
             $this->category = $category;
         } else {
@@ -37,7 +34,8 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         ) );
 
         error_log(print_r($this->category, true));
-        wp_set_object_terms( $post->ID, $this->category->term_id, $this->category->taxonomy );
+        wp_set_object_terms( $post->ID, $this->category->slug, $this->category->taxonomy );
+        $post = get_post( $post->ID );
 		$target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( $result[ 'InvalidationBatch' ][ 'Paths'], array(
@@ -56,7 +54,8 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_name' => 'hello-world',
             'post_type' => 'post',
         ) );
-        wp_set_object_terms( $post->ID, $this->category->term_id, $this->category->taxonomy );
+        wp_set_object_terms( $post->ID, $this->category->slug, $this->category->taxonomy );
+        $post = get_post( $post->ID );
 		$target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( $result[ 'InvalidationBatch' ][ 'Paths'], array(
