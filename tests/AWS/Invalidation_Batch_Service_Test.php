@@ -36,7 +36,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_name' => 'hello-world',
         ) );
 
-        wp_set_object_terms( $post->ID, $this->cattegory->term_id, $this->cattegory->taxonomy );
+        wp_set_object_terms( $post->ID, $this->category->term_id, $this->category->taxonomy );
 		$target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( $result[ 'InvalidationBatch' ][ 'Paths'], array(
@@ -55,7 +55,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_name' => 'hello-world',
             'post_type' => 'post',
         ) );
-        wp_set_object_terms( $post->ID, $this->cattegory->term_id, $this->cattegory->taxonomy );
+        wp_set_object_terms( $post->ID, $this->category->term_id, $this->category->taxonomy );
 		$target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( $result[ 'InvalidationBatch' ][ 'Paths'], array(
