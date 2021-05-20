@@ -31,6 +31,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_status' => 'publish',
             'post_name' => 'hello-world',
         ) );
+        error_log( print_r( \get_option('default_category' ) ) );
 
 		$target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
