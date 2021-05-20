@@ -1,4 +1,7 @@
 <?php
+
+namespace C3_CloudFront_Cache_Controller\Templates;
+
 use C3_CloudFront_Cache_Controller\Constants;
 
 $text_domain = Constants::text_domain();

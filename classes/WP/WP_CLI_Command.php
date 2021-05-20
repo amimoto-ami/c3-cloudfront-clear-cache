@@ -50,7 +50,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			WP_CLI::line( 'Force Clear Mode' );
 			add_filter( 'c3_invalidation_flag', '__return_false' );
 		}
-		if ( 'all' == $type ) {
+		if ( 'all' === $type ) {
 			WP_CLI::line( 'Clear Item = All' );
 			$result = $invalidation_service->invalidate_all();
 		} elseif ( is_numeric( $type ) ) {

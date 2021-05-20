@@ -19,10 +19,10 @@
 
     <!-- Rules: Check PHP version compatibility -->
     <!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-    <config name="testVersion" value="5.3-"/>
+    <config name="testVersion" value="7.0-"/>
     <!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
     <rule ref="PHPCompatibilityWP"/>
-    <config name="minimum_supported_wp_version" value="4.7"/>
+    <config name="minimum_supported_wp_version" value="5.5"/>
     <rule ref="WordPress-Core">
         <exclude name="WordPress.Files.FileName" />
         <exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase" />
@@ -32,13 +32,13 @@
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-            <property name="prefixes" type="array" value="CPTP"/>
+            <property name="prefixes" type="array" value="C3_CloudFront_Cache_Controller"/>
         </properties>
     </rule>
     <rule ref="WordPress.WP.I18n">
         <properties>
             <!-- Value: replace the text domain used. -->
-            <property name="text_domain" type="array" value="custom-post-type-permalinks"/>
+            <property name="text_domain" type="array" value="c3-cloudfront-clear-cache"/>
         </properties>
     </rule>
     <rule ref="WordPress.WhiteSpace.ControlStructureSpacing">

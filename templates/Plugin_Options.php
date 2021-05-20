@@ -1,5 +1,6 @@
 <?php
 
+namespace C3_CloudFront_Cache_Controller\Templates;
 use C3_CloudFront_Cache_Controller\Constants;
 use C3_CloudFront_Cache_Controller\WP\Environment;
 use C3_CloudFront_Cache_Controller\WP\Options;
