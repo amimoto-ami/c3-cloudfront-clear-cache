@@ -18,9 +18,11 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 		$wp_rewrite->flush_rules();
 
         $category = get_category( 1 );
-        
+
+        error_log( $category );
+
         if ( isset( $category ) ) {
-            $this->category = 1;
+            $this->cat_id = 1;
         } else {
 		    $this->cat_id = $this->factory->category->create();
         }
