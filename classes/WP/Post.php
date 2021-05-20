@@ -25,10 +25,14 @@ class Post {
         $post = $this->post;
 		$taxonomies = get_object_taxonomies( $post->post_type );
 
+        error_log( print_r( $post->post_type , true ) );
+        error_log( print_r( $taxonomies , true ) );
+
         $links = [];
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = wp_get_post_terms( $post->ID, $taxonomy );
+            error_log( print_r( $terms , true ) );
 			if ( is_wp_error( $terms ) ) {
 				continue;
 			}

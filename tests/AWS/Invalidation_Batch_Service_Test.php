@@ -44,7 +44,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'Quantity' => 3
         ) );
     }
-
+/*
     public function test_get_the_un_published_post_invalidation_paths() {
         $post = $this->factory->post->create_and_get( array(
             'post_status' => 'trash',
@@ -62,6 +62,6 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'Quantity' => 3
         ) );
     }
-
+*/
     
 }
