@@ -45,10 +45,6 @@ jobs:
           ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
           coverage: xdebug #optional, setup coverage driver
 
-      #- name: Install SVN
-      #  run: |
-      #    apt-get install subversion
-
       - name: Check PHP Version
         run: php -v
 
@@ -67,10 +63,6 @@ jobs:
 
       - name: Install WP Tests
         run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }} true
-
-      #- name: Build
-      #  run: |
-      #    bash ./bin/build.sh
       
       - name: phpunit tests
         run: |
