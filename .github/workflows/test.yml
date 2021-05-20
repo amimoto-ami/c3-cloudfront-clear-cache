@@ -48,10 +48,10 @@ jobs:
       - name: Check PHP Version
         run: php -v
 
-      - name: Install phpunit global
-        run: |
-          composer global require "phpunit/phpunit=5.7.*|6.*.*|7.*.*"
-          phpunit --version
+      #- name: Install phpunit global
+      #  run: |
+      #    composer global require "phpunit/phpunit=5.7.*|6.*.*|7.*.*"
+      #    phpunit --version
       - name: Cache composer packages
         uses: actions/cache@v2
         with:
@@ -66,5 +66,5 @@ jobs:
       
       - name: phpunit tests
         run: |
-          phpunit
-          WP_MULTISITE=1 phpunit
+          composer test
+          WP_MULTISITE=1 composer test
