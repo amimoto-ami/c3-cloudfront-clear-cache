@@ -42,3 +42,23 @@ add_action( 'plugins_loaded', 'c3_init' );
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'c3', 'C3_CloudFront_Cache_Controller\\WP\\WP_CLI_Command' );
 }
+
+
+/**
+ * Backward compatibility
+ */
+class CloudFront_Clear_Cache {
+
+	public static function get_instance() {
+		if ( ! isset( self::$instance ) ) {
+			$c = __CLASS__;
+			self::$instance = new $c();
+		}
+		return self::$instance;
+	}
+
+	public function c3_invalidation() {
+		$service = new C3_CloudFront_Cache_Controller\Invalidation_Service();
+		return $this->service->invalidate_all();
+	}
+}
