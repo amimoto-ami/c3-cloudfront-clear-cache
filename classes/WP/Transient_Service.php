@@ -75,7 +75,7 @@ class Transient_Service {
 	 * @access public
 	 * @since 4.3.0
 	 **/
-	public function merge_transient_invalidation_query( $query, $transiented_query = null ) {
+	public function merge_transient_invalidation_query( $query, $current_transient = null ) {
 		$query = $this->query_normalize( $query );
 
 		if ( $current_transient ) {
