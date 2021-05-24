@@ -13,7 +13,7 @@ if ( ! $options || ! isset( $options[ Constants::DISTRIBUTION_ID ] ) ) {
 ?>
 
 <form method='post' action=''>
-	<table class='wp-list-table widefat plugins'>
+	<table class='wp-list-table widefat plugins' style="margin-bottom: 2rem;">
 		<thead>
 			<tr>
 				<th colspan='2'>

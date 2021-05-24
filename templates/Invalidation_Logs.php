@@ -18,7 +18,7 @@ $histories            = $invalidation_service->list_recent_invalidation_logs();
 ?>
 
 
-<table class='wp-list-table widefat plugins' style="margin-top: 2rem;">
+<table class='wp-list-table widefat plugins'>
 	<thead>
 		<tr>
 			<th colspan='3'>

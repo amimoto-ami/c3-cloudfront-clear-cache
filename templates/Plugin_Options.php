@@ -26,7 +26,7 @@ $secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Const
 ?>
 <h3><?php _e( 'General Settings', $text_domain ); ?></h3>
 <form method="post" action="options.php">
-	<table class='widefat form-table'><tbody>
+	<table class='widefat form-table' style="margin-bottom: 2rem;"><tbody>
 		<tr>
 			<td>
 				<?php _e( 'CloudFront Distribution ID', $text_domain ); ?>
