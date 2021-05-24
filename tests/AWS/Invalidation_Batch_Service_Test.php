@@ -3,8 +3,6 @@ namespace C3_CloudFront_Cache_Controller\Test\AWS;
 use C3_CloudFront_Cache_Controller\AWS;
 
 class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
-    private $cat_id = 1;
-    private $category;
     public function setUp() {
 		/** @var WP_Rewrite $wp_rewrite */
 		global $wp_rewrite;
@@ -16,8 +14,6 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
          */
 		$wp_rewrite->init();
 		$wp_rewrite->set_permalink_structure( '/%postname%/' );
-		$wp_rewrite->flush_rules();
-
     }
 
     public function test_get_the_published_post_invalidation_paths() {
@@ -51,6 +47,18 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             ),
             'Quantity' => 2
         ) , $result[ 'InvalidationBatch' ][ 'Paths' ] );
+    }
+
+    public function test_get_invalidation_path_for_all() {
+		$target = new AWS\Invalidation_Batch_Service();
+        $result = $target->create_batch_for_all( 'EXXXX' );
+        $this->assertEquals( array(
+            'Items' => array(
+                '/*'
+            ),
+            'Quantity' => 1
+        ) , $result[ 'InvalidationBatch' ][ 'Paths' ] );
+
     }
     
 }
