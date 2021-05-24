@@ -23,6 +23,7 @@ $distribution_id     = isset( $plugin_options ) && isset( $plugin_options[ Const
 $access_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::ACCESS_KEY ] ) ? $plugin_options[ Constants::ACCESS_KEY ] : null;
 $secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::SECRET_KEY ] ) ? $plugin_options[ Constants::SECRET_KEY ] : null;
 
+$has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 ?>
 <h3><?php _e( 'General Settings', $text_domain ); ?></h3>
 <form method="post" action="options.php">
@@ -47,46 +48,48 @@ $secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Const
 				?>
 			</td>
 		</tr>
-		<tr>
-			<td>
-				<?php _e( 'AWS Access Key', $text_domain ); ?>
-			</td>
-			<td>
-				<input
-					class='regular-text code'
-					type="password"
-					name="<?php echo isset( $env_access_key ) ? Constants::OPTION_NAME . '[dummy1]' : Constants::OPTION_NAME . '[' . Constants::ACCESS_KEY . ']'; ?>"
-					value="<?php echo esc_attr( isset( $env_access_key ) ? $env_access_key : $access_key ); ?>"
-					<?php echo isset( $env_access_key ) ? 'disabled' : ''; ?>
-				/>
-				<?php
-				if ( isset( $env_access_key ) ) {
-					echo '<p><small>' . __( 'Already defined it in the code.', $text_domain ) . '</small></p>';
-				}
+		<?php if ( ! $has_ec2_instance_role ) { ?>
+			<tr>
+				<td>
+					<?php _e( 'AWS Access Key', $text_domain ); ?>
+				</td>
+				<td>
+					<input
+						class='regular-text code'
+						type="password"
+						name="<?php echo isset( $env_access_key ) ? Constants::OPTION_NAME . '[dummy1]' : Constants::OPTION_NAME . '[' . Constants::ACCESS_KEY . ']'; ?>"
+						value="<?php echo esc_attr( isset( $env_access_key ) ? $env_access_key : $access_key ); ?>"
+						<?php echo isset( $env_access_key ) ? 'disabled' : ''; ?>
+					/>
+					<?php
+					if ( isset( $env_access_key ) ) {
+						echo '<p><small>' . __( 'Already defined it in the code.', $text_domain ) . '</small></p>';
+					}
 
-				?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<?php _e( 'AWS Secret Key', $text_domain ); ?>
-			</td>
-			<td>
-				<input
-					class='regular-text code'
-					type="password"
-					name="<?php echo isset( $env_secret_key ) ? Constants::OPTION_NAME . '[dummy2]' : Constants::OPTION_NAME . '[' . Constants::SECRET_KEY . ']'; ?>"
-					value="<?php echo esc_attr( isset( $env_secret_key ) ? $env_secret_key : $secret_key ); ?>"
-					<?php echo isset( $env_secret_key ) ? 'disabled' : ''; ?>
-				/>
-				<?php
-				if ( isset( $env_secret_key ) ) {
-					echo '<p><small>' . __( 'Already defined it in the code.', $text_domain ) . '</small></p>';
-				}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php _e( 'AWS Secret Key', $text_domain ); ?>
+				</td>
+				<td>
+					<input
+						class='regular-text code'
+						type="password"
+						name="<?php echo isset( $env_secret_key ) ? Constants::OPTION_NAME . '[dummy2]' : Constants::OPTION_NAME . '[' . Constants::SECRET_KEY . ']'; ?>"
+						value="<?php echo esc_attr( isset( $env_secret_key ) ? $env_secret_key : $secret_key ); ?>"
+						<?php echo isset( $env_secret_key ) ? 'disabled' : ''; ?>
+					/>
+					<?php
+					if ( isset( $env_secret_key ) ) {
+						echo '<p><small>' . __( 'Already defined it in the code.', $text_domain ) . '</small></p>';
+					}
 
-				?>
-			</td>
-		</tr>
+					?>
+				</td>
+			</tr>
+		<?php } ?>
 	</tbody></table>
 	<?php
 	if ( ! isset( $env_distribution_id ) || ! isset( $env_secret_key ) || ! isset( $env_secret_key ) ) {
