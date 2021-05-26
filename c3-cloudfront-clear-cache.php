@@ -43,7 +43,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  * Backward compatibility
  */
 class CloudFront_Clear_Cache {
-
+	private static $instance;
 	public static function get_instance() {
 		if ( ! isset( self::$instance ) ) {
 			$c = __CLASS__;
@@ -54,6 +54,6 @@ class CloudFront_Clear_Cache {
 
 	public function c3_invalidation() {
 		$service = new C3_CloudFront_Cache_Controller\Invalidation_Service();
-		return $this->service->invalidate_all();
+		return $service->invalidate_all();
 	}
 }
