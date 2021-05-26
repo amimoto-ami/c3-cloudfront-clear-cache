@@ -23,9 +23,16 @@ class Settings {
 		$this->hook_service->add_filter(
 			'amimoto_c3_add_settings',
 			function () {
-				require_once( C3_PLUGIN_PATH . '/templates/Settings.php' );
+				require_once( C3_PLUGIN_PATH . '/templates/Plugin_Options.php' );
+				require_once( C3_PLUGIN_PATH . '/templates/Manually_Invalidation.php' );
+				require_once( C3_PLUGIN_PATH . '/templates/Invalidation_Logs.php' );
 			}
 		);
+		/**
+		 * Backward compatibility for AMIMOTO Dashboard plugin
+		 */
+		$this->hook_service->add_filter( 'amimoto_show_c3_setting_form', '__return_false' );
+		$this->hook_service->add_filter( 'amimoto_show_invalidation_form', '__return_false' );
 	}
 
 	public function create_options_page() {
