@@ -22,7 +22,10 @@ use C3_CloudFront_Cache_Controller\AWS;
 // fixtures
 function c3_init() {
 	if ( ! class_exists( '\\Aws\\CloudFront\\CloudFrontClient' ) ) {
-		require_once( dirname( __FILE__ ) . '/libs/aws.phar' );
+		$aws_sdk_path = apply_filters( 'c3_aws_sdk_path', dirname( __FILE__ ) . '/libs/aws.phar' );
+		if ( isset( $aws_sdk_path ) ) {
+			require_once( $aws_sdk_path );
+		}
 	}
 	new C3_CloudFront_Cache_Controller\Invalidation_Service();
 	new C3_CloudFront_Cache_Controller\Cron_Service();
