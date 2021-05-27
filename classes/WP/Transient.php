@@ -13,6 +13,10 @@ class Transient {
 		return get_transient( $key );
 	}
 
+	public function delete_transient( string $key ) {
+		return delete_transient( $key );
+	}
+
 	/**
 	 * @see https://developer.wordpress.org/reference/functions/set_transient/
 	 */

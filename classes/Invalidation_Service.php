@@ -9,6 +9,7 @@ class Invalidation_Service {
 	private $option_service;
 	private $transient_service;
 	private $invalidation_batch;
+	private $debug;
 
 	function __construct( ...$args ) {
 		$this->hook_service       = new WP\Hooks();
@@ -51,6 +52,7 @@ class Invalidation_Service {
 				'invalidate_manually',
 			)
 		);
+		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_register_task', false );
 	}
 
 	/**
@@ -90,17 +92,33 @@ class Invalidation_Service {
 	 * Register cron event to send the overflowed invalidation paths
 	 */
 	public function register_cron_event( $query ) {
+		if ( $this->debug ) {
+			error_log('===== C3 CRON Job registration [START] ===');
+		}
 		if ( isset( $query['Paths'] ) && isset( $query['Paths']['Items'] ) && $query['Paths']['Items'][0] === '/*' ) {
+			if ( $this->debug ) {
+				error_log('===== C3 CRON Job registration [SKIP | NO ITEM] ===');
+			}
 			return;
 		}
 		if ( $this->hook_service->apply_filters( 'c3_disabled_cron_retry', false ) ) {
+			if ( $this->debug ) {
+				error_log('===== C3 CRON Job registration [SKIP | DISABLED] ===');
+			}
 			return;
 		}
 		$query = $this->transient_service->save_invalidation_query( $query );
 
 		$interval_minutes = $this->hook_service->apply_filters( 'c3_invalidation_cron_interval', 1 );
 		$time             = time() + MINUTE_IN_SECONDS * $interval_minutes;
+		if ( $this->debug ) {
+			error_log(print_r($query, true));
+		}
 		wp_schedule_single_event( $time, 'c3_cron_invalidation' );
+		error_log('==== register cron event [Done] ===');
+		if ( $this->debug ) {
+			error_log('===== C3 CRON Job registration [COMPLETE] ===');
+		}
 	}
 
 	/**

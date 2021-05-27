@@ -116,7 +116,7 @@ class Transient_Service {
 	 * @return void
 	 */
 	public function set_invalidation_query( $query ) {
-		$interval_minutes = $this->hook_service->apply_filters( 'c3_invalidation_cron_interval', 1 );
+		$interval_minutes = $this->hook_service->apply_filters( 'c3_invalidation_cron_interval', 10 );
 		$this->transient->set_invalidation_target( $query, $interval_minutes * MINUTE_IN_SECONDS * 1.5 );
 	}
 
@@ -128,7 +128,8 @@ class Transient_Service {
 	 * Load invalidation query from transient
 	 */
 	public function load_invalidation_query() {
-		return $this->transient->get_invalidation_target();
+		$result = $this->transient->get_invalidation_target();
+		return $result;
 	}
 
 }

@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cron_Service {
 	private $hook_service;
 	private $transient_service;
+	private $debug;
 
 	function __construct( ...$args ) {
 		$this->hook_service      = new WP\Hooks();
@@ -31,20 +32,39 @@ class Cron_Service {
 				'run_schedule_invalidate',
 			)
 		);
+		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_invalidation_task', false );
 	}
 
 	public function run_schedule_invalidate() {
+		if ( $this->debug ) {
+			error_log('===== C3 Invalidation cron is started ===');
+		}
 		if ( $this->hook_service->apply_filters( 'c3_disabled_cron_retry', false ) ) {
+			if ( $this->debug ) {
+				error_log('===== C3 Invalidation cron has been SKIPPED [Disabled] ===');
+			}
 			return;
 		}
-		$query = $this->transient_service->load_invalidation_query();
-		if ( ! $query || empty( $query ) ) {
+		$invalidation_batch = $this->transient_service->load_invalidation_query();
+		if ( $this->debug ) error_log(print_r($invalidation_batch, true));
+		if ( ! $invalidation_batch || empty( $invalidation_batch ) ) {
+			if ( $this->debug ) {
+				error_log('===== C3 Invalidation cron has been SKIPPED [No Target Item] ===');
+			}
 			return;
 		}
-		error_log( 'cron works' );
+		$distribution_id = $this->cf_service->get_distribution_id();
+		$query = array(
+			'DistributionId'    => esc_attr( $distribution_id ),
+			'InvalidationBatch' => $invalidation_batch,
+		);
+		if ( $this->debug ) error_log(print_r($query, true));
 		// Invalidation
 		$result = $this->cf_service->create_invalidation( $query );
-		error_log( print_r( $result, true ) );
+		if ( $this->debug ) error_log( print_r( $result, true ) );
 		$this->transient_service->delete_invalidation_query();
+		if ( $this->debug ) {
+			error_log('===== C3 Invalidation cron has been COMPLETED ===');
+		}
 	}
 }
