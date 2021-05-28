@@ -5,6 +5,21 @@ use C3_CloudFront_Cache_Controller\Invalidation_Service;
 use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Environment;
 
 class Invalidation_Service_Test extends \WP_UnitTestCase {
+    /**
+     * @dataProvider provide_should_invalidate_test_case
+     */
+    function test_should_invalidate( $new_status, $old_status, $expected ) {
+        $service = new Invalidation_Service();
+        $result = $service->should_invalidate( $new_status, $old_status );
+        $this->assertEquals( $expected, $result );
+    }
+    function provide_should_invalidate_test_case() {
+        return [
+            [ 'any', 'any', false ],
+            [ 'publish', 'any', true ],
+            [ 'any', 'publish', true ],
+        ];
+    }
 
     /**
      * @dataProvider provide_register_cron_event_test_case
