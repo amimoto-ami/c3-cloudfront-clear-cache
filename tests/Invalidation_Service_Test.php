@@ -1,8 +1,6 @@
 <?php
 namespace C3_CloudFront_Cache_Controller\Test;
-use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\Invalidation_Service;
-use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Environment;
 
 class Invalidation_Service_Test extends \WP_UnitTestCase {
     /**

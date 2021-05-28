@@ -43,7 +43,7 @@ class Cron_Service {
 			if ( $this->debug ) {
 				error_log('===== C3 Invalidation cron has been SKIPPED [Disabled] ===');
 			}
-			return;
+			return false;
 		}
 		$invalidation_batch = $this->transient_service->load_invalidation_query();
 		if ( $this->debug ) error_log(print_r($invalidation_batch, true));
@@ -51,7 +51,7 @@ class Cron_Service {
 			if ( $this->debug ) {
 				error_log('===== C3 Invalidation cron has been SKIPPED [No Target Item] ===');
 			}
-			return;
+			return false;
 		}
 		$distribution_id = $this->cf_service->get_distribution_id();
 		$query = array(
@@ -66,5 +66,6 @@ class Cron_Service {
 		if ( $this->debug ) {
 			error_log('===== C3 Invalidation cron has been COMPLETED ===');
 		}
+		return true;
 	}
 }
