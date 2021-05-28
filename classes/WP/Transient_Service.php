@@ -79,7 +79,7 @@ class Transient_Service {
 		$query = $this->query_normalize( $query );
 
 		if ( $current_transient ) {
-			$current_transient       = $this->query_normalize( $current_transient );
+			$current_transient = $this->query_normalize( $current_transient );
 
 			$query_items             = $query['Paths']['Items'];
 			$current_items           = $current_transient['Paths']['Items'];

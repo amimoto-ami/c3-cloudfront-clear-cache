@@ -37,34 +37,40 @@ class Cron_Service {
 
 	public function run_schedule_invalidate() {
 		if ( $this->debug ) {
-			error_log('===== C3 Invalidation cron is started ===');
+			error_log( '===== C3 Invalidation cron is started ===' );
 		}
 		if ( $this->hook_service->apply_filters( 'c3_disabled_cron_retry', false ) ) {
 			if ( $this->debug ) {
-				error_log('===== C3 Invalidation cron has been SKIPPED [Disabled] ===');
+				error_log( '===== C3 Invalidation cron has been SKIPPED [Disabled] ===' );
 			}
 			return false;
 		}
 		$invalidation_batch = $this->transient_service->load_invalidation_query();
-		if ( $this->debug ) error_log(print_r($invalidation_batch, true));
+		if ( $this->debug ) {
+			error_log( print_r( $invalidation_batch, true ) );
+		}
 		if ( ! $invalidation_batch || empty( $invalidation_batch ) ) {
 			if ( $this->debug ) {
-				error_log('===== C3 Invalidation cron has been SKIPPED [No Target Item] ===');
+				error_log( '===== C3 Invalidation cron has been SKIPPED [No Target Item] ===' );
 			}
 			return false;
 		}
 		$distribution_id = $this->cf_service->get_distribution_id();
-		$query = array(
+		$query           = array(
 			'DistributionId'    => esc_attr( $distribution_id ),
 			'InvalidationBatch' => $invalidation_batch,
 		);
-		if ( $this->debug ) error_log(print_r($query, true));
+		if ( $this->debug ) {
+			error_log( print_r( $query, true ) );
+		}
 		// Invalidation
 		$result = $this->cf_service->create_invalidation( $query );
-		if ( $this->debug ) error_log( print_r( $result, true ) );
+		if ( $this->debug ) {
+			error_log( print_r( $result, true ) );
+		}
 		$this->transient_service->delete_invalidation_query();
 		if ( $this->debug ) {
-			error_log('===== C3 Invalidation cron has been COMPLETED ===');
+			error_log( '===== C3 Invalidation cron has been COMPLETED ===' );
 		}
 		return true;
 	}

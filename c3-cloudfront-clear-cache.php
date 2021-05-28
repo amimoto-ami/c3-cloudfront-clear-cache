@@ -49,7 +49,7 @@ class CloudFront_Clear_Cache {
 	private static $instance;
 	public static function get_instance() {
 		if ( ! isset( self::$instance ) ) {
-			$c = __CLASS__;
+			$c              = __CLASS__;
 			self::$instance = new $c();
 		}
 		return self::$instance;
