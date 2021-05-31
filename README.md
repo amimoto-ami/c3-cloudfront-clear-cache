@@ -56,6 +56,30 @@ add_filter( 'c3_invalidation_item_limits', function( $limits ) {
 } );
 ```
 
+### Change or Stop loading bundled AWS SDK (Since v6.0.0)
+
+Use `c3_aws_sdk_path` filter, to relace the AWS SDK library path.
+
+```
+add_filter( 'c3_aws_sdk_path', function () {
+	return 'YOUR/CUSTOM/AWS/SDK/ENTRY/POINT.php';
+} );
+```
+
+If return null, the plugin will not load bundled AWS SDK.
+
+```
+add_filter( 'c3_aws_sdk_path', function () {
+	return null;
+} );
+```
+
+### Logging cron job history(Since v6.0.0)
+
+```
+add_filter( 'c3_log_cron_invalidation_task', '__return_true' );
+```
+
 ## Local testing
 
 ### wp-env
