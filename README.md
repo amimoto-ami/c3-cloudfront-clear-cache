@@ -1,6 +1,5 @@
 # C3 Cloudfront Cache Controller
 
-[![Build Status](https://travis-ci.org/amimoto-ami/c3-cloudfront-clear-cache.svg)](https://travis-ci.org/amimoto-ami/c3-cloudfront-clear-cache)
 [![](https://img.shields.io/wordpress/plugin/dt/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/)
 [![](https://img.shields.io/wordpress/v/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/)
 [![](https://img.shields.io/wordpress/plugin/r/c3-cloudfront-clear-cache.svg)](https://wordpress.org/plugins/c3-cloudfront-clear-cache/)
@@ -55,4 +54,22 @@ add_filter( 'c3_invalidation_item_limits', function( $limits ) {
     $custom_limit = 300;
     return $custom_limit;
 } );
+```
+
+## Local testing
+
+### wp-env
+
+#### Unit test
+
+```bash
+$ yarn dev
+$ yarn test
+```
+
+### GitHub Action(WIP)
+Using act to execute the workflow in your local.
+
+```bash
+$ act -P ubuntu-latest=shivammathur/node:latest
 ```
