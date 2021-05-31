@@ -1,10 +1,10 @@
 === C3 Cloudfront Cache Controller ===
-Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski,jepser,johnbillion
+Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartoszgadomski,jepser,johnbillion,pacifika
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
-Tested up to: 5.2.3
-Stable tag: 5.5.1
+Tested up to: 5.7.2
+Stable tag: 6.0.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
