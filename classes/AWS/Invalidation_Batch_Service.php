@@ -31,15 +31,10 @@ class Invalidation_Batch_Service {
 			$this->post = new Post();
 		}
 	}
-
-	public function set_post( $post ) {
-		$this->post->set_post( $post );
-	}
-
 	/**
-	 * Invalidate
+	 * Set Wp_Post data into Post instance
 	 */
-	public function create_batch_by_post( string $home_url, string $distribution_id, \WP_Post $post = null ) {
+	public function set_post( $post ) {
 		/**
 		 * @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/pull/54/files
 		 */
@@ -47,27 +42,53 @@ class Invalidation_Batch_Service {
 			// For trashed post, get the permalink when it was published.
 			$post->post_status = 'publish';
 		}
+		$this->post->set_post( $post );
+	}
 
+	/**
+	 * Put invalidation path of the post
+	 */
+	public function put_post_invalidation_batch( Invalidation_Batch $invalidation_batch, \WP_Post $post ) {
 		if ( $post ) {
 			$this->set_post( $post );
 		}
-		$this->invalidation_batch = new Invalidation_Batch();
-		$this->invalidation_batch->put_invalidation_path( $home_url );
-		$this->invalidation_batch->put_invalidation_path( $this->post->get_permalink() . '*' );
+		$invalidation_batch->put_invalidation_path( $this->post->get_permalink() . '*' );
 		$term_links = $this->post->get_the_post_term_links();
 		foreach ( $term_links as $key => $url ) {
-			$this->invalidation_batch->put_invalidation_path( $url );
+			$invalidation_batch->put_invalidation_path( $url );
 		}
-
-		return $this->invalidation_batch->get_invalidation_request_parameter( $distribution_id );
+		return $invalidation_batch;
 	}
+
+	/**
+	 * Invalidate by post
+	 */
+	public function create_batch_by_post( string $home_url, string $distribution_id, \WP_Post $post = null ) {
+		$invalidation_batch = new Invalidation_Batch();
+		$invalidation_batch->put_invalidation_path( $home_url );
+		$invalidation_batch = $this->put_post_invalidation_batch( $invalidation_batch, $post );
+		return $invalidation_batch->get_invalidation_request_parameter( $distribution_id );
+	}
+
+	/**
+	 * Invalidate by post
+	 */
+	public function create_batch_by_posts( string $home_url, string $distribution_id, array $posts = [] ) {
+		$invalidation_batch = new Invalidation_Batch();
+		$invalidation_batch->put_invalidation_path( $home_url );
+		foreach ( $posts as $post ) {
+			$invalidation_batch = $this->put_post_invalidation_batch( $invalidation_batch, $post );
+		}
+		return $invalidation_batch->get_invalidation_request_parameter( $distribution_id );
+	}
+
 
 	/**
 	 * Invalidate all cache
 	 */
 	public function create_batch_for_all( string $distribution_id ) {
-		$this->invalidation_batch = new Invalidation_Batch();
-		$this->invalidation_batch->put_invalidation_path( '/*' );
-		return $this->invalidation_batch->get_invalidation_request_parameter( $distribution_id );
+		$invalidation_batch = new Invalidation_Batch();
+		$invalidation_batch->put_invalidation_path( '/*' );
+		return $invalidation_batch->get_invalidation_request_parameter( $distribution_id );
 	}
 }
