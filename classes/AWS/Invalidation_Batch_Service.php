@@ -73,7 +73,7 @@ class Invalidation_Batch_Service {
 	/**
 	 * Invalidate by post
 	 */
-	public function create_batch_by_posts( string $home_url, string $distribution_id, array $posts = [] ) {
+	public function create_batch_by_posts( string $home_url, string $distribution_id, array $posts = array() ) {
 		$invalidation_batch = new Invalidation_Batch();
 		$invalidation_batch->put_invalidation_path( $home_url );
 		foreach ( $posts as $post ) {

@@ -72,8 +72,8 @@ class Invalidation_Service {
 			return;
 		}
 
-		$invalidation_target = $_POST[ 'invalidation_target' ];
-		
+		$invalidation_target = $_POST['invalidation_target'];
+
 		try {
 			if ( ! isset( $invalidation_target ) ) {
 				throw new \Error( 'invalidation_target is required' );
@@ -82,10 +82,12 @@ class Invalidation_Service {
 				$result = $this->invalidate_all();
 			} else {
 				$post_ids = explode( ',', $invalidation_target );
-				$query = new \WP_Query( [
-					'post__in' => $post_ids,
-				] );
-				$posts = $query->get_posts();
+				$query    = new \WP_Query(
+					array(
+						'post__in' => $post_ids,
+					)
+				);
+				$posts    = $query->get_posts();
 				wp_reset_postdata();
 				$this->invalidate_posts_cache( $posts, true );
 			}
@@ -195,7 +197,7 @@ class Invalidation_Service {
 	/**
 	 * Invalidate the post's caches
 	 */
-	public function invalidate_post_cache( \WP_Post $post, $force = false  ) {
+	public function invalidate_post_cache( \WP_Post $post, $force = false ) {
 		$home_url = $this->option_service->home_url( '/' );
 		$options  = $this->option_service->get_options();
 		$query    = $this->invalidation_batch->create_batch_by_post( $home_url, $options['distribution_id'], $post );
@@ -205,7 +207,7 @@ class Invalidation_Service {
 	/**
 	 * Invalidate the post's caches
 	 */
-	public function invalidate_posts_cache( array $posts = [], $force = false  ) {
+	public function invalidate_posts_cache( array $posts = array(), $force = false ) {
 		$home_url = $this->option_service->home_url( '/' );
 		$options  = $this->option_service->get_options();
 		$query    = $this->invalidation_batch->create_batch_by_posts( $home_url, $options['distribution_id'], $posts );

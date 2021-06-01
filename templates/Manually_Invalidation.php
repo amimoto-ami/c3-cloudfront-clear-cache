@@ -37,13 +37,13 @@ if ( ! $options || ! isset( $options[ Constants::DISTRIBUTION_ID ] ) ) {
 			<tr>
 				<th>
 					<b><?php _e( 'Flush Cache by Post ids', $text_domain ); ?></b><br/>
-					<small><?php _e( "Provide a post ids like (1,2,3)", $text_domain ); ?></small>
+					<small><?php _e( 'Provide a post ids like (1,2,3)', $text_domain ); ?></small>
 				</th>
 				<td>
 					<form method='post' action=''>
 						<input name="invalidation_target" placeholder="1,2,3" type="text" />
 						<?php echo wp_nonce_field( Constants::C3_INVALIDATION, Constants::C3_INVALIDATION, true, false ); ?>
-						<?php echo get_submit_button( __( 'Flush Cache', $text_domain ), 'primary large' , 'Submit', false ); ?>
+						<?php echo get_submit_button( __( 'Flush Cache', $text_domain ), 'primary large', 'Submit', false ); ?>
 					</form>
 				</td>
 			</tr>

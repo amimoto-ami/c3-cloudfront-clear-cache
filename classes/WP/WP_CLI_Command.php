@@ -67,10 +67,12 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$result = $invalidation_service->invalidate_post_cache( $post );
 		} else {
 			$post_ids = explode( ',', $type );
-			$query = new \WP_Query( [
-				'post__in' => $post_ids,
-			] );
-			$posts = $query->get_posts();
+			$query    = new \WP_Query(
+				array(
+					'post__in' => $post_ids,
+				)
+			);
+			$posts    = $query->get_posts();
 			wp_reset_postdata();
 			$result = $invalidation_service->invalidate_posts_cache( $posts, true );
 		}
