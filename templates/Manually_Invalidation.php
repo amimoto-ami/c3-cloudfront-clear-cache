@@ -12,7 +12,6 @@ if ( ! $options || ! isset( $options[ Constants::DISTRIBUTION_ID ] ) ) {
 }
 ?>
 
-<form method='post' action=''>
 	<table class='wp-list-table widefat plugins' style="margin-bottom: 2rem;">
 		<thead>
 			<tr>
@@ -28,11 +27,25 @@ if ( ! $options || ! isset( $options[ Constants::DISTRIBUTION_ID ] ) ) {
 					<small><?php _e( "Notice: Every page's cache is removed.", $text_domain ); ?></small>
 				</th>
 				<td>
-					<input type='hidden' name='invalidation_target' value='all' />
-					<?php echo wp_nonce_field( Constants::C3_INVALIDATION, Constants::C3_INVALIDATION, true, false ); ?>
-					<?php echo get_submit_button( __( 'Flush All Cache', $text_domain ) ); ?>
+					<form method='post' action=''>
+						<input type='hidden' name='invalidation_target' value='all' />
+						<?php echo wp_nonce_field( Constants::C3_INVALIDATION, Constants::C3_INVALIDATION, true, false ); ?>
+						<?php echo get_submit_button( __( 'Flush All Cache', $text_domain ) ); ?>
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<b><?php _e( 'Flush Cache by Post ids', $text_domain ); ?></b><br/>
+					<small><?php _e( "Provide a post ids like (1,2,3)", $text_domain ); ?></small>
+				</th>
+				<td>
+					<form method='post' action=''>
+						<input name="invalidation_target" placeholder="1,2,3" type="text" />
+						<?php echo wp_nonce_field( Constants::C3_INVALIDATION, Constants::C3_INVALIDATION, true, false ); ?>
+						<?php echo get_submit_button( __( 'Flush Cache', $text_domain ), 'primary large' , 'Submit', false ); ?>
+					</form>
 				</td>
 			</tr>
 		</tbody>
 	</table>
-</form>
