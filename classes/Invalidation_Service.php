@@ -1,5 +1,6 @@
 <?php
 namespace C3_CloudFront_Cache_Controller;
+use C3_CloudFront_Cache_Controller\WP\Post_Service;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -81,14 +82,8 @@ class Invalidation_Service {
 			if ( 'all' === $invalidation_target ) {
 				$result = $this->invalidate_all();
 			} else {
-				$post_ids = explode( ',', $invalidation_target );
-				$query    = new \WP_Query(
-					array(
-						'post__in' => $post_ids,
-					)
-				);
-				$posts    = $query->get_posts();
-				wp_reset_postdata();
+				$post_service = new Post_Service();
+				$posts = $post_service->list_posts_by_ids( explode( ',', $invalidation_target ) );
 				$this->invalidate_posts_cache( $posts, true );
 			}
 		} catch ( \Exception $e ) {

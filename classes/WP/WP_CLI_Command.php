@@ -9,6 +9,7 @@ namespace C3_CloudFront_Cache_Controller\WP;
 use WP_CLI;
 use C3_CloudFront_Cache_Controller\Invalidation_Service;
 use C3_CloudFront_Cache_Controller\Constants;
+use C3_CloudFront_Cache_Controller\WP\Post_Service;
 
 /**
  * WP-CLI Command to control C3 CloudFront Cache Controller Plugins
@@ -66,14 +67,8 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$post   = get_post( $type );
 			$result = $invalidation_service->invalidate_post_cache( $post );
 		} else {
-			$post_ids = explode( ',', $type );
-			$query    = new \WP_Query(
-				array(
-					'post__in' => $post_ids,
-				)
-			);
-			$posts    = $query->get_posts();
-			wp_reset_postdata();
+			$post_service = new Post_Service();
+			$posts = $post_service->list_posts_by_ids( explode( ',', $type ) );
 			$result = $invalidation_service->invalidate_posts_cache( $posts, true );
 		}
 		if ( ! is_wp_error( $result ) ) {
