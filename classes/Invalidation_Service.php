@@ -1,5 +1,6 @@
 <?php
 namespace C3_CloudFront_Cache_Controller;
+use C3_CloudFront_Cache_Controller\WP\Post_Service;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -72,8 +73,19 @@ class Invalidation_Service {
 			return;
 		}
 
+		$invalidation_target = $_POST['invalidation_target'];
+
 		try {
-			$result = $this->invalidate_all();
+			if ( ! isset( $invalidation_target ) ) {
+				throw new \Error( 'invalidation_target is required' );
+			}
+			if ( 'all' === $invalidation_target ) {
+				$result = $this->invalidate_all();
+			} else {
+				$post_service = new Post_Service();
+				$posts = $post_service->list_posts_by_ids( explode( ',', $invalidation_target ) );
+				$this->invalidate_posts_cache( $posts, true );
+			}
 		} catch ( \Exception $e ) {
 			$result = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
 		}
@@ -152,8 +164,8 @@ class Invalidation_Service {
 		$this->invalidate_post_cache( $post );
 	}
 
-	public function invalidate_by_query( $query ) {
-		if ( $this->transient_service->should_regist_cron_job() ) {
+	public function invalidate_by_query( $query, $force = false ) {
+		if ( $this->transient_service->should_regist_cron_job() && false === $force ) {
 			/**
 			 * Just regist a cron job.
 			 */
@@ -180,11 +192,21 @@ class Invalidation_Service {
 	/**
 	 * Invalidate the post's caches
 	 */
-	public function invalidate_post_cache( \WP_Post $post ) {
+	public function invalidate_post_cache( \WP_Post $post, $force = false ) {
 		$home_url = $this->option_service->home_url( '/' );
 		$options  = $this->option_service->get_options();
 		$query    = $this->invalidation_batch->create_batch_by_post( $home_url, $options['distribution_id'], $post );
-		return $this->invalidate_by_query( $query );
+		return $this->invalidate_by_query( $query, $force );
+	}
+
+	/**
+	 * Invalidate the post's caches
+	 */
+	public function invalidate_posts_cache( array $posts = array(), $force = false ) {
+		$home_url = $this->option_service->home_url( '/' );
+		$options  = $this->option_service->get_options();
+		$query    = $this->invalidation_batch->create_batch_by_posts( $home_url, $options['distribution_id'], $posts );
+		return $this->invalidate_by_query( $query, $force );
 	}
 
 	/**
@@ -193,7 +215,7 @@ class Invalidation_Service {
 	public function invalidate_all() {
 		$options = $this->option_service->get_options();
 		$query   = $this->invalidation_batch->create_batch_for_all( $options['distribution_id'] );
-		return $this->invalidate_by_query( $query );
+		return $this->invalidate_by_query( $query, true );
 	}
 
 	public function list_recent_invalidation_logs() {

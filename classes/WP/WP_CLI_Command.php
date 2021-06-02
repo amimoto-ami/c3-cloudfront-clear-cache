@@ -9,6 +9,7 @@ namespace C3_CloudFront_Cache_Controller\WP;
 use WP_CLI;
 use C3_CloudFront_Cache_Controller\Invalidation_Service;
 use C3_CloudFront_Cache_Controller\Constants;
+use C3_CloudFront_Cache_Controller\WP\Post_Service;
 
 /**
  * WP-CLI Command to control C3 CloudFront Cache Controller Plugins
@@ -29,7 +30,9 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp c3 flush <post_id>       : Flush <post_id>'s CloudFront Cache.
+	 *     wp c3 flush <post_id>       : Flush cache of the post (ID=<post_id>).
+	 *     wp c3 flush 1               : Flush cache of the post (ID=1).
+	 *     wp c3 flush 1,2,4           : Flush cache of these posts (ID=1,2,4).
 	 *     wp c3 flush all             : Flush All CloudFront Cache.
 	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
 	 *
@@ -50,6 +53,12 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			WP_CLI::line( 'Force Clear Mode' );
 			add_filter( 'c3_invalidation_flag', '__return_false' );
 		}
+
+		if ( ! isset( $type ) ) {
+			WP_CLI::error( 'Please input parameter:post_id(numeric) or all' );
+			exit;
+		}
+
 		if ( 'all' === $type ) {
 			WP_CLI::line( 'Clear Item = All' );
 			$result = $invalidation_service->invalidate_all();
@@ -58,8 +67,9 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$post   = get_post( $type );
 			$result = $invalidation_service->invalidate_post_cache( $post );
 		} else {
-			WP_CLI::error( 'Please input parameter:post_id(numeric) or all' );
-			exit;
+			$post_service = new Post_Service();
+			$posts = $post_service->list_posts_by_ids( explode( ',', $type ) );
+			$result = $invalidation_service->invalidate_posts_cache( $posts, true );
 		}
 		if ( ! is_wp_error( $result ) ) {
 			WP_CLI::success( 'Create Invalidation Request. Please wait few minutes to finished clear CloudFront Cache.' );
