@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 5.7.2
-Stable tag: 6.0.0
+Stable tag: 6.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,14 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+== 6.1.0 ==
+* [Update] Flush cache by post_ids
+
+== 6.0.0 ==
+* [Breaking Change] Re-write entire code
+* [Update] Add `c3_log_cron_invalidation_task` filter to show cron job Logs
+* [Update] Add `c3_aws_sdk_path` filter to change or remove bundled AWS SDK path
 
 == 5.5.1 ==
 * [Update] Replace the top level menu with a Settings submenu
@@ -244,5 +252,5 @@ add_filter( 'c3_select_aws_sdk', function() {
 
 == Upgrade Notice ==
 
-= 5.5.0 =
-* [Update] Can use defined variables for AWS Credentials
+== 6.1.0 ==
+* [Update] Flush cache by post_ids
