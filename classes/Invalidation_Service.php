@@ -193,6 +193,10 @@ class Invalidation_Service {
 		);
 	}
 
+	/**
+	 * distribution_id must be provided to send the invalidation request.
+	 * So if the option is empty, we must return WP_Error and terminate the process
+	 */
 	public function get_plugin_option() {
 		$options  = $this->option_service->get_options();
 		if ( ! isset( $options[ 'distribution_id' ] ) || empty( $options[ 'distribution_id' ] ) ) {
@@ -201,7 +205,10 @@ class Invalidation_Service {
 		return $options;
 	}
 
-	public function create_invalidation_batch( array $posts = array(), $force = false ) {
+	/**
+	 * Create invalidation batch query for post
+	 */
+	public function create_post_invalidation_batch( array $posts = array(), $force = false ) {
 		$home_url = $this->option_service->home_url( '/' );
 		$options  = $this->get_plugin_option();
 		if ( is_wp_error( $options ) ) {
@@ -215,7 +222,7 @@ class Invalidation_Service {
 	 * Invalidate the post's caches
 	 */
 	public function invalidate_post_cache( \WP_Post $post, $force = false ) {
-		$query = $this->create_invalidation_batch( [ $post ], $force );
+		$query = $this->create_post_invalidation_batch( [ $post ], $force );
 		return $this->invalidate_by_query( $query, $force );
 	}
 
@@ -223,7 +230,7 @@ class Invalidation_Service {
 	 * Invalidate the post's caches
 	 */
 	public function invalidate_posts_cache( array $posts = array(), $force = false ) {
-		$query = $this->create_invalidation_batch( $posts, $force );
+		$query = $this->create_post_invalidation_batch( $posts, $force );
 		return $this->invalidate_by_query( $query, $force );
 	}
 
