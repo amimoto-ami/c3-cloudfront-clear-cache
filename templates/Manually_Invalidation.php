@@ -41,7 +41,7 @@ if ( ! $options || ! isset( $options[ Constants::DISTRIBUTION_ID ] ) ) {
 				</th>
 				<td>
 					<form method='post' action=''>
-						<input name="invalidation_target" placeholder="1,2,3" type="text" />
+						<input name="invalidation_target" placeholder="1,2,3" type="text" required="required" />
 						<?php echo wp_nonce_field( Constants::C3_INVALIDATION, Constants::C3_INVALIDATION, true, false ); ?>
 						<?php echo get_submit_button( __( 'Flush Cache', $text_domain ), 'primary large', 'Submit', false ); ?>
 					</form>
