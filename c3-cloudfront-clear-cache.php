@@ -11,9 +11,6 @@
  * @package c3-cloudfront-clear-cache
  */
 
-define( 'C3_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'C3_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'C3_PLUGIN_ROOT', __FILE__ );
 require_once( __DIR__ . '/loader.php' );
 
 use C3_CloudFront_Cache_Controller\WP;
