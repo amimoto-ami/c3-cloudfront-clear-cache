@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 5.7.2
-Stable tag: 6.1.0
+Stable tag: 6.1.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+== 6.1.0 ==
+* [Fix] Plugin deactivation issue
 
 == 6.1.0 ==
 * [Update] Flush cache by post_ids
@@ -253,4 +256,4 @@ add_filter( 'c3_select_aws_sdk', function() {
 == Upgrade Notice ==
 
 == 6.1.0 ==
-* [Update] Flush cache by post_ids
+* [Fix] Plugin deactivation issue
