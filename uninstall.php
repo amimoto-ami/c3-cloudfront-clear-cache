@@ -1,5 +1,6 @@
 <?php
 
+require_once( __DIR__ . '/loader.php' );
 use C3_CloudFront_Cache_Controller\WP;
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	die;

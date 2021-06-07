@@ -39,6 +39,7 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 					name="<?php echo isset( $env_distribution_id ) ? Constants::OPTION_NAME . '[dummy]' : Constants::OPTION_NAME . '[' . Constants::DISTRIBUTION_ID . ']'; ?>"
 					value="<?php echo esc_attr( isset( $env_distribution_id ) ? $env_distribution_id : $distribution_id ); ?>"
 					<?php echo isset( $env_distribution_id ) ? 'disabled' : ''; ?>
+					<?php echo isset( $env_distribution_id ) ? '': 'required="required"'; ?>
 				/>
 				<?php
 				if ( isset( $env_distribution_id ) ) {

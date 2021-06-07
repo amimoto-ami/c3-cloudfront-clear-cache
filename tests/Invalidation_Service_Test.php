@@ -1,8 +1,66 @@
 <?php
 namespace C3_CloudFront_Cache_Controller\Test;
 use C3_CloudFront_Cache_Controller\Invalidation_Service;
+use C3_CloudFront_Cache_Controller\Constants;
 
 class Invalidation_Service_Test extends \WP_UnitTestCase {
+    /**
+     * @dataProvider provide_test_get_plugin_option_case
+     */
+    function test_get_plugin_option( $options, $expected ) {
+		update_option( Constants::OPTION_NAME, $options );
+        $service = new Invalidation_Service();
+        $result = $service->get_plugin_option();
+        delete_option( Constants::OPTION_NAME );
+        $this->assertEquals( $expected, $result );
+    }
+    function provide_test_get_plugin_option_case() {
+        $error = new \WP_Error( 'C3 Invalidation Error', 'distribution_id is required. Please update setting or define a C3_DISTRIBUTION_ID on wp-config.php');
+        return [
+            [
+                array(
+                    'distribution_id' => 'EXXX'
+                ),
+                array(
+                    'distribution_id' => 'EXXX',
+                    'access_key' => null,
+                    'secret_key' => null
+                )
+            ],
+            [
+                array(
+                    'distribution_id' => 'EXXX',
+                    'access_key' => 'attribute1',
+                    'secret_key' => 'attribute2',
+                ),
+                array(
+                    'distribution_id' => 'EXXX',
+                    'access_key' => 'attribute1',
+                    'secret_key' => 'attribute2',
+                )
+            ],
+            [
+                array(
+                    'access_key' => 'attribute1',
+                    'secret_key' => 'attribute2',
+                ),
+                $error,
+            ],
+            [
+                array(),
+                $error,
+            ]
+        ];
+    }
+
+    function test_invalidate_by_query_should_return_wp_error_when_provide_wp_error() {
+        $service = new Invalidation_Service();
+        $error = new \WP_Error( 'error', 'for unit test' );
+        $result = $service->invalidate_by_query( $error );
+        $this->assertEquals( $error, $result );
+        
+    }
+
     /**
      * @dataProvider provide_should_invalidate_test_case
      */

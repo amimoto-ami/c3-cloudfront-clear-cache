@@ -84,7 +84,7 @@ class Invalidation_Service {
 			} else {
 				$post_service = new Post_Service();
 				$posts = $post_service->list_posts_by_ids( explode( ',', $invalidation_target ) );
-				$this->invalidate_posts_cache( $posts, true );
+				$result = $this->invalidate_posts_cache( $posts, true );
 			}
 		} catch ( \Exception $e ) {
 			$result = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
@@ -165,6 +165,10 @@ class Invalidation_Service {
 	}
 
 	public function invalidate_by_query( $query, $force = false ) {
+		if ( is_wp_error( $query ) ) {
+			return $query;
+		}
+
 		if ( $this->transient_service->should_regist_cron_job() && false === $force ) {
 			/**
 			 * Just regist a cron job.
@@ -190,12 +194,35 @@ class Invalidation_Service {
 	}
 
 	/**
+	 * distribution_id must be provided to send the invalidation request.
+	 * So if the option is empty, we must return WP_Error and terminate the process
+	 */
+	public function get_plugin_option() {
+		$options  = $this->option_service->get_options();
+		if ( ! isset( $options[ 'distribution_id' ] ) || empty( $options[ 'distribution_id' ] ) ) {
+			return new \WP_Error( 'C3 Invalidation Error', 'distribution_id is required. Please update setting or define a C3_DISTRIBUTION_ID on wp-config.php');
+		}
+		return $options;
+	}
+
+	/**
+	 * Create invalidation batch query for post
+	 */
+	public function create_post_invalidation_batch( array $posts = array(), $force = false ) {
+		$home_url = $this->option_service->home_url( '/' );
+		$options  = $this->get_plugin_option();
+		if ( is_wp_error( $options ) ) {
+			return $options;
+		}
+		$query    = $this->invalidation_batch->create_batch_by_post( $home_url, $options['distribution_id'], $posts );
+		return $query;
+	}
+
+	/**
 	 * Invalidate the post's caches
 	 */
 	public function invalidate_post_cache( \WP_Post $post, $force = false ) {
-		$home_url = $this->option_service->home_url( '/' );
-		$options  = $this->option_service->get_options();
-		$query    = $this->invalidation_batch->create_batch_by_post( $home_url, $options['distribution_id'], $post );
+		$query = $this->create_post_invalidation_batch( [ $post ], $force );
 		return $this->invalidate_by_query( $query, $force );
 	}
 
@@ -203,9 +230,7 @@ class Invalidation_Service {
 	 * Invalidate the post's caches
 	 */
 	public function invalidate_posts_cache( array $posts = array(), $force = false ) {
-		$home_url = $this->option_service->home_url( '/' );
-		$options  = $this->option_service->get_options();
-		$query    = $this->invalidation_batch->create_batch_by_posts( $home_url, $options['distribution_id'], $posts );
+		$query = $this->create_post_invalidation_batch( $posts, $force );
 		return $this->invalidate_by_query( $query, $force );
 	}
 
@@ -213,7 +238,10 @@ class Invalidation_Service {
 	 * Invalidate all cache
 	 */
 	public function invalidate_all() {
-		$options = $this->option_service->get_options();
+		$options  = $this->get_plugin_option();
+		if ( is_wp_error( $options ) ) {
+			return $options;
+		}
 		$query   = $this->invalidation_batch->create_batch_for_all( $options['distribution_id'] );
 		return $this->invalidate_by_query( $query, true );
 	}
