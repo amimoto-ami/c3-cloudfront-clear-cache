@@ -2,6 +2,9 @@
 namespace C3_CloudFront_Cache_Controller\Test;
 use C3_CloudFront_Cache_Controller\Invalidation_Service;
 use C3_CloudFront_Cache_Controller\Constants;
+use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Options;
+use C3_CloudFront_Cache_Controller\WP\Options_Service;
+
 
 class Invalidation_Service_Test extends \WP_UnitTestCase {
     /**
@@ -169,5 +172,23 @@ class Invalidation_Service_Test extends \WP_UnitTestCase {
                 )
             ]
         );
+    }
+
+    public function test_create_post_invalidation_batch() {
+        $post = $this->factory->post->create_and_get( array(
+            'post_status' => 'publish',
+            'post_name' => 'hello-world',
+        ) );
+        $service = new Invalidation_Service(
+            new Options_Service(
+                new Options()
+            )
+        );
+        $result = $service->create_post_invalidation_batch( [$post] );
+        $this->assertEquals( $result[ 'DistributionId' ], 'DIST_ID' );
+        $this->assertEquals( $result[ 'InvalidationBatch' ] ['Paths' ], array(
+            'Items' => [ '/' ],
+            'Quantity' => 1
+        ));
     }
 }

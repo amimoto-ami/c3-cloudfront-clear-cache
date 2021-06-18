@@ -83,8 +83,8 @@ class Invalidation_Service {
 				$result = $this->invalidate_all();
 			} else {
 				$post_service = new Post_Service();
-				$posts = $post_service->list_posts_by_ids( explode( ',', $invalidation_target ) );
-				$result = $this->invalidate_posts_cache( $posts, true );
+				$posts        = $post_service->list_posts_by_ids( explode( ',', $invalidation_target ) );
+				$result       = $this->invalidate_posts_cache( $posts, true );
 			}
 		} catch ( \Exception $e ) {
 			$result = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
@@ -198,9 +198,9 @@ class Invalidation_Service {
 	 * So if the option is empty, we must return WP_Error and terminate the process
 	 */
 	public function get_plugin_option() {
-		$options  = $this->option_service->get_options();
-		if ( ! isset( $options[ 'distribution_id' ] ) || empty( $options[ 'distribution_id' ] ) ) {
-			return new \WP_Error( 'C3 Invalidation Error', 'distribution_id is required. Please update setting or define a C3_DISTRIBUTION_ID on wp-config.php');
+		$options = $this->option_service->get_options();
+		if ( ! isset( $options['distribution_id'] ) || empty( $options['distribution_id'] ) ) {
+			return new \WP_Error( 'C3 Invalidation Error', 'distribution_id is required. Please update setting or define a C3_DISTRIBUTION_ID on wp-config.php' );
 		}
 		return $options;
 	}
@@ -214,7 +214,7 @@ class Invalidation_Service {
 		if ( is_wp_error( $options ) ) {
 			return $options;
 		}
-		$query    = $this->invalidation_batch->create_batch_by_post( $home_url, $options['distribution_id'], $posts );
+		$query = $this->invalidation_batch->create_batch_by_posts( $home_url, $options['distribution_id'], $posts );
 		return $query;
 	}
 
@@ -222,7 +222,7 @@ class Invalidation_Service {
 	 * Invalidate the post's caches
 	 */
 	public function invalidate_post_cache( \WP_Post $post, $force = false ) {
-		$query = $this->create_post_invalidation_batch( [ $post ], $force );
+		$query = $this->create_post_invalidation_batch( array( $post ), $force );
 		return $this->invalidate_by_query( $query, $force );
 	}
 
@@ -238,11 +238,11 @@ class Invalidation_Service {
 	 * Invalidate all cache
 	 */
 	public function invalidate_all() {
-		$options  = $this->get_plugin_option();
+		$options = $this->get_plugin_option();
 		if ( is_wp_error( $options ) ) {
 			return $options;
 		}
-		$query   = $this->invalidation_batch->create_batch_for_all( $options['distribution_id'] );
+		$query = $this->invalidation_batch->create_batch_for_all( $options['distribution_id'] );
 		return $this->invalidate_by_query( $query, true );
 	}
 
