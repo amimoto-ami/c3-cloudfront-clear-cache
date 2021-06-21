@@ -221,7 +221,10 @@ class Invalidation_Service {
 	/**
 	 * Invalidate the post's caches
 	 */
-	public function invalidate_post_cache( \WP_Post $post, $force = false ) {
+	public function invalidate_post_cache( \WP_Post $post = null, $force = false ) {
+		if ( ! isset( $post ) ) {
+			return new \WP_Error( 'C3 Invalidation Error', 'No such post' );
+		}
 		$query = $this->create_post_invalidation_batch( array( $post ), $force );
 		return $this->invalidate_by_query( $query, $force );
 	}

@@ -191,4 +191,14 @@ class Invalidation_Service_Test extends \WP_UnitTestCase {
             'Quantity' => 1
         ));
     }
+
+    public function test_invalidate_post_cache_error_case() {
+        $service = new Invalidation_Service(
+            new Options_Service(
+                new Options()
+            )
+        );
+        $result = $service->invalidate_post_cache( null );
+        $this->assertEquals( is_wp_error( $result ), true );
+    }
 }

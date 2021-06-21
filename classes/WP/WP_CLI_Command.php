@@ -71,7 +71,9 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$posts        = $post_service->list_posts_by_ids( explode( ',', $type ) );
 			$result       = $invalidation_service->invalidate_posts_cache( $posts, true );
 		}
-		if ( ! is_wp_error( $result ) ) {
+		if ( is_wp_error( $result ) ) {
+			WP_CLI::error( $result->get_error_message() );
+		} else {
 			WP_CLI::success( 'Create Invalidation Request. Please wait few minutes to finished clear CloudFront Cache.' );
 		}
 	}
