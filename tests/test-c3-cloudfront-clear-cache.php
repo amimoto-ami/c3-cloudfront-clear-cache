@@ -4,10 +4,6 @@ use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Environment;
 
 class Example_Test extends \WP_UnitTestCase {
-	public function test_case() {
-		$this->assertEquals(1, 1);
-	}
-
 
 	public function test_return_null_array_when_the_env_is_amimoto_managed() {
 		$target = new WP\Options_Service(

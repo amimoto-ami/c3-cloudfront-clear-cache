@@ -24,8 +24,8 @@ class Fixtures {
 		$this->hook_service->add_action( 'plugins_loaded', array( $this, 'set_avoid_cache_cookie' ) );
 		$this->hook_service->add_action( 'wp_logout', array( $this, 'unset_avoid_cache_cookie' ) );
 
-		if ( ! defined( 'C3_AVOID_CACHE_COOKEY_KEY' ) ) {
-			define( 'C3_AVOID_CACHE_COOKEY_KEY', 'wordpress_loginuser_last_visit' );
+		if ( ! defined( 'C3_AVOID_CACHE_COOKIE_KEY' ) ) {
+			define( 'C3_AVOID_CACHE_COOKIE_KEY', 'wordpress_loginuser_last_visit' );
 		}
 	}
 
@@ -54,7 +54,7 @@ class Fixtures {
 			// Thanks for Human Made team!
 			// @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
 			setcookie(
-				C3_AVOID_CACHE_COOKEY_KEY,
+				C3_AVOID_CACHE_COOKIE_KEY,
 				time(),
 				array(
 					'expires'  => 0,
@@ -71,14 +71,14 @@ class Fixtures {
 		// Thanks for Human Made team!
 		// @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
 		setcookie(
-			C3_AVOID_CACHE_COOKEY_KEY,
-			time() - 1800,
+			C3_AVOID_CACHE_COOKIE_KEY,
+			'', 
 			array(
-				'expires'  => 0,
+				'expires' => time() - 1800,
 				'samesite' => 'None',
 				'secure'   => true,
-				'path'     => $cookie_path,
-			)
+				'path'     => $cookie_path
+		 	)
 		);
 	}
 }

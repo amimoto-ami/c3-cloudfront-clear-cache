@@ -30,8 +30,7 @@ function c3_init() {
 	new C3_CloudFront_Cache_Controller\Views\Settings();
 	new WP\Fixtures();
 }
-
-add_action( 'plugins_loaded', 'c3_init' );
+c3_init();
 
 // WP-CLI
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
