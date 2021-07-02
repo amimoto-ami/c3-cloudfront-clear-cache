@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Fixtures {
 	private $hook_service;
+	private $cookie_key = 'wordpress_loginuser_last_visit';
 
 	function __construct( ...$args ) {
 		if ( $args && ! empty( $args ) ) {
@@ -24,8 +25,8 @@ class Fixtures {
 		$this->hook_service->add_action( 'plugins_loaded', array( $this, 'set_avoid_cache_cookie' ) );
 		$this->hook_service->add_action( 'wp_logout', array( $this, 'unset_avoid_cache_cookie' ) );
 
-		if ( ! defined( 'C3_AVOID_CACHE_COOKIE_KEY' ) ) {
-			define( 'C3_AVOID_CACHE_COOKIE_KEY', 'wordpress_loginuser_last_visit' );
+		if ( defined( 'C3_AVOID_CACHE_COOKIE_KEY' ) && C3_AVOID_CACHE_COOKIE_KEY ) {
+			$this->cookie_key = C3_AVOID_CACHE_COOKIE_KEY;
 		}
 	}
 
@@ -48,37 +49,32 @@ class Fixtures {
 		return $is_mobile;
 	}
 
+	private function set_cookie( $key, $value, $expires = 0 ) {
+		$cookie_path = preg_replace( '#^https?://[^/]+/?#', '/', home_url( '/' ) );
+		// Thanks for Human Made team!
+		// @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
+		if ( version_compare( '7.3.0', phpversion(), '>=' ) ) {
+			// PHP 7.3.0 or higher
+			$args = array(
+				'expires'  => $expires,
+				'samesite' => 'None',
+				'secure'   => true,
+				'path'     => $cookie_path,
+			);
+			setcookie( $key, $value, $args );
+		} else {
+			// Less than PHP 7.3.0
+			setcookie( $key, $value, $expires, $cookie_path, '', true, true ); 
+		}
+	}
+
 	public function set_avoid_cache_cookie() {
 		if ( is_user_logged_in() ) {
-			$cookie_path = preg_replace( '#^https?://[^/]+/?#', '/', home_url( '/' ) );
-			// Thanks for Human Made team!
-			// @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
-			setcookie(
-				C3_AVOID_CACHE_COOKIE_KEY,
-				time(),
-				array(
-					'expires'  => 0,
-					'samesite' => 'None',
-					'secure'   => true,
-					'path'     => $cookie_path,
-				)
-			);
+			$this->set_cookie( $this->cookie_key, time(), 0 );
 		}
 	}
 
 	public function unset_avoid_cache_cookie() {
-		$cookie_path = preg_replace( '#^https?://[^/]+/?#', '/', home_url( '/' ) );
-		// Thanks for Human Made team!
-		// @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
-		setcookie(
-			C3_AVOID_CACHE_COOKIE_KEY,
-			'', 
-			array(
-				'expires' => time() - 1800,
-				'samesite' => 'None',
-				'secure'   => true,
-				'path'     => $cookie_path
-		 	)
-		);
+		$this->set_cookie( $this->cookie_key, '', time() - 1800 );
 	}
 }
