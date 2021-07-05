@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Plugin Name: C3 Cloudfront Cache Controller
  * Version: 6.1.1
  * Plugin URI:https://github.com/amimoto-ami/c3-cloudfront-clear-cache
@@ -8,15 +8,21 @@
  * Author URI: https://wp-kyoto.net/
  * Requires PHP: 7.0
  * Text Domain: c3-cloudfront-clear-cache
+ *
  * @package c3-cloudfront-clear-cache
  */
 
+/**
+ * Load the class loader
+ */
 require_once( __DIR__ . '/loader.php' );
 
 use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\AWS;
 
-// fixtures
+/**
+ * Load AWS SDK and classes
+ */
 function c3_init() {
 	if ( ! class_exists( '\\Aws\\CloudFront\\CloudFrontClient' ) ) {
 		$aws_sdk_path = apply_filters( 'c3_aws_sdk_path', dirname( __FILE__ ) . '/libs/aws.phar' );
@@ -32,7 +38,9 @@ function c3_init() {
 }
 c3_init();
 
-// WP-CLI
+/**
+ * For WP-CLI.
+ */
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command( 'c3', 'C3_CloudFront_Cache_Controller\\WP\\WP_CLI_Command' );
 }
@@ -40,9 +48,23 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 /**
  * Backward compatibility
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
  */
 class CloudFront_Clear_Cache {
+	/**
+	 * Class instance
+	 *
+	 * @var CloudFront_Clear_Cache
+	 */
 	private static $instance;
+
+	/**
+	 * Create instance
+	 *
+	 * @return CloudFront_Clear_Cache
+	 */
 	public static function get_instance() {
 		if ( ! isset( self::$instance ) ) {
 			$c              = __CLASS__;
@@ -51,6 +73,9 @@ class CloudFront_Clear_Cache {
 		return self::$instance;
 	}
 
+	/**
+	 * Run invalidation all
+	 */
 	public function c3_invalidation() {
 		$service = new C3_CloudFront_Cache_Controller\Invalidation_Service();
 		return $service->invalidate_all();

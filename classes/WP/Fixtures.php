@@ -2,7 +2,7 @@
 namespace C3_CloudFront_Cache_Controller\WP;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 class Fixtures {
@@ -72,13 +72,13 @@ class Fixtures {
 		// @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
 		setcookie(
 			C3_AVOID_CACHE_COOKIE_KEY,
-			'', 
+			'',
 			array(
-				'expires' => time() - 1800,
+				'expires'  => time() - 1800,
 				'samesite' => 'None',
 				'secure'   => true,
-				'path'     => $cookie_path
-		 	)
+				'path'     => $cookie_path,
+			)
 		);
 	}
 }

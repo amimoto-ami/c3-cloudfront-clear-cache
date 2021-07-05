@@ -1,14 +1,33 @@
 <?php
+/**
+ * Define a plugin constants
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ **/
+
 namespace C3_CloudFront_Cache_Controller;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
+/**
+ * Class of constants
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Constants {
-	// Panel key
+	/**
+	 * Panel key
+	 */
 	const MENU_ID = 'c3-admin-menu';
 
-	// Action key
+	/**
+	 * Action key
+	 */
 	const AUTHENTICATION  = 'c3_auth';
 	const C3_INVALIDATION = 'c3_invalidation';
 	const OPTION_NAME     = 'c3_settings';
@@ -16,6 +35,7 @@ class Constants {
 	const DISTRIBUTION_ID = 'distribution_id';
 	const ACCESS_KEY      = 'access_key';
 	const SECRET_KEY      = 'secret_key';
+
 	/**
 	 * Get Plugin text_domain
 	 *

@@ -1,14 +1,50 @@
 <?php
+/**
+ * Cron service
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Cron service
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Cron_Service {
+	/**
+	 * Hook
+	 *
+	 * @var WP\Hooks
+	 */
 	private $hook_service;
+
+	/**
+	 * WP Transient service
+	 *
+	 * @var WP\Transient_Service
+	 */
 	private $transient_service;
+
+	/**
+	 * Debug flag
+	 *
+	 * @var boolean
+	 */
 	private $debug;
 
+	/**
+	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
+	 */
 	function __construct( ...$args ) {
 		$this->hook_service      = new WP\Hooks();
 		$this->transient_service = new WP\Transient_Service();
@@ -35,6 +71,11 @@ class Cron_Service {
 		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_invalidation_task', false );
 	}
 
+	/**
+	 * Run the schedule invalidation
+	 *
+	 * @return boolean
+	 */
 	public function run_schedule_invalidate() {
 		if ( $this->debug ) {
 			error_log( '===== C3 Invalidation cron is started ===' );
@@ -63,7 +104,10 @@ class Cron_Service {
 		if ( $this->debug ) {
 			error_log( print_r( $query, true ) );
 		}
-		// Invalidation
+
+		/**
+		 * Execute the invalidation.
+		 */
 		$result = $this->cf_service->create_invalidation( $query );
 		if ( $this->debug ) {
 			error_log( print_r( $result, true ) );

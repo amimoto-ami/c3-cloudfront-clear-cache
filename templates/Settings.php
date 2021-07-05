@@ -6,6 +6,7 @@
  * @since 6.1.1
  * @package C3_CloudFront_Cache_Controller
  **/
+
 namespace C3_CloudFront_Cache_Controller\Templates;
 
 use C3_CloudFront_Cache_Controller\Constants;

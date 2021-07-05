@@ -32,9 +32,19 @@
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-            <property name="prefixes" type="array" value="C3_CloudFront_Cache_Controller"/>
+            <property name="prefixes" type="array">
+                <element key="class" value="C3_CloudFront_Cache_Controller" />
+                <element key="const" value="C3" />
+            </property>
         </properties>
         <exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound" />
+        <exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound" />
+        <exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed" />
+        <exclude-pattern>*/templates/*</exclude-pattern>
+        <exclude-pattern>*/c3-cloudfront-clear-cache.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound">
+        <exclude-pattern>*/loader.php</exclude-pattern>
     </rule>
     <rule ref="WordPress.WP.I18n">
         <properties>
@@ -42,9 +52,6 @@
             <property name="text_domain" type="array" value="c3-cloudfront-clear-cache"/>
         </properties>
         <exclude name="WordPress.WP.I18n.NonSingularStringLiteralDomain" />
-    </rule>
-    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
-        <exclude-pattern>*/templates/*</exclude-pattern>
     </rule>
     <rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
         <properties>

@@ -1,7 +1,7 @@
 <?php
 namespace C3_CloudFront_Cache_Controller\WP;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 use C3_CloudFront_Cache_Controller\AWS;

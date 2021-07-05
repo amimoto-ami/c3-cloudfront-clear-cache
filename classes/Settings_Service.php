@@ -1,20 +1,60 @@
 <?php
+/**
+ * Manage the plugin settings
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 use C3_CloudFront_Cache_Controller\AWS;
 use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\Constants;
 
+/**
+ * Setting service
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Settings_Service {
+	/**
+	 * Env class
+	 *
+	 * @var WP\Environment
+	 */
 	private $env;
+
+	/**
+	 * Option service
+	 *
+	 * @var WP\Options_service
+	 */
 	private $options_service;
+
+	/**
+	 * Hook
+	 *
+	 * @var WP\Hooks
+	 */
 	private $hook_service;
+
+	/**
+	 * CloudFront service
+	 *
+	 * @var AWS\CloudFront_Service
+	 */
 	private $cf_service;
+
 	/**
 	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
 	 */
 	function __construct( ...$args ) {
 		$this->hook_service    = new WP\Hooks();
@@ -39,17 +79,22 @@ class Settings_Service {
 
 	/**
 	 * Test the requested parameter and save it
+	 *
+	 * @param string $distribution_id CloudFront distribution id.
+	 * @param string $access_key AWS access key id.
+	 * @param string $secret_key AWS secret access key id.
+	 * @throws \WP_Error If no distribution id provided, should throw error.
 	 */
 	public function update_options( string $distribution_id, string $access_key = null, string $secret_key = null ) {
-		// null check
+		// Null check.
 		if ( ! $distribution_id ) {
 			throw new \WP_Error( 'distribution id is required' );
 		}
 
-		// CloudFront API call
+		// CloudFront API call.
 		$this->cf_service->try_to_call_aws_api( $distribution_id, $access_key, $secret_key );
 
-		// Save
+		// Save.
 		$result = $this->options_service->update_options( $distribution_id, $access_key, $secret_key );
 		return $result;
 	}

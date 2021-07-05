@@ -2,7 +2,7 @@
 
 namespace C3_CloudFront_Cache_Controller\AWS;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 class Invalidation_Batch {

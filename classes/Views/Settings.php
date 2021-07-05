@@ -1,13 +1,38 @@
 <?php
+/**
+ * Setting page view service
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller\Views;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\Constants;
 
+/**
+ * Setting page class
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Settings {
+	/**
+	 * Hook
+	 *
+	 * @var WP\Hooks
+	 */
+	private $hook_service;
 
+	/**
+	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
+	 */
 	function __construct( ...$args ) {
 		$this->hook_service = new WP\Hooks();
 
@@ -29,12 +54,15 @@ class Settings {
 			}
 		);
 		/**
-		 * Backward compatibility for AMIMOTO Dashboard plugin
+		 * Backward compatibility for AMIMOTO Dashboard plugin.
 		 */
 		$this->hook_service->add_filter( 'amimoto_show_c3_setting_form', '__return_false' );
 		$this->hook_service->add_filter( 'amimoto_show_invalidation_form', '__return_false' );
 	}
 
+	/**
+	 * Create the plugin option page
+	 */
 	public function create_options_page() {
 		add_options_page(
 			__( 'CloudFront Settings', Constants::text_domain() ),
@@ -57,6 +85,11 @@ class Settings {
 		);
 	}
 
+	/**
+	 * Filter the saving option's request
+	 *
+	 * @param mixed $args form parameter.
+	 */
 	function filter_and_escape( $args ) {
 		$allow_keys = array(
 			Constants::DISTRIBUTION_ID,
