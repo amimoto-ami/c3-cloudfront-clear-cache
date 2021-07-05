@@ -1,6 +1,5 @@
 name: Test plugin
-on:
-  push
+on: [push, pull_request]
 
 jobs:
   tag:
@@ -54,6 +53,13 @@ jobs:
       - name: Install phpunit global
         run: |
           composer global require "phpunit/phpunit=5.7.*|6.*.*|7.*.*"
+      
+      - name: Coding Style check
+        run: |
+          composer lint
+
+      - name: Run PHP Unit
+        run: |
           phpunit --version
 
       - name: Cache composer packages
