@@ -109,4 +109,9 @@ class Environment {
 		return null;
 	}
 
+	public function is_supported_version( string $supported_version, $version = null ) {
+		if ( ! isset( $version ) ) $version = phpversion();
+		return version_compare( $supported_version, $version, '<=' );
+	}
+
 }

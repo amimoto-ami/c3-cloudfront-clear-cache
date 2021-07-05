@@ -21,6 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Fixtures {
 	/**
+	 * Env class
+	 *
+	 * @var Environment
+	 */
+	private $env;
+
+	/**
 	 * Hook
 	 *
 	 * @var Hooks
@@ -45,11 +52,16 @@ class Fixtures {
 			foreach ( $args as $key => $value ) {
 				if ( $value instanceof Hooks ) {
 					$this->hook_service = $value;
+				} elseif ( $value instanceof Environment ) {
+					$this->env = $value;
 				}
 			}
 		}
 		if ( ! $this->hook_service ) {
 			$this->hook_service = new Hooks();
+		}
+		if ( ! $this->env ) {
+			$this->env = new Environment();
 		}
 
 		$this->hook_service->add_filter( 'wp_is_mobile', array( $this, 'cloudfront_is_mobile' ) );
@@ -96,7 +108,7 @@ class Fixtures {
 		 *
 		 * @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
 		 */
-		if ( version_compare( '7.3.0', phpversion(), '>=' ) ) {
+		if ( $this->env->is_supported_version( '7.3.0' , phpversion() ) ) {
 			// PHP 7.3.0 or higher.
 			$args = array(
 				'expires'  => $expires,
