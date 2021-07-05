@@ -1,17 +1,65 @@
 <?php
+/**
+ * Invalidation execution service
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller;
 use C3_CloudFront_Cache_Controller\WP\Post_Service;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Invalidation service
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Invalidation_Service {
+	/**
+	 * Hook service
+	 *
+	 * @var WP\Hook_Service
+	 */
 	private $hook_service;
+
+	/**
+	 * WP Options serivce
+	 *
+	 * @var WP\Options_Service
+	 */
 	private $option_service;
+
+	/**
+	 * Transient service.
+	 *
+	 * @var AWS\Transient_Service
+	 */
 	private $transient_service;
+
+	/**
+	 * Invalidation batch service.
+	 *
+	 * @var AWS\Invalidation_Batch_Service
+	 */
 	private $invalidation_batch;
+
+	/**
+	 * Debug flag
+	 *
+	 * @var boolean
+	 */
 	private $debug;
 
+	/**
+	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
+	 */
 	function __construct( ...$args ) {
 		$this->hook_service       = new WP\Hooks();
 		$this->option_service     = new WP\Options_Service();
@@ -58,6 +106,8 @@ class Invalidation_Service {
 
 	/**
 	 * Invalidate all cache manually
+	 *
+	 * @throws \Error Failed to invalidate.
 	 */
 	public function invalidate_manually() {
 		if ( empty( $_POST ) ) {
@@ -103,7 +153,8 @@ class Invalidation_Service {
 	/**
 	 * Register cron event to send the overflowed invalidation paths
 	 *
-	 * @return boolean - If true, cron has been scheduled
+	 * @param mixed $query Invalidation query.
+	 * @return boolean If true, cron has been scheduled.
 	 */
 	public function register_cron_event( $query ) {
 		if ( $this->debug ) {
@@ -139,6 +190,9 @@ class Invalidation_Service {
 
 	/**
 	 * Check the post status to run invalidation or not.
+	 *
+	 * @param string $new_status The post's new status.
+	 * @param string $old_status The post's old status.
 	 */
 	public function should_invalidate( $new_status, $old_status ) {
 		if ( 'publish' === $new_status ) {
@@ -156,6 +210,10 @@ class Invalidation_Service {
 
 	/**
 	 * Execute invalidation process when post status has been changed.
+	 *
+	 * @param string   $new_status The post's new status.
+	 * @param string   $old_status The post's old status.
+	 * @param \WP_Post $post The target post object.
 	 */
 	public function invalidate_by_changing_post_status( $new_status, $old_status, $post ) {
 		if ( ! $this->should_invalidate( $new_status, $old_status ) ) {
@@ -164,6 +222,12 @@ class Invalidation_Service {
 		$this->invalidate_post_cache( $post );
 	}
 
+	/**
+	 * Execute invalidation by query
+	 *
+	 * @param mixed   $query Invalidation query.
+	 * @param boolean $force Must run the invalidation.
+	 */
 	public function invalidate_by_query( $query, $force = false ) {
 		if ( is_wp_error( $query ) ) {
 			return $query;
@@ -194,8 +258,8 @@ class Invalidation_Service {
 	}
 
 	/**
-	 * distribution_id must be provided to send the invalidation request.
-	 * So if the option is empty, we must return WP_Error and terminate the process
+	 * The distribution_id must be provided to send the invalidation request.
+	 * So if the option is empty, we must return WP_Error and terminate the process.
 	 */
 	public function get_plugin_option() {
 		$options = $this->option_service->get_options();
@@ -207,6 +271,9 @@ class Invalidation_Service {
 
 	/**
 	 * Create invalidation batch query for post
+	 *
+	 * @param array   $posts The lists of WP_Posts.
+	 * @param boolean $force Must run the invalidation.
 	 */
 	public function create_post_invalidation_batch( array $posts = array(), $force = false ) {
 		$home_url = $this->option_service->home_url( '/' );
@@ -220,6 +287,9 @@ class Invalidation_Service {
 
 	/**
 	 * Invalidate the post's caches
+	 *
+	 * @param \WP_Post $post WP_Posts.
+	 * @param boolean  $force Must run the invalidation.
 	 */
 	public function invalidate_post_cache( \WP_Post $post = null, $force = false ) {
 		if ( ! isset( $post ) ) {
@@ -231,6 +301,9 @@ class Invalidation_Service {
 
 	/**
 	 * Invalidate the post's caches
+	 *
+	 * @param array   $posts The lists of WP_Posts.
+	 * @param boolean $force Must run the invalidation.
 	 */
 	public function invalidate_posts_cache( array $posts = array(), $force = false ) {
 		$query = $this->create_post_invalidation_batch( $posts, $force );
@@ -249,6 +322,9 @@ class Invalidation_Service {
 		return $this->invalidate_by_query( $query, true );
 	}
 
+	/**
+	 * List the invalidation logs
+	 */
 	public function list_recent_invalidation_logs() {
 		$histories = $this->cf_service->list_invalidations();
 		return $histories;

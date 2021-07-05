@@ -27,6 +27,7 @@
         <exclude name="WordPress.Files.FileName" />
         <exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase" />
         <exclude name="WordPress.NamingConventions.ValidHookName" />
+        <exclude name="WordPress.PHP.YodaConditions.NotYoda" />
     </rule>
     <rule ref="WordPress-Docs"/>
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
@@ -42,6 +43,9 @@
         <exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed" />
         <exclude-pattern>*/templates/*</exclude-pattern>
         <exclude-pattern>*/c3-cloudfront-clear-cache.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound">
+        <exclude-pattern>classes/WP/Hooks.php</exclude-pattern>
     </rule>
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound">
         <exclude-pattern>*/loader.php</exclude-pattern>
