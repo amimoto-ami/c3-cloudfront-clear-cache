@@ -34,12 +34,17 @@
             <!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
             <property name="prefixes" type="array" value="C3_CloudFront_Cache_Controller"/>
         </properties>
+        <exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound" />
     </rule>
     <rule ref="WordPress.WP.I18n">
         <properties>
             <!-- Value: replace the text domain used. -->
             <property name="text_domain" type="array" value="c3-cloudfront-clear-cache"/>
         </properties>
+        <exclude name="WordPress.WP.I18n.NonSingularStringLiteralDomain" />
+    </rule>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+        <exclude-pattern>*/templates/*</exclude-pattern>
     </rule>
     <rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
         <properties>
