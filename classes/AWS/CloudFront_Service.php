@@ -1,20 +1,52 @@
 <?php
+/**
+ * CloudFront management service class
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 
 namespace C3_CloudFront_Cache_Controller\AWS;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 use C3_CloudFront_Cache_Controller\WP;
 use Aws\CloudFront\CloudFrontClient;
 
+/**
+ * CloudFront service
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class CloudFront_Service {
-
+	/**
+	 * Env class
+	 *
+	 * @var WP\Environment
+	 */
 	private $env;
+
+	/**
+	 * Option service
+	 *
+	 * @var WP\Options_service
+	 */
 	private $options_service;
+
+	/**
+	 * Hook
+	 *
+	 * @var WP\Hooks
+	 */
 	private $hook_service;
+
 	/**
 	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
 	 */
 	function __construct( ...$args ) {
 		if ( $args && ! empty( $args ) ) {
@@ -39,6 +71,12 @@ class CloudFront_Service {
 		}
 	}
 
+	/**
+	 * Create the AWS SDK credential
+	 *
+	 * @param string $access_key AWS access key id.
+	 * @param string $secret_key AWS secret access key id.
+	 */
 	public function create_credential( string $access_key = null, string $secret_key = null ) {
 		$key    = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
 		$secret = isset( $secret_key ) ? $secret_key : $this->env->get_aws_secret_key();
@@ -51,6 +89,11 @@ class CloudFront_Service {
 	/**
 	 * Check the plugin option parameter.
 	 * Calling GetDistribution API to check these parameters.
+	 *
+	 * @param string $distribution_id CloudFront distribution id.
+	 * @param string $access_key AWS access key id.
+	 * @param string $secret_key AWS secret access key id.
+	 * @throws \WP_Error|\Exception  If AWS API returns any error, should throw it.
 	 */
 	public function try_to_call_aws_api( string $distribution_id, string $access_key = null, string $secret_key = null ) {
 		$credentials = $this->create_credential( $access_key, $secret_key );
@@ -132,6 +175,9 @@ class CloudFront_Service {
 
 	/**
 	 * Get the target CloudFront distribution id
+	 *
+	 * @return string distribution id
+	 * @throws \Exception If no distribution id provided.
 	 */
 	public function get_distribution_id() {
 		/**
@@ -152,6 +198,11 @@ class CloudFront_Service {
 		throw new \Exception( 'distribution_id does not exists.' );
 	}
 
+	/**
+	 * Create Invalidation request to AWS
+	 *
+	 * @param mixed $params Invalidation request.
+	 */
 	public function create_invalidation( $params ) {
 		try {
 			$client = $this->create_client();

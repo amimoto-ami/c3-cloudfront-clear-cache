@@ -1,17 +1,52 @@
 <?php
+/**
+ * WP Options management service
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller\WP;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 use C3_CloudFront_Cache_Controller\AWS;
 
+/**
+ * Options service class
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Options_Service {
+	/**
+	 * Env class
+	 *
+	 * @var Environment
+	 */
 	private $env;
+
+	/**
+	 * Option
+	 *
+	 * @var Options
+	 */
 	private $options;
+
+	/**
+	 * Hook
+	 *
+	 * @var Hooks
+	 */
 	private $hook_service;
+
+
 	/**
 	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
 	 */
 	function __construct( ...$args ) {
 		$this->hook_service = new Hooks();
@@ -31,15 +66,24 @@ class Options_Service {
 		}
 	}
 
+	/**
+	 * Get the home url
+	 *
+	 * @param string $path Target path.
+	 */
 	public function home_url( string $path ) {
 		return $this->options->home_url( $path );
 	}
 
 	/**
 	 * Test the requested parameter and save it
+	 *
+	 * @param string $distribution_id CloudFront distribution id.
+	 * @param string $access_key AWS access key id.
+	 * @param string $secret_key AWS secret access key id.
+	 * @throws \WP_Error If no distribution id provided, should throw error.
 	 */
 	public function update_options( string $distribution_id, string $access_key = null, string $secret_key = null ) {
-		// null check
 		if ( ! $distribution_id ) {
 			throw new \WP_Error( 'distribution id is required' );
 		}
@@ -55,7 +99,6 @@ class Options_Service {
 			$options['secret_key'] = $secret_key;
 		}
 
-		// Save
 		$this->options->update_options( $options );
 	}
 

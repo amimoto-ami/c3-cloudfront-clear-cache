@@ -1,18 +1,44 @@
 <?php
+/**
+ * Create a invalidation batch
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 
 namespace C3_CloudFront_Cache_Controller\AWS;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 use C3_CloudFront_Cache_Controller\WP\Hooks;
 use C3_CloudFront_Cache_Controller\WP\Post;
 
+/**
+ * Invalidation batch service
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Invalidation_Batch_Service {
+	/**
+	 * WP Hook service
+	 *
+	 * @var Hooks
+	 */
 	private $hook_service;
+
+	/**
+	 * Post object
+	 *
+	 * @var Post
+	 */
 	private $post;
 
 	/**
 	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
 	 */
 	function __construct( ...$args ) {
 		if ( $args && ! empty( $args ) ) {
@@ -33,9 +59,13 @@ class Invalidation_Batch_Service {
 	}
 	/**
 	 * Set Wp_Post data into Post instance
+	 *
+	 * @param \WP_Post $post WP post object.
 	 */
 	public function set_post( $post ) {
 		/**
+		 * To get the trashed post's permalink.
+		 *
 		 * @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/pull/54/files
 		 */
 		if ( 'trash' === $post->post_status ) {
@@ -47,6 +77,9 @@ class Invalidation_Batch_Service {
 
 	/**
 	 * Put invalidation path of the post
+	 *
+	 * @param Invalidation_Batch $invalidation_batch invalidation batch class.
+	 * @param \WP_Post           $post WP post object.
 	 */
 	public function put_post_invalidation_batch( Invalidation_Batch $invalidation_batch, \WP_Post $post ) {
 		if ( $post ) {
@@ -62,6 +95,10 @@ class Invalidation_Batch_Service {
 
 	/**
 	 * Invalidate by post
+	 *
+	 * @param string   $home_url WP home url.
+	 * @param string   $distribution_id CloudFront distribution id.
+	 * @param \WP_Post $post WP post object.
 	 */
 	public function create_batch_by_post( string $home_url, string $distribution_id, \WP_Post $post = null ) {
 		$invalidation_batch = new Invalidation_Batch();
@@ -72,6 +109,10 @@ class Invalidation_Batch_Service {
 
 	/**
 	 * Invalidate by post
+	 *
+	 * @param string $home_url WP home url.
+	 * @param string $distribution_id CloudFront distribution id.
+	 * @param array  $posts The lists of WP post object.
 	 */
 	public function create_batch_by_posts( string $home_url, string $distribution_id, array $posts = array() ) {
 		$invalidation_batch = new Invalidation_Batch();
@@ -85,6 +126,8 @@ class Invalidation_Batch_Service {
 
 	/**
 	 * Invalidate all cache
+	 *
+	 * @param string $distribution_id CloudFront distribution id.
 	 */
 	public function create_batch_for_all( string $distribution_id ) {
 		$invalidation_batch = new Invalidation_Batch();

@@ -1,4 +1,12 @@
 <?php
+/**
+ * Load class files
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ **/
+
 define( 'C3_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'C3_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'C3_PLUGIN_ROOT', __FILE__ );

@@ -1,11 +1,32 @@
 <?php
+/**
+ * Admin notice manager
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller\WP;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
+/**
+ * Admin notice class
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Admin_Notice {
+
+	/**
+	 * Echo the success message
+	 *
+	 * @param string $message Successfull message.
+	 * @param string $code Successfull code.
+	 */
 	public function echo_success_message( string $message, string $code = null ) {
 		?>
 		<div class='notice notice-success is-dismissible'>
@@ -21,6 +42,13 @@ class Admin_Notice {
 		</div>
 		<?php
 	}
+
+	/**
+	 * Show success message
+	 *
+	 * @param string $message Successfull message.
+	 * @param string $code Successfull code.
+	 */
 	public function show_admin_success( string $message, string $code = null ) {
 		add_action(
 			'admin_notices',
@@ -29,6 +57,12 @@ class Admin_Notice {
 			}
 		);
 	}
+
+	/**
+	 * Echo error message
+	 *
+	 * @param \WP_Error $result Error object.
+	 */
 	public function echo_error( \WP_Error $result ) {
 		$messages = $result->get_error_messages();
 		$codes    = $result->get_error_codes();
@@ -49,6 +83,11 @@ class Admin_Notice {
 		<?php
 	}
 
+	/**
+	 * Show error message
+	 *
+	 * @param \WP_Error $e Error object.
+	 */
 	public function show_admin_error( \WP_Error $e ) {
 		add_action(
 			'admin_notices',
