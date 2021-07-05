@@ -108,7 +108,7 @@ class Fixtures {
 		 *
 		 * @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/issues/53
 		 */
-		if ( $this->env->is_supported_version( '7.3.0' , phpversion() ) ) {
+		if ( $this->env->is_supported_version( '7.3.0', phpversion() ) ) {
 			// PHP 7.3.0 or higher.
 			$args = array(
 				'expires'  => $expires,
