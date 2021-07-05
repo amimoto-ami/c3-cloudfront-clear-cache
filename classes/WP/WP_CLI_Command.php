@@ -1,11 +1,13 @@
 <?php
-namespace C3_CloudFront_Cache_Controller\WP;
 /**
- * Control C3_CloudFront_Clear_Cache.
+ * WP CLI Command
  *
- * @author hideokamoto
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
  */
 
+namespace C3_CloudFront_Cache_Controller\WP;
 use WP_CLI;
 use C3_CloudFront_Cache_Controller\Invalidation_Service;
 use C3_CloudFront_Cache_Controller\Constants;
@@ -14,7 +16,6 @@ use C3_CloudFront_Cache_Controller\WP\Post_Service;
 /**
  * WP-CLI Command to control C3 CloudFront Cache Controller Plugins
  *
- * @class C3_CloudFront_Clear_Cache_Command
  * @since 2.3.0
  */
 class WP_CLI_Command extends \WP_CLI_Command {
@@ -36,8 +37,8 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *     wp c3 flush all             : Flush All CloudFront Cache.
 	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
 	 *
-	 * @param string $args: WP-CLI Command Name
-	 * @param string $assoc_args: WP-CLI Command Option
+	 * @param string $args WP-CLI Command Name.
+	 * @param string $assoc_args WP-CLI Command Option.
 	 * @since 2.3.0
 	 */
 	function flush( $args, $assoc_args ) {
@@ -49,7 +50,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		list( $type ) = $args;
 
 		$invalidation_service = new Invalidation_Service();
-		if ( array_search( 'force', $assoc_args ) ) {
+		if ( array_search( 'force', $assoc_args, true ) ) {
 			WP_CLI::line( 'Force Clear Mode' );
 			add_filter( 'c3_invalidation_flag', '__return_false' );
 		}
@@ -100,8 +101,8 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *     wp c3 update access_key <Setting Param>      :Default usage.
 	 *     wp c3 update secret_key <Setting Param>      :Default usage.
 	 *
-	 * @param string $args: WP-CLI Command Name
-	 * @param string $assoc_args: WP-CLI Command Option
+	 * @param string $args WP-CLI Command Name.
+	 * @param string $assoc_args WP-CLI Command Option.
 	 * @since 2.4.0
 	 */
 	function update( $args, $assoc_args ) {

@@ -1,13 +1,37 @@
 <?php
+/**
+ * Invalidation bach entity
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 
 namespace C3_CloudFront_Cache_Controller\AWS;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Invalidation batch class
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Invalidation_Batch {
+
+	/**
+	 * Invalidation path items
+	 *
+	 * @var array
+	 */
 	private $items = array();
 
+	/**
+	 * Put a invalidation path
+	 *
+	 * @param string $path The invalidation path.
+	 */
 	public function put_invalidation_path( string $path ) {
 		$result = $this->make_invalidate_path( $path );
 
@@ -19,6 +43,10 @@ class Invalidation_Batch {
 		$this->items   = array_unique( $this->items );
 	}
 
+	/**
+	 * Get the invalidation target items.
+	 * If over the defined limit, should return '/*' to remove all cache.
+	 */
 	public function get_invalidation_path_items() {
 		if ( 1 > count( $this->items ) || 10 < count( $this->items ) ) {
 			return array( '/*' );
@@ -29,8 +57,7 @@ class Invalidation_Batch {
 	/**
 	 * Create Invalidation path from url
 	 *
-	 * @return (string) $url
-	 * @param string
+	 * @param string $url The invalidation target url.
 	 * @since 4.0.0
 	 * @access public
 	 */
@@ -41,6 +68,9 @@ class Invalidation_Batch {
 			: preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
 	}
 
+	/**
+	 * Get the invalidation batch
+	 */
 	public function get_invalidation_batch() {
 		return array(
 			'CallerReference' => uniqid(),
@@ -51,6 +81,11 @@ class Invalidation_Batch {
 		);
 	}
 
+	/**
+	 * Get the invalidation request parameter
+	 *
+	 * @param string $distribution_id CloudFront distribution id.
+	 */
 	public function get_invalidation_request_parameter( string $distribution_id ) {
 		return array(
 			'DistributionId'    => esc_attr( $distribution_id ),

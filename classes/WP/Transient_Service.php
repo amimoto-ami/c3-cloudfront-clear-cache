@@ -1,14 +1,44 @@
 <?php
+/**
+ * WordPress Transient API service
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller\WP;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Transient API Service
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Transient_Service {
+	/**
+	 * WP Transiend API Adapter.
+	 *
+	 * @var Transient Transient API class.
+	 */
 	private $transient;
+
+	/**
+	 * WP Hook Adapter.
+	 *
+	 * @var Hooks WP Hook Adapter class.
+	 */
 	private $hook_service;
 
+	/**
+	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
+	 */
 	function __construct( ...$args ) {
 		if ( $args && ! empty( $args ) ) {
 			foreach ( $args as $key => $value ) {
@@ -27,11 +57,17 @@ class Transient_Service {
 		}
 	}
 
+	/**
+	 * Load and detect the cron job target
+	 */
 	public function should_regist_cron_job() {
 		$data = $this->transient->get_invalidation_transient();
 		return $this->hook_service->apply_filters( 'c3_invalidation_flag', $data );
 	}
 
+	/**
+	 * Set the last invalidation time
+	 */
 	public function set_invalidation_time() {
 		return $this->transient->set_invalidation_transient(
 			true,
@@ -42,7 +78,7 @@ class Transient_Service {
 	/**
 	 * Normalize invalidation query
 	 *
-	 * @param $query
+	 * @param midex $query Invalidation query.
 	 * @since 5.3.4
 	 * @return array
 	 */
@@ -70,7 +106,8 @@ class Transient_Service {
 	/**
 	 * Merge transiented invalidation query
 	 *
-	 * @param array $query
+	 * @param array      $query Merge target query.
+	 * @param array|null $current_transient Saved invalidation query.
 	 * @return array $query
 	 * @access public
 	 * @since 4.3.0
@@ -98,10 +135,10 @@ class Transient_Service {
 		return $query;
 	}
 
-
 	/**
 	 * Save the invalidation query to transient API.
 	 *
+	 * @param array $query Invalidation query.
 	 * @return void
 	 */
 	public function save_invalidation_query( $query ) {
@@ -113,6 +150,7 @@ class Transient_Service {
 	/**
 	 * Set transient object for record the invalidation query
 	 *
+	 * @param array $query Invalidation query.
 	 * @return void
 	 */
 	public function set_invalidation_query( $query ) {
@@ -120,6 +158,9 @@ class Transient_Service {
 		$this->transient->set_invalidation_target( $query, $interval_minutes * MINUTE_IN_SECONDS * 1.5 );
 	}
 
+	/**
+	 * Delete the saved invalidation query
+	 */
 	public function delete_invalidation_query() {
 		$this->transient->delete_invalidation_target();
 	}

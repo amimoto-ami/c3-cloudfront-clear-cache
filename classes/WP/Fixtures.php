@@ -1,13 +1,38 @@
 <?php
+/**
+ * Fixtures
+ *
+ * @author hideokamoto <hide.okamoto@digitalcube.jp>
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
+
 namespace C3_CloudFront_Cache_Controller\WP;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Fixtures
+ *
+ * @since 6.1.1
+ * @package C3_CloudFront_Cache_Controller
+ */
 class Fixtures {
+	/**
+	 * Hook
+	 *
+	 * @var Hooks
+	 */
 	private $hook_service;
 
+
+	/**
+	 * Inject a external services
+	 *
+	 * @param mixed ...$args Inject class.
+	 */
 	function __construct( ...$args ) {
 		if ( $args && ! empty( $args ) ) {
 			foreach ( $args as $key => $value ) {
@@ -32,6 +57,8 @@ class Fixtures {
 	/**
 	 * Detect the viewer option from CloudFront,
 	 * and overwrite wp_is_mobile result
+	 * 
+	 * @param boolean $is_mobile Detect the request device type.
 	 */
 	public function cloudfront_is_mobile( $is_mobile ) {
 		// CloudFront でスマートフォンと判定された場合、true を返す。
