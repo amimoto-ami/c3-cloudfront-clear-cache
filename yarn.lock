@@ -60,10 +60,10 @@
   dependencies:
     "@types/node" "*"
 
-"@wordpress/env@4.0.5":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-4.0.5.tgz#5560c39fc2e453291ad370128807e9e1ec975f37"
-  integrity sha512-Z0ZHj2M0v7RMS59qIKdvfOkIGKKuNAcrQ6cCqY2IU4JVsDJEDjrjGV2uTj2oLuwwFKOb/cIDGZabDIsiBXw9AQ==
+"@wordpress/env@4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-4.1.2.tgz#44cc456f90474b513806f710df3de05f5a8a05e1"
+  integrity sha512-ODeBOAcgmT3a7YmfCkVlcBonnUQQcZHiByH6zjtrertVkIA2JiajOqm1l7ru8VmRpIg1rZDlkUGivspp3tt3fg==
   dependencies:
     chalk "^4.0.0"
     copy-dir "^1.3.0"
