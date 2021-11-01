@@ -56,6 +56,25 @@ add_filter( 'c3_invalidation_item_limits', function( $limits ) {
 } );
 ```
 
+### Customize/Overwrite the invalidation path
+
+Using the `c3_invalidation_items` filter, we can update the invalidation path.
+
+```php
+add_filter( 'c3_invalidation_items', function($items){  
+        return array('/*'); 
+});
+```
+
+```php
+add_filter( 'c3_invalidation_items', function( $items, $post ) {
+    if ( 'should-overwritten' === $post->post_name) {
+        return ['/slug-overwritten'];
+    }
+    return $items;
+}, 10, 2 );
+```
+
 ### Change or Stop loading bundled AWS SDK (Since v6.0.0)
 
 Use `c3_aws_sdk_path` filter, to relace the AWS SDK library path.
