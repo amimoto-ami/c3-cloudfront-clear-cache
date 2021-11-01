@@ -10,8 +10,6 @@
 		"phpcompatibility/phpcompatibility-wp": "*",
 		"squizlabs/php_codesniffer": "*",
 		"wp-coding-standards/wpcs": "*",
-		"wp-phpunit/wp-phpunit": "5.7.2",
-		"phpunit/phpunit": "^7.5.20",
     	"yoast/phpunit-polyfills": "^1.0"
   },
 	"autoload": {
@@ -22,7 +20,7 @@
 		}
 	},
 	"scripts": {
-		"test": "phpunit",
+        "test": "@php ./vendor/phpunit/phpunit/phpunit",
 		"format": "phpcbf --standard=./.phpcs.xml.dist --report-summary --report-source",
 		"lint": "phpcs --standard=./.phpcs.xml.dist",
 		"phpcs": "phpcs --standard=./.phpcs.xml.dist"

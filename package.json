@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@wordpress/env": "4.0.5"
+    "@wordpress/env": "^4.1.2"
   },
   "name": "trunk",
   "version": "6.1.2",
@@ -10,7 +10,8 @@
   },
   "dependencies": {},
   "scripts": {
-    "test": "wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/trunk/phpunit.xml --verbose\"",
+    "test": "wp-env run phpunit \"composer test -d /var/www/html/wp-content/plugins/trunk --verbose\"",
+    "test:bk": "wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/trunk/phpunit.xml --verbose\"",
     "dev": "wp-env start",
     "wpenv": "wp-env"
   },

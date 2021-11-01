@@ -4,8 +4,8 @@ use C3_CloudFront_Cache_Controller\WP;
 
 class Transiend_Service_Test extends \WP_UnitTestCase {
     private $target;
-    public function setUp() {
-        parent::setUp();
+    public function set_up() {
+        parent::set_up();
         $this->target = new WP\Transient_Service();
     }
 

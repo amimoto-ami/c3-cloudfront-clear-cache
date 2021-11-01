@@ -8,6 +8,7 @@
 ?>
 
 <?php
+require dirname( __DIR__ ) . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
 require dirname( __DIR__ ) . '/vendor/autoload.php';
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );

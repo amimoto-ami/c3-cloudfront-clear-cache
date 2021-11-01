@@ -3,7 +3,7 @@ require_once('module/model/invalidation.php');
 
 class C3_Invalidation_test extends WP_UnitTestCase {
 	protected $class;
-	function setUp() {
+	function set_up() {
 		$this->class = C3_Invalidation::get_instance();;
 	}
 	function test_should_return_empty_array_when_given_string() {
