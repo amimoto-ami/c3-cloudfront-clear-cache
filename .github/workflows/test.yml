@@ -18,22 +18,10 @@ jobs:
     strategy:
       matrix:
         include:
-          #- php: 8.0
-          #  wp: trunk
-          #  experimental: true
-          - php: 7.4
-            wp: trunk
-            experimental: true
           - php: 7.4
             wp: latest
           - php: 7.3
-            wp: trunk
-            experimental: true
-          - php: 7.3
             wp: latest
-          - php: 7.2
-            wp: trunk
-            experimental: true
           - php: 7.2
             wp: latest
     steps:
