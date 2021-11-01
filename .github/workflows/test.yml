@@ -40,20 +40,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} Test
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@master
         with:
+          tools: phpunit-polyfills, phpunit
           php-version: ${{ matrix.php }}
           extensions: mbstring, intl , mysqli
           ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
           coverage: xdebug #optional, setup coverage driver
-          tools: phpunit-polyfills, phpunit
 
       - name: Check PHP Version
         run: php -v
 
       - name: Install phpunit global
         run: |
-          composer global require "phpunit/phpunit=5.7.*|6.*.*|7.*.*"
           phpunit --version
 
       - name: Cache composer packages
