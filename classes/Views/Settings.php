@@ -58,6 +58,8 @@ class Settings {
 		 */
 		$this->hook_service->add_filter( 'amimoto_show_c3_setting_form', '__return_false' );
 		$this->hook_service->add_filter( 'amimoto_show_invalidation_form', '__return_false' );
+
+		$this->hook_service->add_action( 'admin_init', array( $this, 'define_caps' ) );
 	}
 
 	/**
@@ -67,7 +69,7 @@ class Settings {
 		add_options_page(
 			__( 'CloudFront Settings', Constants::text_domain() ),
 			__( 'CloudFront Settings', Constants::text_domain() ),
-			'administrator',
+			'cloudfront_clear_cache',
 			Constants::MENU_ID,
 			function () {
 				require_once( C3_PLUGIN_PATH . '/templates/Settings.php' );
@@ -85,6 +87,17 @@ class Settings {
 		);
 	}
 
+	/**
+	 * Define C3 plugin capabilities
+	 *
+	 * @access public
+	 * @param none
+	 * @since 4.0.0
+	 */
+	public function define_caps() {
+		$role = get_role( 'administrator' );
+		$role->add_cap( 'cloudfront_clear_cache' );
+	}
 	/**
 	 * Filter the saving option's request
 	 *
