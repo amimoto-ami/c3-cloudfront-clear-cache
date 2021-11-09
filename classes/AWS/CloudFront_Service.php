@@ -55,7 +55,7 @@ class CloudFront_Service {
 					$this->options_service = $value;
 				} elseif ( $value instanceof WP\Hooks ) {
 					$this->hook_service = $value;
-				} elseif ( $value instanceof Environment ) {
+				} elseif ( $value instanceof WP\Environment ) {
 					$this->env = $value;
 				}
 			}
