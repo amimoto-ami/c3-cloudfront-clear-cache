@@ -81,13 +81,9 @@ class Options_Service {
 	 * @param string $distribution_id CloudFront distribution id.
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
-	 * @throws \WP_Error If no distribution id provided, should throw error.
+	 * @return void
 	 */
 	public function update_options( string $distribution_id, string $access_key = null, string $secret_key = null ) {
-		if ( ! $distribution_id ) {
-			throw new \WP_Error( 'distribution id is required' );
-		}
-
 		$options = array(
 			'distribution_id' => $distribution_id,
 		);
