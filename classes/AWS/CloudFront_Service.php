@@ -121,7 +121,7 @@ class CloudFront_Service {
 			} else {
 				$e = new \WP_Error( 'C3 Auth Error', $e->getMessage() );
 			}
-			error_log( $e->get_error_messages(), 0 );
+			error_log( print_r( $e->get_error_messages(), true ), 0 );
 			return $e;
 		}
 	}
