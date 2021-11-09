@@ -38,11 +38,11 @@ class Post {
 	/**
 	 * Get the post permalink
 	 *
-	 * @throws \WP_Error If no post provided, should throw it.
+	 * @return \WP_Error|string|false Return permanent link otherwise false if post does not exist, WP_Error if no post provided.
 	 */
 	public function get_permalink() {
 		if ( ! $this->post ) {
-			throw new \WP_Error( 'Post is required' );
+			return new \WP_Error( 'Post is required' );
 		}
 		return get_permalink( $this->post );
 	}
