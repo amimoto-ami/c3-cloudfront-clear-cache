@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Aws\Exception\AwsException;
 use C3_CloudFront_Cache_Controller\WP;
 use Aws\CloudFront\CloudFrontClient;
 
@@ -113,9 +114,9 @@ class CloudFront_Service {
 			);
 			return null;
 		} catch ( \Exception $e ) {
-			if ( 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
+			if ( $e instanceof AwsException && 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
 				$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
-			} elseif ( 'InvalidClientTokenId' === $e->getAwsErrorCode() ) {
+			} elseif ( $e instanceof AwsException && 'InvalidClientTokenId' === $e->getAwsErrorCode() ) {
 				$e = new \WP_Error( 'C3 Auth Error', 'AWS AWS Access Key or AWS Secret Key is invalid.' );
 			} else {
 				$e = new \WP_Error( 'C3 Auth Error', $e->getMessage() );
