@@ -155,6 +155,15 @@ class Options_Service {
 			if ( isset( $options['secret_key'] ) ) {
 				$results['secret_key'] = $options['secret_key'];
 			}
+			if ( isset( $options['magento_distribution_id'] ) ) {
+				$results['magento_distribution_id'] = $options['magento_distribution_id'];
+			}
+			if ( isset( $options['magento_access_key'] ) ) {
+				$results['magento_access_key'] = $options['magento_access_key'];
+			}
+			if ( isset( $options['magento_secret_key'] ) ) {
+				$results['magento_secret_key'] = $options['magento_secret_key'];
+			}
 		}
 
 		if ( 0 === count( array_filter( $results ) ) ) {

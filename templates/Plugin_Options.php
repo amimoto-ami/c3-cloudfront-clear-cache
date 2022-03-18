@@ -30,6 +30,11 @@ $distribution_id     = isset( $plugin_options ) && isset( $plugin_options[ Const
 $access_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::ACCESS_KEY ] ) ? $plugin_options[ Constants::ACCESS_KEY ] : null;
 $secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::SECRET_KEY ] ) ? $plugin_options[ Constants::SECRET_KEY ] : null;
 
+// Magento Extension
+$magento_distribution_id     = isset( $plugin_options ) && isset( $plugin_options[ Constants::MAGENTO_DISTRIBUTION_ID ] ) ? $plugin_options[ Constants::MAGENTO_DISTRIBUTION_ID ] : null;
+$magento_access_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::MAGENTO_ACCESS_KEY ] ) ? $plugin_options[ Constants::MAGENTO_ACCESS_KEY ] : null;
+$magento_secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::MAGENTO_SECRET_KEY ] ) ? $plugin_options[ Constants::MAGENTO_SECRET_KEY ] : null;
+
 $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 ?>
 <h3><?php _e( 'General Settings', $text_domain ); ?></h3>
@@ -37,7 +42,7 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 	<table class='widefat form-table' style="margin-bottom: 2rem;"><tbody>
 		<tr>
 			<td>
-				<?php _e( 'CloudFront Distribution ID', $text_domain ); ?>
+				<?php _e( 'ShopNext: CloudFront Distribution ID', $text_domain ); ?>
 			</td>
 			<td>
 				<input
@@ -59,7 +64,7 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 		<?php if ( ! $has_ec2_instance_role ) { ?>
 			<tr>
 				<td>
-					<?php _e( 'AWS Access Key', $text_domain ); ?>
+					<?php _e( 'ShopNext: AWS Access Key', $text_domain ); ?>
 				</td>
 				<td>
 					<input
@@ -79,7 +84,7 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 			</tr>
 			<tr>
 				<td>
-					<?php _e( 'AWS Secret Key', $text_domain ); ?>
+					<?php _e( 'ShopNext: AWS Secret Key', $text_domain ); ?>
 				</td>
 				<td>
 					<input
@@ -95,6 +100,48 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 					}
 
 					?>
+				</td>
+			</tr>
+		<?php } ?>
+		<tr>
+			<td>
+				<?php _e( 'Magento: CloudFront Distribution ID', $text_domain ); ?>
+			</td>
+			<td>
+				<input
+					class='regular-text code'
+					type="text"
+					name="<?php echo Constants::OPTION_NAME . '[' . Constants::MAGENTO_DISTRIBUTION_ID . ']'; ?>"
+					value="<?php echo esc_attr( $magento_distribution_id ); ?>"
+					required="required"
+				/>
+			</td>
+		</tr>
+		<?php if ( ! $has_ec2_instance_role ) { ?>
+			<tr>
+				<td>
+					<?php _e( 'Magento: AWS Access Key', $text_domain ); ?>
+				</td>
+				<td>
+					<input
+						class='regular-text code'
+						type="password"
+						name="<?php echo Constants::OPTION_NAME . '[' . Constants::MAGENTO_ACCESS_KEY . ']'; ?>"
+						value="<?php echo esc_attr( $magento_access_key ); ?>"
+					/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php _e( 'Magento: AWS Secret Key', $text_domain ); ?>
+				</td>
+				<td>
+					<input
+						class='regular-text code'
+						type="password"
+						name="<?php echo Constants::OPTION_NAME . '[' . Constants::MAGENTO_SECRET_KEY . ']'; ?>"
+						value="<?php echo esc_attr( $magento_secret_key ); ?>"
+					/>
 				</td>
 			</tr>
 		<?php } ?>

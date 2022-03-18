@@ -36,6 +36,10 @@ class Constants {
 	const ACCESS_KEY      = 'access_key';
 	const SECRET_KEY      = 'secret_key';
 
+	const MAGENTO_DISTRIBUTION_ID = 'magento_distribution_id';
+	const MAGENTO_ACCESS_KEY      = 'magento_access_key';
+	const MAGENTO_SECRET_KEY      = 'magento_secret_key';
+
 	/**
 	 * Get Plugin text_domain
 	 *
