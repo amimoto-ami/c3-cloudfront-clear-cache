@@ -108,7 +108,9 @@ class Cron_Service {
 		/**
 		 * Execute the invalidation.
 		 */
+		$this->cf_service->create_invalidation( $query, 'magento' );
 		$result = $this->cf_service->create_invalidation( $query );
+		
 		if ( $this->debug ) {
 			error_log( print_r( $result, true ) );
 		}

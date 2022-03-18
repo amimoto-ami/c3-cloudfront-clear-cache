@@ -128,7 +128,7 @@ class CloudFront_Service {
 	/**
 	 * Create CloudFront Client
 	 */
-	public function create_client() {
+	public function create_client($credential_key='access_key', string $secret_key = 'secret_key') {
 
 		/**
 		 * Load credentials from wp_options or defined values.
@@ -144,8 +144,8 @@ class CloudFront_Service {
 		$credentials = $this->hook_service->apply_filters(
 			'c3_credential',
 			array(
-				'key'    => $options['access_key'],
-				'secret' => $options['secret_key'],
+				'key'    => $options[$credential_key],
+				'secret' => $options[$secret_key],
 			)
 		);
 
@@ -160,7 +160,7 @@ class CloudFront_Service {
 		/**
 		 * If AWS credentials are available, will put it.
 		 */
-		if ( $options['access_key'] && $options['secret_key'] ) {
+		if ( $options[$credential_key] && $options[$secret_key] ) {
 			$params['credentials'] = $credentials;
 		}
 
@@ -171,6 +171,13 @@ class CloudFront_Service {
 
 		$cloudfront = CloudFrontClient::factory( $params );
 		return $cloudfront;
+	}
+
+	/**
+	 * Create Magento Client
+	 */
+	public function create_magento_client() {
+		return $this->create_client('magento_access_key', 'magento_secret_key');
 	}
 
 	/**
@@ -203,9 +210,14 @@ class CloudFront_Service {
 	 *
 	 * @param mixed $params Invalidation request.
 	 */
-	public function create_invalidation( $params ) {
+	public function create_invalidation( $params, $env ) {
 		try {
-			$client = $this->create_client();
+			if($env === 'magento') {
+				$client = $this->create_magento_client();
+			} else {
+				$client = $this->create_client();
+			}
+
 			$result = $client->createInvalidation( $params );
 			return $result;
 		} catch ( \Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {

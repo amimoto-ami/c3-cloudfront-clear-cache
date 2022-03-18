@@ -228,7 +228,7 @@ class Invalidation_Service {
 	 * @param mixed   $query Invalidation query.
 	 * @param boolean $force Must run the invalidation.
 	 */
-	public function invalidate_by_query( $query, $force = false ) {
+	public function invalidate_by_query( $query, $force = false, $env = '' ) {
 		if ( is_wp_error( $query ) ) {
 			return $query;
 		}
@@ -247,7 +247,7 @@ class Invalidation_Service {
 		 * Execute invalidation request
 		 */
 		$this->transient_service->set_invalidation_time();
-		$result = $this->cf_service->create_invalidation( $query );
+		$result = $this->cf_service->create_invalidation( $query, $env );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
@@ -281,6 +281,11 @@ class Invalidation_Service {
 		if ( is_wp_error( $options ) ) {
 			return $options;
 		}
+
+		// try to clear CloudFront for Magento.
+		$query = $this->invalidation_batch->create_batch_for_all( $options['magento_distribution_id'] );
+		$this->invalidate_by_query( $query, true, 'magento' );
+
 		$query = $this->invalidation_batch->create_batch_by_posts( $home_url, $options['distribution_id'], $posts );
 		return $query;
 	}
@@ -318,6 +323,13 @@ class Invalidation_Service {
 		if ( is_wp_error( $options ) ) {
 			return $options;
 		}
+
+		// try to clear CloudFront for Magento.
+		if ( isset( $options['magento_distribution_id'] ) ) {
+			$query = $this->invalidation_batch->create_batch_for_all( $options['magento_distribution_id'] );
+			$this->invalidate_by_query( $query, true, 'magento' );
+		}
+
 		$query = $this->invalidation_batch->create_batch_for_all( $options['distribution_id'] );
 		return $this->invalidate_by_query( $query, true );
 	}

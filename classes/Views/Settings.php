@@ -108,6 +108,9 @@ class Settings {
 			Constants::DISTRIBUTION_ID,
 			Constants::ACCESS_KEY,
 			Constants::SECRET_KEY,
+			Constants::MAGENTO_DISTRIBUTION_ID,
+			Constants::MAGENTO_ACCESS_KEY,
+			Constants::MAGENTO_SECRET_KEY,
 		);
 		$items      = array();
 		foreach ( $allow_keys as $key ) {
