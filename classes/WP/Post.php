@@ -93,4 +93,24 @@ class Post {
 		return $links;
 	}
 
+	/**
+	 * Load the post's term links
+	 *
+	 * @throws \WP_Error If no post provided, should throw it.
+	 */
+	public function get_the_post_type_archive_links() {
+		if ( ! $this->post ) {
+			throw new \WP_Error( 'Post is required' );
+		}
+		$post       = $this->post;
+		$url        = $this->parse_url( get_post_type_archive_link( $post->post_type ) );
+		$home_url   = $this->parse_url( home_url() );
+
+		$links = array();
+		if ( trailingslashit( $home_url ) !== $url ) {
+			$links[] = $url . '*';
+		}
+
+		return $links;
+	}
 }
