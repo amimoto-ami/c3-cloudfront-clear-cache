@@ -104,10 +104,13 @@ class Post {
 		}
 		$post       = $this->post;
 		$url        = $this->parse_url( get_post_type_archive_link( $post->post_type ) );
+		if ( is_wp_error( $url ) ) {
+			$url = false;
+		}
 		$home_url   = $this->parse_url( home_url() );
 
 		$links = array();
-		if ( trailingslashit( $home_url ) !== $url ) {
+		if ( $url && trailingslashit( $home_url ) !== $url ) {
 			$links[] = $url . '*';
 		}
 
