@@ -34,6 +34,10 @@ if ( ! $_tests_dir ) {
 	}
 }
 
+if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
+    define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', dirname( __FILE__ ) . '/../vendor/yoast/phpunit-polyfills/' );
+}
+
 // Fallback.
 if ( ! $_tests_dir ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
