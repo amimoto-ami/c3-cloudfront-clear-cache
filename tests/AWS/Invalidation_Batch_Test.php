@@ -3,7 +3,7 @@ namespace C3_CloudFront_Cache_Controller\Test\AWS;
 use C3_CloudFront_Cache_Controller\AWS;
 
 class Invalidation_Batch_Test extends \WP_UnitTestCase {
-	/**
+    /**
 	 * @dataProvider provide_invalidation_path_test_case
 	 */
 	public function test_invalidation_path_items( $paths, $expected = null ) {

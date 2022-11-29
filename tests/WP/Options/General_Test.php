@@ -5,7 +5,7 @@ use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Environment;
 use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Options;
 
 class General_Test extends \WP_UnitTestCase {
-	public function test_return_null_array_when_no_parameters_are_defined() {
+    public function test_return_null_array_when_no_parameters_are_defined() {
 		$target = new WP\Options_Service(
 			new Environment()
 		);

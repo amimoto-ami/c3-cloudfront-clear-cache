@@ -6,7 +6,7 @@
  * Description: Manage CloudFront Cache and provide some fixtures.
  * Author: hideokamoto
  * Author URI: https://wp-kyoto.net/
- * Requires PHP: 7.0
+ * Requires PHP: 7.4
  * Text Domain: c3-cloudfront-clear-cache
  *
  * @package c3-cloudfront-clear-cache
