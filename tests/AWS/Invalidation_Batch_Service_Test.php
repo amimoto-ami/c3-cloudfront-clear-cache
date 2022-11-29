@@ -3,17 +3,34 @@ namespace C3_CloudFront_Cache_Controller\Test\AWS;
 use C3_CloudFront_Cache_Controller\AWS;
 
 class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
-    protected function setUp() {
-		/** @var WP_Rewrite $wp_rewrite */
-		global $wp_rewrite;
-
+    /**
+     * Sets up the fixture, for example, open a network connection.
+     *
+     * This method is called before each test.
+     *
+     * @return void
+     */
+    protected function setUp(): void {
         parent::setUp();
+        $this->set_up();
+    }
+
+    /**
+     * Sets up the fixture, for example, open a network connection.
+     *
+     * This method is called before each test.
+     *
+     * @return void
+     */
+    protected function set_up() {
+        /** @var WP_Rewrite $wp_rewrite */
+        global $wp_rewrite;
 
         /**
          * Change the permalink structure
          */
-		$wp_rewrite->init();
-		$wp_rewrite->set_permalink_structure( '/%postname%/' );
+        $wp_rewrite->init();
+        $wp_rewrite->set_permalink_structure( '/%postname%/' );
     }
 
     public function test_get_the_published_post_invalidation_paths() {
@@ -22,7 +39,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_name' => 'hello-world',
         ) );
 
-		$target = new AWS\Invalidation_Batch_Service();
+        $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( array(
             'Items' => array(
@@ -43,7 +60,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             }
             return $items;
         }, 10, 2 );
-		$target = new AWS\Invalidation_Batch_Service();
+        $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( $expected, $result[ 'InvalidationBatch' ][ 'Paths' ] );
     }
@@ -83,7 +100,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_name' => 'hello-world',
             'post_type' => 'post',
         ) );
-		$target = new AWS\Invalidation_Batch_Service();
+        $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
         $this->assertEquals( array(
             'Items' => array(
@@ -95,7 +112,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
     }
 
     public function test_get_invalidation_path_for_all() {
-		$target = new AWS\Invalidation_Batch_Service();
+        $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_for_all( 'EXXXX' );
         $this->assertEquals( array(
             'Items' => array(
@@ -109,7 +126,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
      * @dataProvider provide_create_batch_by_posts_test_case
      */
     public function test_create_batch_by_posts( $posts = [], $expected ) {
-		$target = new AWS\Invalidation_Batch_Service();
+        $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_posts( 'localhost', 'EXXXX', $posts );
         $this->assertEquals( $expected, $result[ 'InvalidationBatch' ][ 'Paths' ] );
     }
