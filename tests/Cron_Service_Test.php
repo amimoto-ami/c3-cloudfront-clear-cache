@@ -5,6 +5,10 @@ use C3_CloudFront_Cache_Controller\AWS\CloudFront_Service;
 use C3_CloudFront_Cache_Controller\WP\Transient_Service;
 
 class Cron_Service_Test extends \WP_UnitTestCase {
+    public function setUp() {
+        parent::setUp();
+    }
+
     /**
      * @dataProvider provide_test_run_schedule_invalidate_test_case
      */

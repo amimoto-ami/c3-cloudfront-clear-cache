@@ -7,6 +7,10 @@ use C3_CloudFront_Cache_Controller\WP\Options_Service;
 
 
 class Invalidation_Service_Test extends \WP_UnitTestCase {
+    public function setUp() {
+        parent::setUp();
+    }
+
     /**
      * @dataProvider provide_test_get_plugin_option_case
      */

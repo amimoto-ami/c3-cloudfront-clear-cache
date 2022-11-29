@@ -3,6 +3,10 @@ namespace C3_CloudFront_Cache_Controller\Test\WP;
 use C3_CloudFront_Cache_Controller\WP;
 
 class Environment_Test extends \WP_UnitTestCase {
+    public function setUp() {
+        parent::setUp();
+    }
+
     /**
      * @dataProvider provide_is_supported_version
      */
