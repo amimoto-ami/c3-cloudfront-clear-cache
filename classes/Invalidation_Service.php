@@ -23,7 +23,7 @@ class Invalidation_Service {
 	/**
 	 * Hook service
 	 *
-	 * @var WP\Hook_Service
+	 * @var WP\Hooks
 	 */
 	private $hook_service;
 
@@ -37,7 +37,7 @@ class Invalidation_Service {
 	/**
 	 * Transient service.
 	 *
-	 * @var AWS\Transient_Service
+	 * @var WP\Transient_Service
 	 */
 	private $transient_service;
 

@@ -38,7 +38,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *     wp c3 flush all --force     : Flush All CloudFront Cache.( Force )
 	 *
 	 * @param string $args WP-CLI Command Name.
-	 * @param string $assoc_args WP-CLI Command Option.
+	 * @param array $assoc_args WP-CLI Command Option.
 	 * @since 2.3.0
 	 */
 	function flush( $args, $assoc_args ) {
@@ -102,7 +102,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *     wp c3 update secret_key <Setting Param>      :Default usage.
 	 *
 	 * @param string $args WP-CLI Command Name.
-	 * @param string $assoc_args WP-CLI Command Option.
+	 * @param array $assoc_args WP-CLI Command Option.
 	 * @since 2.4.0
 	 */
 	function update( $args, $assoc_args ) {

@@ -99,7 +99,7 @@ class Fixtures {
 	 *
 	 * @param string $key Cookie key name.
 	 * @param mixed  $value Cookie value.
-	 * @param init   $expires Cookie expiration.
+	 * @param int    $expires Cookie expiration.
 	 */
 	private function set_cookie( $key, $value, $expires = 0 ) {
 		$cookie_path = preg_replace( '#^https?://[^/]+/?#', '/', home_url( '/' ) );

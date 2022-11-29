@@ -78,7 +78,7 @@ class Transient_Service {
 	/**
 	 * Normalize invalidation query
 	 *
-	 * @param midex $query Invalidation query.
+	 * @param mixed $query Invalidation query.
 	 * @since 5.3.4
 	 * @return array
 	 */

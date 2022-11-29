@@ -91,7 +91,6 @@ class Settings {
 	 * Define C3 plugin capabilities
 	 *
 	 * @access public
-	 * @param none
 	 * @since 4.0.0
 	 */
 	public function define_caps() {
