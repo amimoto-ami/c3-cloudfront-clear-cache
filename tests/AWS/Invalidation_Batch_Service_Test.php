@@ -11,20 +11,10 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
      * @return void
      */
     protected function setUp(): void {
-        parent::setUp();
-        $this->set_up();
-    }
-
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     *
-     * This method is called before each test.
-     *
-     * @return void
-     */
-    protected function set_up() {
         /** @var WP_Rewrite $wp_rewrite */
         global $wp_rewrite;
+
+        parent::setUp();
 
         /**
          * Change the permalink structure
