@@ -3,7 +3,7 @@ namespace C3_CloudFront_Cache_Controller\Test\AWS;
 use C3_CloudFront_Cache_Controller\AWS;
 
 class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
-    public function setUp() {
+    protected function setUp() {
 		/** @var WP_Rewrite $wp_rewrite */
 		global $wp_rewrite;
 

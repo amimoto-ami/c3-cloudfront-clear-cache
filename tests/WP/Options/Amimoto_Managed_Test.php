@@ -5,10 +5,6 @@ use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Environment;
 use C3_CloudFront_Cache_Controller\Test\Mocks\WP\Options;
 
 class Amimoto_Managed_Test extends \WP_UnitTestCase {
-    public function setUp() {
-        parent::setUp();
-    }
-
 	public function test_return_null_array_by_default() {
 		$target = new WP\Options_Service(
 			new Environment('amimoto_managed')
