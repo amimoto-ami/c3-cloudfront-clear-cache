@@ -56,7 +56,7 @@ class CloudFront_Service {
 					$this->options_service = $value;
 				} elseif ( $value instanceof WP\Hooks ) {
 					$this->hook_service = $value;
-				} elseif ( $value instanceof Environment ) {
+				} elseif ( $value instanceof WP\Environment ) {
 					$this->env = $value;
 				}
 			}
@@ -209,11 +209,7 @@ class CloudFront_Service {
 			$client = $this->create_client();
 			$result = $client->createInvalidation( $params );
 			return $result;
-		} catch ( \Aws\CloudFront\Exception\TooManyInvalidationsInProgressException $e ) {
-			error_log( $e->__toString(), 0 );
-			$e = new \WP_Error( 'C3 Invalidation Error', $e->__toString() );
-			return $e;
-		} catch ( \Aws\CloudFront\Exception $e ) {
+		} catch ( \Aws\CloudFront\Exception\CloudFrontException $e ) {
 			error_log( $e->__toString(), 0 );
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->__toString() );
 			return $e;
@@ -244,8 +240,10 @@ class CloudFront_Service {
 				return $lists['InvalidationList']['Items'];
 			}
 			return array();
-		} catch ( \Aws\CloudFront\Exception\NoSuchDistributionException $e ) {
-			error_log( $options['distribution_id'] . 'not found' );
+		} catch ( \Aws\CloudFront\Exception\CloudFrontException $e ) {
+			if ( isset( $distribution_id ) && 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
+				error_log( $distribution_id . ' not found' );
+			}
 			error_log( $e->__toString(), 0 );
 		} catch ( \Exception $e ) {
 			error_log( $e->__toString(), 0 );
