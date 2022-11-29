@@ -83,20 +83,19 @@ class Settings_Service {
 	 * @param string $distribution_id CloudFront distribution id.
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
-	 * @throws \WP_Error If no distribution id provided, should throw error.
+	 * @return \WP_Error|null
 	 */
 	public function update_options( string $distribution_id, string $access_key = null, string $secret_key = null ) {
-		// Null check.
-		if ( ! $distribution_id ) {
-			throw new \WP_Error( 'distribution id is required' );
+		// CloudFront API call.
+		$error = $this->cf_service->try_to_call_aws_api( $distribution_id, $access_key, $secret_key );
+		if ( is_wp_error( $error ) ) {
+			return $error;
 		}
 
-		// CloudFront API call.
-		$this->cf_service->try_to_call_aws_api( $distribution_id, $access_key, $secret_key );
-
 		// Save.
-		$result = $this->options_service->update_options( $distribution_id, $access_key, $secret_key );
-		return $result;
+		$this->options_service->update_options( $distribution_id, $access_key, $secret_key );
+
+		return null;
 	}
 
 	/**

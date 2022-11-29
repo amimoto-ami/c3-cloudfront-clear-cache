@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Aws\Exception\AwsException;
 use C3_CloudFront_Cache_Controller\WP;
 use Aws\CloudFront\CloudFrontClient;
 
@@ -93,7 +94,7 @@ class CloudFront_Service {
 	 * @param string $distribution_id CloudFront distribution id.
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
-	 * @throws \WP_Error|\Exception  If AWS API returns any error, should throw it.
+	 * @return \WP_Error|null  Return WP_Error if AWS API returns any error.
 	 */
 	public function try_to_call_aws_api( string $distribution_id, string $access_key = null, string $secret_key = null ) {
 		$credentials = $this->create_credential( $access_key, $secret_key );
@@ -111,17 +112,17 @@ class CloudFront_Service {
 					'Id' => $distribution_id,
 				)
 			);
-			return true;
+			return null;
 		} catch ( \Exception $e ) {
-			if ( 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
+			if ( $e instanceof AwsException && 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
 				$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
-			} elseif ( 'InvalidClientTokenId' === $e->getAwsErrorCode() ) {
+			} elseif ( $e instanceof AwsException && 'InvalidClientTokenId' === $e->getAwsErrorCode() ) {
 				$e = new \WP_Error( 'C3 Auth Error', 'AWS AWS Access Key or AWS Secret Key is invalid.' );
 			} else {
 				$e = new \WP_Error( 'C3 Auth Error', $e->getMessage() );
 			}
-			error_log( $e->get_error_messages(), 0 );
-			throw $e;
+			error_log( print_r( $e->get_error_messages(), true ), 0 );
+			return $e;
 		}
 	}
 
