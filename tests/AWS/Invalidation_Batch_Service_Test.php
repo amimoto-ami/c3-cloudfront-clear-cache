@@ -115,7 +115,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
     /**
      * @dataProvider provide_create_batch_by_posts_test_case
      */
-    public function test_create_batch_by_posts( $posts = [], $expected ) {
+    public function test_create_batch_by_posts( $posts = [], $expected = '' ) {
         $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_by_posts( 'localhost', 'EXXXX', $posts );
         $this->assertEquals( $expected, $result[ 'InvalidationBatch' ][ 'Paths' ] );
