@@ -53,6 +53,9 @@ class Post {
 	 * @param string $url Target URL.
 	 */
 	public function parse_url( string $url ) {
+		if ( ! isset($url) || empty($url)) {
+			return new \WP_Error( 'URL must not be empty' );
+		}
 		$parsed_url = parse_url( $url );
 		$url        = $parsed_url['scheme'] . '://' . $parsed_url['host'];
 		if ( isset( $parsed_url['path'] ) ) {
