@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 6.1.1
-Stable tag: 6.1.4
+Stable tag: 6.1.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -109,6 +109,9 @@ add_filter( 'c3_select_aws_sdk', function() {
 `
 
 == Changelog ==
+
+== 6.1.5 ==
+* [Fix] Changed to install the AWS SDK using composer instead of aws.phar.
 
 == 6.1.4 ==
 * [Update] Support post_type_archive_link
