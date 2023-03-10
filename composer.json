@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "wordpress-plugin",
   "require": {
-    "php": ">=7.4"
+    "php": ">=7.4",
+    "aws/aws-sdk-php": "^3.261"
   },
   "require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "*",
