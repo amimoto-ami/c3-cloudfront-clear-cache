@@ -41,6 +41,13 @@ class Cron_Service {
 	private $debug;
 
 	/**
+	 * CloudFront service
+	 *
+	 * @var \C3_CloudFront_Cache_Controller\AWS\CloudFront_Service
+	 */
+	private $cf_service;
+
+	/**
 	 * Inject a external services
 	 *
 	 * @param mixed ...$args Inject class.
