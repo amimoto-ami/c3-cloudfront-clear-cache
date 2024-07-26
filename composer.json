@@ -1,6 +1,6 @@
 {
-  "name": "digitalcube/c3-cloudfront-clear-cache",
-  "version": "0.0.0",
+  "name": "aztecweb/c3-cloudfront-clear-cache",
+  "version": "6.1.5",
   "type": "wordpress-plugin",
   "require": {
     "php": ">=7.4",
