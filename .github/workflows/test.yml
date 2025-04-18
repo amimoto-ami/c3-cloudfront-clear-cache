@@ -21,6 +21,7 @@ jobs:
           extensions: mbstring, intl, mysqli
           ini-values: post_max_size=256M, short_open_tag=On
           coverage: xdebug
+          tools: composer:v2
           
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -52,6 +53,10 @@ jobs:
           key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ matrix.php }}-
+
+      - name: Install Composer in WordPress container
+        run: |
+          wp-env run cli "curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer"
 
       - name: Install dependencies in WordPress container
         run: |
