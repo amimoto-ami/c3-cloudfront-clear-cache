@@ -42,7 +42,7 @@ jobs:
           phpunit --version
 
       - name: Cache composer packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
