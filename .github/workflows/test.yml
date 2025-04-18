@@ -54,17 +54,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-${{ matrix.php }}-
 
-      - name: Install Composer in WordPress container
+      - name: Run lint 
         run: |
-          wp-env run cli bash -c "curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer"
-
-      - name: Install dependencies in WordPress container
-        run: |
-          wp-env run cli "composer install --optimize-autoloader --prefer-dist"
-
-      - name: Run lint in WordPress container
-        run: |
-          wp-env run cli "composer lint"
+          composer lint
       
       - name: Run tests
         run: yarn test
