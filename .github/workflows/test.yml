@@ -9,7 +9,7 @@ jobs:
       matrix:
         include:
           - php: 7.4
-            wp: latest
+            wp: 6.7
     steps:
       - name: Checkout
         uses: actions/checkout@master
