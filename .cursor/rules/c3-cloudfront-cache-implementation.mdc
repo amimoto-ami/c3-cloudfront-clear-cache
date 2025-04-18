@@ -1,0 +1,64 @@
+---
+description: This rule contains important implementation details and best practices for the C3 Cloudfront Cache Controller WordPress plugin
+globs:
+alwaysApply: false
+---
+# C3 Cloudfront Cache Controller Implementation Guide
+
+## Overview
+C3 Cloudfront Cache Controller is a WordPress plugin that manages CloudFront cache invalidation when content is published or updated. It provides both automatic invalidation based on post status changes and manual invalidation through the admin interface.
+
+## Key Implementation Points
+
+### Configuration
+- AWS credentials can be provided in three ways:
+  1. Environment variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `C3_DISTRIBUTION_ID`
+  2. WordPress options table (stored through Settings UI)
+  3. Custom filters for programmatic override
+
+### CloudFront Invalidation
+- Invalidations are triggered when:
+  - Posts change status to/from "publish"
+  - Manual invalidation is requested through admin UI
+  - WP-CLI commands are executed
+- CloudFront API has a limit of 1000 paths per invalidation request
+- The plugin implements batching and cron jobs to handle large invalidation requests
+
+### Code Architecture
+- Follows a service-based architecture with clear separation of concerns
+- Core services:
+  - `Invalidation_Service`: Manages the invalidation process
+  - `CloudFront_Service`: Handles AWS API interactions
+  - `Invalidation_Batch_Service`: Creates invalidation batches
+  - Various WordPress integration services (Hooks, Options, Transient)
+
+### Batching & Performance
+- Uses cron jobs to handle invalidation overflow
+- Implements retry mechanisms for failed invalidations
+- Default invalidation interval is 1 minute (customizable via filter)
+- Default invalidation limit is 100 items (customizable via filter)
+
+### Extension Points
+- Multiple filters available for customization:
+  - `c3_invalidation_interval`: Change invalidation interval
+  - `c3_invalidation_cron_interval`: Change retry interval
+  - `c3_invalidation_item_limits`: Change invalidation path limit
+  - `c3_invalidation_items`: Customize invalidation paths
+  - `c3_aws_sdk_path`: Change AWS SDK loading path
+  - `c3_log_cron_invalidation_task`: Enable logging for debugging
+
+### Error Handling
+- Implements proper AWS exception handling
+- Provides admin notices for success/error states
+- Logs errors for debugging purposes
+
+### AWS SDK Integration
+- Bundled AWS SDK with option to use external SDK
+- Always uses 'us-east-1' region for CloudFront operations
+- Implements credential verification before operations
+
+### Best Practices
+- Use environment variables for credentials in production
+- Implement custom filters for fine-grained control
+- Monitor invalidation history for quota management
+- Consider implementing custom path invalidation for high-traffic sites 
