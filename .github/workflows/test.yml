@@ -56,7 +56,7 @@ jobs:
 
       - name: Install Composer in WordPress container
         run: |
-          wp-env run cli "curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer"
+          wp-env run cli bash -c "curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer"
 
       - name: Install dependencies in WordPress container
         run: |
