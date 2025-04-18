@@ -42,15 +42,14 @@ class Transient {
 	}
 
 	/**
-	 * Set the transient
+	 * Set transient
 	 *
-	 * @see https://developer.wordpress.org/reference/functions/set_transient/
-	 * @param string $transient Transient key name.
-	 * @param mixed  $value Saved value.
-	 * @param int    $expiration Expiration of the transient.
+	 * @param string $transient_key Key name.
+	 * @param mixed  $value Value.
+	 * @param mixed  $expiration Cache expiration.
 	 */
-	public function set_transient( string $transient, $value, int $expiration = null ) {
-		return set_transient( $transient, $value, $expiration );
+	public function set_transient( string $transient_key, $value, ?int $expiration = null ) {
+		return set_transient( $transient_key, $value, $expiration );
 	}
 
 	/**
@@ -61,13 +60,13 @@ class Transient {
 	}
 
 	/**
-	 * Set the invalidation transient
+	 * Set invalidation flag
 	 *
-	 * @param mixed $value Saved value.
-	 * @param int   $expiration Expiration of the transient.
+	 * @param boolean $flag Flag value.
+	 * @param integer $expiration Cache expiration.
 	 */
-	public function set_invalidation_transient( $value, int $expiration = null ) {
-		return $this->set_transient( self::C3_INVALIDATION, $value, $expiration );
+	public function set_invalidation_transient( bool $flag, ?int $expiration = null ) {
+		return $this->set_transient( self::C3_INVALIDATION, $flag, $expiration );
 	}
 
 	/**
@@ -78,13 +77,13 @@ class Transient {
 	}
 
 	/**
-	 * Set the invalidation targets
+	 * Set the invalidation target
 	 *
-	 * @param mixed $value Saved value.
-	 * @param int   $expiration Expiration of the transient.
+	 * @param mixed $target Invalidation target.
+	 * @param mixed $expiration Cache expiration.
 	 */
-	public function set_invalidation_target( $value, int $expiration = null ) {
-		return $this->set_transient( self::C3_CRON_INDALITATION_TARGET, $value, $expiration );
+	public function set_invalidation_target( $target, ?int $expiration = null ) {
+		return $this->set_transient( self::C3_CRON_INDALITATION_TARGET, $target, $expiration );
 	}
 
 	/**
