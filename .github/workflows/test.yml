@@ -51,11 +51,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          wp-env run cli "composer install --optimize-autoloader --prefer-dist"
+          wp-env run cli "cd /var/www/html/wp-content/plugins/c3-cloudfront-clear-cache && composer install --optimize-autoloader --prefer-dist"
 
       - name: Run lint in WordPress container
         run: |
-          wp-env run cli "composer lint"
+          wp-env run cli "cd /var/www/html/wp-content/plugins/c3-cloudfront-clear-cache && composer lint"
       
       - name: Run tests
         run: yarn test
