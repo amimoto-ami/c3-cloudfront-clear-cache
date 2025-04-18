@@ -2,7 +2,7 @@ name: Test plugin
 on: [push, pull_request]
 
 jobs:
-  tag:
+  test:
     name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} Test
     runs-on: ubuntu-latest
     strategy:
@@ -14,17 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
         
-      - name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} Test
+      - name: PHP ${{ matrix.php }} Test
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, intl, mysqli
           ini-values: post_max_size=256M, short_open_tag=On
           coverage: xdebug
-
-      - name: Check PHP Version
-        run: php -v
-        
+          
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -38,8 +35,11 @@ jobs:
           fi
           yarn --version
           
-      - name: Install Yarn dependencies
-        run: yarn install
+      - name: Start WP-ENV
+        uses: godaddy-wordpress/setup-wp-env@v1
+        with:
+          core: 'WordPress/WordPress#${{ matrix.wp }}'
+          phpVersion: '${{ matrix.php }}'
         
       - name: Cache Composer packages
         uses: actions/cache@v3
@@ -56,12 +56,6 @@ jobs:
 
       - name: Coding Style check
         run: composer lint
-        
-      - name: Start WordPress environment and wait for it to be ready
-        run: |
-          export WP_ENV_DEBUG=true
-          yarn run dev
-          sleep 30  # 環境が完全に起動するのを待つ
-        
+      
       - name: Run tests
-        run: yarn run test
+        run: yarn test
