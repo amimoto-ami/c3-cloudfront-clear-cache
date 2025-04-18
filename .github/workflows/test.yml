@@ -8,8 +8,12 @@ jobs:
     strategy:
       matrix:
         include:
+          - php: 7.4
+            wp: 6.7
+            composer_file: composer-php7.json
           - php: 8.2
             wp: 6.7
+            composer_file: composer.json
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -36,7 +40,16 @@ jobs:
           fi
           yarn --version
           
-      - name: Install plugin dependencies before WP-ENV starts
+      - name: Install plugin dependencies for PHP 7.4
+        if: ${{ matrix.php == '7.4' }}
+        run: |
+          if [ -f "${{ matrix.composer_file }}" ]; then
+            cp ${{ matrix.composer_file }} composer.json
+          fi
+          composer update --optimize-autoloader --prefer-dist
+          
+      - name: Install plugin dependencies for PHP 8.2
+        if: ${{ matrix.php == '8.2' }}
         run: |
           composer install --optimize-autoloader --prefer-dist
           
