@@ -40,12 +40,12 @@ class Cron_Service_Test extends \WP_UnitTestCase {
                 false
             ],
             [
-                array(
-                    'Paths' => [ '/' ],
-                    'Quantity' => 1,
-                ),
+                [
+                    'Paths' => ['/'],
+                    'Quantity' => 1
+                ],
                 true
-            ],
+            ]
         ];
     }
 }
