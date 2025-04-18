@@ -34,18 +34,18 @@ class Cron_Service_Test extends \WP_UnitTestCase {
     }
 
     function provide_test_run_schedule_invalidate_test_case() {
-        return [
-            [
+        return array(
+            array(
                 null,
                 false
-            ],
-            [
+            ),
+            array(
                 array(
-                    'Paths' => [ '/' ],
+                    'Paths' => array( '/' ),
                     'Quantity' => 1,
                 ),
                 true
-            ],
-        ];
+            ),
+        );
     }
 }
