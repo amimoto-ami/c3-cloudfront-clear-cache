@@ -5,47 +5,41 @@ jobs:
   tag:
     name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} Test
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: wordpress_test
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
       matrix:
         include:
-          #- php: 8.0
-          #  wp: latest
           - php: 7.4
             wp: latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
+        
       - name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} Test
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, intl , mysqli
-          ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
-          coverage: xdebug #optional, setup coverage driver
+          extensions: mbstring, intl, mysqli
+          ini-values: post_max_size=256M, short_open_tag=On
+          coverage: xdebug
 
       - name: Check PHP Version
         run: php -v
-
-      - name: Install phpunit global
-        run: |
-          composer global require "phpunit/phpunit=7.*.*|8.*.*"
-          phpunit --version
-
-      - name: Cache composer packages
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'  # 最新のLTSバージョン
+          
+      - name: Install NPM dependencies
+        run: npm ci
+        
+      - name: Cache Composer packages
         uses: actions/cache@v3
         with:
           path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
+          key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php }}-
 
       - name: Composer install
         run: |
@@ -54,11 +48,9 @@ jobs:
 
       - name: Coding Style check
         run: composer lint
-
-      - name: Install WP Tests
-        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }} true
-      
-      - name: phpunit tests
-        run: |
-          phpunit
-          WP_MULTISITE=1 phpunit
+        
+      - name: Start WordPress environment
+        run: npm run dev
+        
+      - name: Run tests
+        run: npm run test
