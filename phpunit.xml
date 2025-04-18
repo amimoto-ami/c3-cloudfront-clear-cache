@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 <phpunit
-		bootstrap="tests/bootstrap.php"
-		backupGlobals="false"
-		colors="true"
-		convertErrorsToExceptions="true"
-		convertNoticesToExceptions="true"
-		convertWarningsToExceptions="true"
-		verbose="true"
->
-	<testsuites>
-		<testsuite name="tests">
-			<directory prefix="test-" suffix=".php">./tests/</directory>
-			<directory suffix="_Test.php">./tests/</directory>
-		</testsuite>
-	</testsuites>
-	<php>
-		<ini name="display_errors" value="true"/>
-	</php>
+  bootstrap="tests/bootstrap.php"
+  backupGlobals="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  >
+  <testsuites>
+    <testsuite name="c3-cloudfront-clear-cache">
+      <directory prefix="test-" suffix=".php">./tests/</directory>
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <ini name="display_errors" value="true"/>
+  </php>
 </phpunit>
