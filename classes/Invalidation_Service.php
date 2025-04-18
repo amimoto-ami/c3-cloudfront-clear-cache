@@ -21,6 +21,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Invalidation_Service {
 	/**
+	 * CloudFront service.
+	 *
+	 * @var \C3_CloudFront_Cache_Controller\AWS\CloudFront_Service
+	 */
+	private $cf_service;
+
+	/**
+	 * Admin notice service.
+	 *
+	 * @var WP\Admin_Notice
+	 */
+	private $notice;
+
+	/**
 	 * Hook service
 	 *
 	 * @var WP\Hooks
