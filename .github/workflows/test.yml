@@ -49,13 +49,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-${{ matrix.php }}-
 
-      - name: Composer install
+      - name: Install dependencies
         run: |
-          composer install --optimize-autoloader --prefer-dist
-          composer fund
+          wp-env run cli "composer install --optimize-autoloader --prefer-dist"
 
-      - name: Coding Style check
-        run: composer lint
+      - name: Run lint in WordPress container
+        run: |
+          wp-env run cli "composer lint"
       
       - name: Run tests
         run: yarn test
