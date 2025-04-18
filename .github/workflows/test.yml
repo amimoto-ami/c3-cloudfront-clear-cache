@@ -28,10 +28,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # 最新のLTSバージョン
+          node-version: '22'
           
-      - name: Install NPM dependencies
-        run: npm ci
+      - name: Ensure Yarn is installed
+        run: |
+          if ! command -v yarn &> /dev/null; then
+            echo "Yarn not found, installing..."
+            npm install -g yarn
+          fi
+          yarn --version
+          
+      - name: Install Yarn dependencies
+        run: yarn install
         
       - name: Cache Composer packages
         uses: actions/cache@v3
@@ -49,8 +57,11 @@ jobs:
       - name: Coding Style check
         run: composer lint
         
-      - name: Start WordPress environment
-        run: npm run dev
+      - name: Start WordPress environment and wait for it to be ready
+        run: |
+          export WP_ENV_DEBUG=true
+          yarn run dev
+          sleep 30  # 環境が完全に起動するのを待つ
         
       - name: Run tests
-        run: npm run test
+        run: yarn run test
