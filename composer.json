@@ -11,9 +11,9 @@
 		"phpcompatibility/phpcompatibility-wp": "*",
 		"squizlabs/php_codesniffer": "*",
 		"wp-coding-standards/wpcs": "*",
-		"wp-phpunit/wp-phpunit": "5.7.2",
-		"phpunit/phpunit": "7.5.9",
-		"yoast/phpunit-polyfills": "^1.1.0"
+		"wp-phpunit/wp-phpunit": "*",
+		"phpunit/phpunit": "^9.5.10",
+		"yoast/phpunit-polyfills": "^1.0.1"
 	  },
 	"autoload": {
 		"psr-4": {

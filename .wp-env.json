@@ -1,5 +1,14 @@
 {
-    "plugins": [
-        "."
-    ]
+  "core": null,
+  "plugins": [
+    ".",
+    "https://downloads.wordpress.org/plugin/wordpress-importer.zip"
+  ],
+  "phpVersion": "8.2",
+  "port": 8888,
+  "env": {
+    "tests": {
+      "port": 8889
+    }
+  }
 }
