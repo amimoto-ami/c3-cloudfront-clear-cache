@@ -26,7 +26,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
     public function test_get_the_published_post_invalidation_paths() {
         $post = $this->factory->post->create_and_get( array(
             'post_status' => 'publish',
-            'post_name' => 'hello-world',
+            'post_name' => 'good-bye',
         ) );
 
         $target = new AWS\Invalidation_Batch_Service();
@@ -34,7 +34,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         $this->assertEquals( array(
             'Items' => array(
                 'localhost',
-                '/hello-world/*',
+                '/good-bye/*',
             ),
             'Quantity' => 2
         ), $result[ 'InvalidationBatch' ][ 'Paths' ] );
@@ -87,7 +87,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
     public function test_get_the_un_published_post_invalidation_paths() {
         $post = $this->factory->post->create_and_get( array(
             'post_status' => 'trash',
-            'post_name' => 'hello-world',
+            'post_name' => 'ohayou',
             'post_type' => 'post',
         ) );
         $target = new AWS\Invalidation_Batch_Service();
@@ -95,7 +95,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         $this->assertEquals( array(
             'Items' => array(
                 'localhost',
-                '/hello-world/*',
+                '/ohayou/*',
             ),
             'Quantity' => 2
         ) , $result[ 'InvalidationBatch' ][ 'Paths' ] );
