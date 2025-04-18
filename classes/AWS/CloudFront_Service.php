@@ -78,7 +78,7 @@ class CloudFront_Service {
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
 	 */
-	public function create_credential( string $access_key = null, string $secret_key = null ) {
+	public function create_credential( ?string $access_key = null, ?string $secret_key = null ) {
 		$key    = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
 		$secret = isset( $secret_key ) ? $secret_key : $this->env->get_aws_secret_key();
 		if ( ! isset( $key ) || ! isset( $secret ) ) {
@@ -96,7 +96,7 @@ class CloudFront_Service {
 	 * @param string $secret_key AWS secret access key id.
 	 * @return \WP_Error|null  Return WP_Error if AWS API returns any error.
 	 */
-	public function try_to_call_aws_api( string $distribution_id, string $access_key = null, string $secret_key = null ) {
+	public function try_to_call_aws_api( string $distribution_id, ?string $access_key = null, ?string $secret_key = null ) {
 		$credentials = $this->create_credential( $access_key, $secret_key );
 		$params      = array(
 			'version' => 'latest',

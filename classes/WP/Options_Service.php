@@ -76,14 +76,14 @@ class Options_Service {
 	}
 
 	/**
-	 * Test the requested parameter and save it
+	 * Update the options
 	 *
-	 * @param string $distribution_id CloudFront distribution id.
-	 * @param string $access_key AWS access key id.
-	 * @param string $secret_key AWS secret access key id.
-	 * @return void
+	 * @param string $distribution_id The CloudFront Distribution ID.
+	 * @param string $access_key AWS Access Key.
+	 * @param string $secret_key AWS Secret Key.
+	 * @throws \Exception Update option failed.
 	 */
-	public function update_options( string $distribution_id, string $access_key = null, string $secret_key = null ) {
+	public function update_options( string $distribution_id, ?string $access_key = null, ?string $secret_key = null ) {
 		$options = array(
 			'distribution_id' => $distribution_id,
 		);
