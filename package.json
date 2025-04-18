@@ -10,7 +10,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "test": "wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/trunk/phpunit.xml --verbose\"",
+    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/c3-cloudfront-clear-cache phpunit -c ./phpunit.xml --verbose",
     "dev": "wp-env start",
     "wpenv": "wp-env"
   },
