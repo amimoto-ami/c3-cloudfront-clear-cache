@@ -35,6 +35,10 @@ jobs:
           fi
           yarn --version
           
+      - name: Install plugin dependencies before WP-ENV starts
+        run: |
+          composer install --optimize-autoloader --prefer-dist
+          
       - name: Start WP-ENV
         uses: godaddy-wordpress/setup-wp-env@v1
         with:
