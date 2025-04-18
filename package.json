@@ -10,10 +10,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "test:local": "wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/c3-cloudfront-clear-cache/phpunit.xml --verbose\"",
-    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/c3-cloudfront-clear-cache phpunit -c ./phpunit.xml --verbose",
-    "install-deps": "wp-env run cli composer install --working-dir=/var/www/html/wp-content/plugins/c3-cloudfront-clear-cache",
-    "test-unit-php": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress vendor/bin/phpunit -c phpunit.xml.dist --verbose",
+    "test": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress vendor/bin/phpunit -c phpunit.xml --verbose",
     "dev": "wp-env start",
     "wpenv": "wp-env"
   },

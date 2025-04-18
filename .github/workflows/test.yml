@@ -59,6 +59,6 @@ jobs:
       #  run: |
       #    composer lint
       
-      # TODO: どうせPHP8対応があるので、CI復活を優先 2025/04
-      #- name: Run tests
-      #  run: yarn test
+      - name: Run tests with PHPUnit 
+        run: |
+          yarn test
