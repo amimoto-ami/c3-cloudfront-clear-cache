@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@wordpress/env": "4.0.5"
+    "@wordpress/env": "8.2.0"
   },
   "name": "trunk",
   "version": "6.1.4",
@@ -10,10 +10,14 @@
   },
   "dependencies": {},
   "scripts": {
-    "test:local": "wp-env run phpunit \"phpunit -c /var/www/html/wp-content/plugins/c3-cloudfront-clear-cache/phpunit.xml --verbose\"",
-    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/c3-cloudfront-clear-cache phpunit -c ./phpunit.xml --verbose",
+    "test": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress vendor/bin/phpunit -c phpunit.xml --verbose",
     "dev": "wp-env start",
     "wpenv": "wp-env"
+  },
+  "wp-env": {
+    "plugin-dir": "c3-cloudfront-clear-cache",
+    "plugin-name": "c3-cloudfront-clear-cache",
+    "welcome-build-command": "npm run dev"
   },
   "repository": {
     "type": "git",
