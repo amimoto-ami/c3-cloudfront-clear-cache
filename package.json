@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@wordpress/env": "8.2.0"
+    "@wordpress/env": "10.25.0"
   },
   "name": "trunk",
   "version": "6.1.4",
