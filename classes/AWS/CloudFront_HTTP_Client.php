@@ -3,7 +3,7 @@
  * CloudFront HTTP Client for direct API communication
  *
  * @author hideokamoto <hide.okamoto@digitalcube.jp>
- * @since 6.2.0
+ * @since 6.1.1
  * @package C3_CloudFront_Cache_Controller
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * CloudFront HTTP Client
  *
- * @since 6.2.0
+ * @since 6.1.1
  * @package C3_CloudFront_Cache_Controller
  */
 class CloudFront_HTTP_Client {

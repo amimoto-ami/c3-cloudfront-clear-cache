@@ -3,7 +3,7 @@
  * AWS Signature Version 4 implementation
  *
  * @author hideokamoto <hide.okamoto@digitalcube.jp>
- * @since 6.2.0
+ * @since 6.1.1
  * @package C3_CloudFront_Cache_Controller
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * AWS Signature Version 4 service
  *
- * @since 6.2.0
+ * @since 6.1.1
  * @package C3_CloudFront_Cache_Controller
  */
 class AWS_Signature_V4 {
