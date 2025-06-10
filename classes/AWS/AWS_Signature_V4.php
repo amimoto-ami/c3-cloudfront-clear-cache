@@ -55,7 +55,7 @@ class AWS_Signature_V4 {
 	 * @param string $region AWS Region.
 	 * @param string $service_name AWS Service name.
 	 */
-	public function __construct( $access_key_id, $secret_access_key, $region, $service_name ) {
+	function __construct( $access_key_id, $secret_access_key, $region, $service_name ) {
 		$this->access_key_id     = $access_key_id;
 		$this->secret_access_key = $secret_access_key;
 		$this->region            = $region;

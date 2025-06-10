@@ -46,7 +46,7 @@ class CloudFront_HTTP_Client {
 	 * @param string $access_key_id AWS Access Key ID.
 	 * @param string $secret_access_key AWS Secret Access Key.
 	 */
-	public function __construct( $access_key_id, $secret_access_key ) {
+	function __construct( $access_key_id, $secret_access_key ) {
 		$this->signature_service = new AWS_Signature_V4(
 			$access_key_id,
 			$secret_access_key,
