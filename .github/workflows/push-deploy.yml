@@ -9,6 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, intl, mysqli
+        tools: composer:v2
+        
+    - name: Install production dependencies
+      run: |
+        composer install --optimize-autoloader --prefer-dist --no-dev
+        
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@stable
       env:
