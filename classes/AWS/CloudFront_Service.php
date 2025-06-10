@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Aws\Exception\AwsException;
 use C3_CloudFront_Cache_Controller\WP;
-use Aws\CloudFront\CloudFrontClient;
 
 /**
  * CloudFront service
@@ -73,18 +71,22 @@ class CloudFront_Service {
 	}
 
 	/**
-	 * Create the AWS SDK credential
+	 * Get AWS credentials
 	 *
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
+	 * @return array|null Array with 'key' and 'secret' or null if not available.
 	 */
-	public function create_credential( ?string $access_key = null, ?string $secret_key = null ) {
+	public function get_credentials( ?string $access_key = null, ?string $secret_key = null ) {
 		$key    = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
 		$secret = isset( $secret_key ) ? $secret_key : $this->env->get_aws_secret_key();
 		if ( ! isset( $key ) || ! isset( $secret ) ) {
 			return null;
 		}
-		return new \Aws\Credentials\Credentials( $key, $secret );
+		return array(
+			'key'    => $key,
+			'secret' => $secret,
+		);
 	}
 
 	/**
@@ -97,37 +99,31 @@ class CloudFront_Service {
 	 * @return \WP_Error|null  Return WP_Error if AWS API returns any error.
 	 */
 	public function try_to_call_aws_api( string $distribution_id, ?string $access_key = null, ?string $secret_key = null ) {
-		$credentials = $this->create_credential( $access_key, $secret_key );
-		$params      = array(
-			'version' => 'latest',
-			'region'  => 'us-east-1',
-		);
-		if ( isset( $credentials ) ) {
-			$params['credentials'] = $credentials;
+		$credentials = $this->get_credentials( $access_key, $secret_key );
+		if ( ! $credentials ) {
+			return new \WP_Error( 'C3 Auth Error', 'AWS credentials are not available.' );
 		}
-		$cloudfront = CloudFrontClient::factory( $params );
-		try {
-			$cloudfront->getDistribution(
-				array(
-					'Id' => $distribution_id,
-				)
-			);
-			return null;
-		} catch ( \Exception $e ) {
-			if ( $e instanceof AwsException && 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
+
+		$client = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'] );
+		$result = $client->get_distribution( $distribution_id );
+
+		if ( is_wp_error( $result ) ) {
+			$error_message = $result->get_error_message();
+			if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
 				$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
-			} elseif ( $e instanceof AwsException && 'InvalidClientTokenId' === $e->getAwsErrorCode() ) {
-				$e = new \WP_Error( 'C3 Auth Error', 'AWS AWS Access Key or AWS Secret Key is invalid.' );
+			} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
+				$e = new \WP_Error( 'C3 Auth Error', 'AWS Access Key or AWS Secret Key is invalid.' );
 			} else {
-				$e = new \WP_Error( 'C3 Auth Error', $e->getMessage() );
+				$e = new \WP_Error( 'C3 Auth Error', $error_message );
 			}
 			error_log( print_r( $e->get_error_messages(), true ), 0 );
 			return $e;
 		}
+		return null;
 	}
 
 	/**
-	 * Create CloudFront Client
+	 * Create CloudFront HTTP Client
 	 */
 	public function create_client() {
 
@@ -151,27 +147,14 @@ class CloudFront_Service {
 		);
 
 		/**
-		 * Should use us-east-1 region, because CloudFront resources are always in there.
+		 * If AWS credentials are available, create HTTP client.
 		 */
-		$params = array(
-			'version' => 'latest',
-			'region'  => 'us-east-1',
-		);
-
-		/**
-		 * If AWS credentials are available, will put it.
-		 */
-		if ( $options['access_key'] && $options['secret_key'] ) {
-			$params['credentials'] = $credentials;
+		if ( $credentials['key'] && $credentials['secret'] ) {
+			$client = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'] );
+			return $client;
 		}
 
-		/**
-		 * You can overwrite the CloudFront client constructor parameters
-		 */
-		$this->hook_service->apply_filters( 'c3_cloudfront_client_constructor', $params );
-
-		$cloudfront = CloudFrontClient::factory( $params );
-		return $cloudfront;
+		return new \WP_Error( 'C3 Create Client Error', 'AWS credentials are required.' );
 	}
 
 	/**
@@ -207,12 +190,15 @@ class CloudFront_Service {
 	public function create_invalidation( $params ) {
 		try {
 			$client = $this->create_client();
-			$result = $client->createInvalidation( $params );
+			if ( is_wp_error( $client ) ) {
+				return $client;
+			}
+
+			$distribution_id = $params['DistributionId'];
+			$paths           = $params['InvalidationBatch']['Paths']['Items'];
+
+			$result = $client->create_invalidation( $distribution_id, $paths );
 			return $result;
-		} catch ( \Aws\CloudFront\Exception\CloudFrontException $e ) {
-			error_log( $e->__toString(), 0 );
-			$e = new \WP_Error( 'C3 Invalidation Error', $e->__toString() );
-			return $e;
 		} catch ( \Exception $e ) {
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
 			error_log( print_r( $e->get_error_messages(), true ), 0 );
@@ -228,23 +214,28 @@ class CloudFront_Service {
 	 */
 	public function list_invalidations() {
 		try {
-			$client          = $this->create_client();
+			$client = $this->create_client();
+			if ( is_wp_error( $client ) ) {
+				error_log( 'Failed to create CloudFront client: ' . $client->get_error_message() );
+				return array();
+			}
+
 			$distribution_id = $this->get_distribution_id();
-			$lists           = $client->listInvalidations(
-				array(
-					'DistributionId' => $distribution_id,
-					'MaxItems'       => $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 ),
-				)
-			);
-			if ( $lists['InvalidationList'] && $lists['InvalidationList']['Quantity'] > 0 ) {
-				return $lists['InvalidationList']['Items'];
+			$max_items       = $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 );
+			$result          = $client->list_invalidations( $distribution_id, $max_items );
+
+			if ( is_wp_error( $result ) ) {
+				if ( strpos( $result->get_error_message(), 'NoSuchDistribution' ) !== false ) {
+					error_log( $distribution_id . ' not found' );
+				}
+				error_log( $result->get_error_message() );
+				return array();
+			}
+
+			if ( isset( $result['InvalidationList'] ) && isset( $result['InvalidationList']['Quantity'] ) && $result['InvalidationList']['Quantity'] > 0 ) {
+				return $result['InvalidationList']['Items'];
 			}
 			return array();
-		} catch ( \Aws\CloudFront\Exception\CloudFrontException $e ) {
-			if ( isset( $distribution_id ) && 'NoSuchDistribution' === $e->getAwsErrorCode() ) {
-				error_log( $distribution_id . ' not found' );
-			}
-			error_log( $e->__toString(), 0 );
 		} catch ( \Exception $e ) {
 			error_log( $e->__toString(), 0 );
 		} catch ( \Error $e ) {

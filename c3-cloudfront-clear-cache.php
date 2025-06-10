@@ -21,12 +21,9 @@ use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\AWS;
 
 /**
- * Load AWS SDK and classes
+ * Load classes and initialize services
  */
 function c3_init() {
-	if ( ! class_exists( '\\Aws\\CloudFront\\CloudFrontClient' ) ) {
-		require_once __DIR__ . '/vendor/autoload.php';
-	}
 	new C3_CloudFront_Cache_Controller\Invalidation_Service();
 	new C3_CloudFront_Cache_Controller\Cron_Service();
 	new C3_CloudFront_Cache_Controller\Settings_Service();
