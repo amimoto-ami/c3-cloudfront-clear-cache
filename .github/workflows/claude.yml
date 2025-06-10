@@ -1,11 +1,22 @@
-name: Claude Code Review
+name: Claude Code
 
 on:
-  pull_request:
-    types: [opened, synchronize]  # Runs on new PRs and updates
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
 
 jobs:
-  code-review:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -13,14 +24,13 @@ jobs:
       issues: read
       id-token: write
     steps:
-      # Check out the code to allow git diff operations
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history for accurate diffs
+          fetch-depth: 1
 
-      - name: Run Code Review with Claude
-        id: code-review
+      - name: Run Claude Code
+        id: claude
         uses: anthropics/claude-code-action@beta
         with:
           # Define the review focus areas
@@ -30,3 +40,4 @@ jobs:
           allowed_tools: "Bash(git diff --name-only HEAD~1),Bash(git diff HEAD~1),View,GlobTool,GrepTool"
 
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
