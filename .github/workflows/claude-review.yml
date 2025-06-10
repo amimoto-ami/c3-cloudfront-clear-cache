@@ -3,6 +3,12 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize]  # Runs on new PRs and updates
+    paths:
+      - '**.php'
+      - '**.js'
+      - '**.sh'
+      - '**.json'
+      - '**.yml'
 
 jobs:
   code-review:
