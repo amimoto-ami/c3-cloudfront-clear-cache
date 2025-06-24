@@ -1,12 +1,54 @@
 ---
 description: This rule contains important implementation details and best practices for the C3 Cloudfront Cache Controller WordPress plugin
-globs:
+globs: 
 alwaysApply: false
 ---
-# C3 Cloudfront Cache Controller Implementation Guide
+# C3 CloudFront Cache Controller Implementation Guide
 
 ## Overview
-C3 Cloudfront Cache Controller is a WordPress plugin that manages CloudFront cache invalidation when content is published or updated. It provides both automatic invalidation based on post status changes and manual invalidation through the admin interface.
+C3 CloudFront Cache Controller is a WordPress plugin that manages CloudFront cache invalidation when content is published or updated. It provides both automatic invalidation based on post status changes and manual invalidation through the admin interface.
+
+## WordPress Permalink Settings Requirement
+
+### Critical Requirement
+**The plugin requires WordPress permalink settings to be set to something other than "Plain" (default) for proper operation.**
+
+### Technical Background
+When WordPress uses the default "Plain" permalink structure:
+- Post URLs are generated as `?p=123` format (e.g., `http://example.com/?p=6`)
+- The `parse_url()` function returns only `/` as the path component
+- Query parameters are not included in CloudFront invalidation paths
+- This results in either no invalidation paths or fallback to wildcard invalidation (`/*`)
+
+### Supported Permalink Structures
+The plugin works correctly with any custom permalink structure, including:
+- Post name: `http://example.com/sample-post/`
+- Day and name: `http://example.com/2023/01/01/sample-post/`
+- Month and name: `http://example.com/2023/01/sample-post/`
+- Numeric: `http://example.com/archives/123`
+- Custom structure: `http://example.com/blog/%postname%/`
+
+### Implementation Details
+The invalidation path generation process:
+1. `get_permalink()` retrieves the post URL
+2. `make_invalidate_path()` extracts the path component using `parse_url()`
+3. For plain permalinks, this results in `/` which gets filtered out
+4. When no valid paths remain, the system falls back to `/*` (full cache clear)
+
+### Workaround for Plain Permalinks
+If plain permalinks must be used, developers can implement a custom solution using the `c3_invalidation_items` filter:
+
+```php
+add_filter('c3_invalidation_items', function($items, $post) {
+    if ($post && isset($_GET['p'])) {
+        // Add query parameter based invalidation
+        $items[] = '/?p=' . $post->ID;
+    }
+    return $items;
+}, 10, 2);
+```
+
+Note: CloudFront invalidation with query parameters may have limitations and should be tested thoroughly.
 
 ## Key Implementation Points
 
@@ -44,7 +86,7 @@ C3 Cloudfront Cache Controller is a WordPress plugin that manages CloudFront cac
   - `c3_invalidation_cron_interval`: Change retry interval
   - `c3_invalidation_item_limits`: Change invalidation path limit
   - `c3_invalidation_items`: Customize invalidation paths
-  - `c3_aws_sdk_path`: Change AWS SDK loading path
+  - `c3_credential`: Override AWS credentials programmatically
   - `c3_log_cron_invalidation_task`: Enable logging for debugging
 
 ### Error Handling
@@ -52,8 +94,9 @@ C3 Cloudfront Cache Controller is a WordPress plugin that manages CloudFront cac
 - Provides admin notices for success/error states
 - Logs errors for debugging purposes
 
-### AWS SDK Integration
-- Bundled AWS SDK with option to use external SDK
+### Custom AWS Implementation
+- Direct CloudFront API communication using custom HTTP client
+- AWS Signature Version 4 implementation for authentication
 - Always uses 'us-east-1' region for CloudFront operations
 - Implements credential verification before operations
 
@@ -61,4 +104,4 @@ C3 Cloudfront Cache Controller is a WordPress plugin that manages CloudFront cac
 - Use environment variables for credentials in production
 - Implement custom filters for fine-grained control
 - Monitor invalidation history for quota management
-- Consider implementing custom path invalidation for high-traffic sites 
+- Consider implementing custom path invalidation for high-traffic sites
