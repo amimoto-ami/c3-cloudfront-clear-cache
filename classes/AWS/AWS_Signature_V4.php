@@ -67,7 +67,7 @@ class AWS_Signature_V4 {
 	 *
 	 * @param string $method HTTP method.
 	 * @param string $endpoint API endpoint hostname.
-	 * @param string $path Request path.
+	 * @param string $path Request path with optional query parameters.
 	 * @param string $payload Request payload.
 	 * @param array  $headers Additional headers.
 	 * @return array Signed headers for the request.
@@ -76,6 +76,22 @@ class AWS_Signature_V4 {
 		$now       = new \DateTime();
 		$amz_date  = $now->format( 'Ymd\THis\Z' );
 		$date_stamp = $now->format( 'Ymd' );
+
+		// パスからクエリ文字列を分離
+		$parsed_url = parse_url( $path );
+		$canonical_uri = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '/';
+		$canonical_query_string = '';
+		
+		if ( isset( $parsed_url['query'] ) ) {
+			// クエリパラメータをソートして正規化
+			parse_str( $parsed_url['query'], $query_params );
+			ksort( $query_params );
+			$canonical_query_parts = array();
+			foreach ( $query_params as $key => $value ) {
+				$canonical_query_parts[] = rawurlencode( $key ) . '=' . rawurlencode( $value );
+			}
+			$canonical_query_string = implode( '&', $canonical_query_parts );
+		}
 
 		$default_headers = array(
 			'host'                 => $endpoint,
@@ -98,8 +114,8 @@ class AWS_Signature_V4 {
 			"\n",
 			array(
 				$method,
-				$path,
-				'',
+				$canonical_uri,
+				$canonical_query_string,
 				$canonical_headers,
 				$signed_headers_string,
 				hash( 'sha256', $payload ),

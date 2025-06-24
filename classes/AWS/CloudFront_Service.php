@@ -216,31 +216,45 @@ class CloudFront_Service {
 		try {
 			$client = $this->create_client();
 			if ( is_wp_error( $client ) ) {
-				error_log( 'Failed to create CloudFront client: ' . $client->get_error_message() );
-				return array();
+				error_log( 'C3 CloudFront: Failed to create CloudFront client: ' . $client->get_error_message() );
+				return new \WP_Error( 'C3 List Invalidations Error', 'Failed to create CloudFront client: ' . $client->get_error_message() );
 			}
 
 			$distribution_id = $this->get_distribution_id();
+			error_log( 'C3 CloudFront: Listing invalidations for distribution: ' . $distribution_id );
+			
 			$max_items       = $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 );
 			$result          = $client->list_invalidations( $distribution_id, $max_items );
 
 			if ( is_wp_error( $result ) ) {
-				if ( strpos( $result->get_error_message(), 'NoSuchDistribution' ) !== false ) {
-					error_log( $distribution_id . ' not found' );
+				$error_message = $result->get_error_message();
+				error_log( 'C3 CloudFront: API Error: ' . $error_message );
+				
+				if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
+					error_log( 'C3 CloudFront: Distribution not found: ' . $distribution_id );
+					return new \WP_Error( 'C3 List Invalidations Error', "CloudFront Distribution ID: {$distribution_id} not found." );
+				} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
+					return new \WP_Error( 'C3 List Invalidations Error', 'AWS Access Key or AWS Secret Key is invalid.' );
+				} else {
+					return new \WP_Error( 'C3 List Invalidations Error', $error_message );
 				}
-				error_log( $result->get_error_message() );
-				return array();
 			}
 
-			if ( isset( $result['InvalidationList'] ) && isset( $result['InvalidationList']['Quantity'] ) && $result['InvalidationList']['Quantity'] > 0 ) {
-				return $result['InvalidationList']['Items'];
+			error_log( 'C3 CloudFront: Raw API response: ' . print_r( $result, true ) );
+
+			if ( isset( $result['Quantity'] ) && $result['Quantity'] > 0 && isset( $result['Items']['InvalidationSummary'] ) ) {
+				error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
+				return $result['Items']['InvalidationSummary'];
 			}
+			
+			error_log( 'C3 CloudFront: No invalidations found' );
 			return array();
 		} catch ( \Exception $e ) {
-			error_log( $e->__toString(), 0 );
+			error_log( 'C3 CloudFront: Exception in list_invalidations: ' . $e->__toString() );
+			return new \WP_Error( 'C3 List Invalidations Error', $e->getMessage() );
 		} catch ( \Error $e ) {
-			error_log( $e->__toString(), 0 );
+			error_log( 'C3 CloudFront: Error in list_invalidations: ' . $e->__toString() );
+			return new \WP_Error( 'C3 List Invalidations Error', $e->getMessage() );
 		}
-		return array();
 	}
 }
