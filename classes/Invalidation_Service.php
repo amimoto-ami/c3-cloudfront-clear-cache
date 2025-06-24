@@ -191,7 +191,10 @@ class Invalidation_Service {
 		$interval_minutes = $this->hook_service->apply_filters( 'c3_invalidation_cron_interval', 1 );
 		$time             = time() + MINUTE_IN_SECONDS * $interval_minutes;
 		if ( $this->debug ) {
-			error_log( print_r( $query, true ) );
+			$path_count = is_object( $query ) && method_exists( $query, 'get_paths' ) 
+				? count( $query->get_paths() ) 
+				: ( is_array( $query ) ? count( $query ) : 0 );
+			error_log( '===== C3 CRON Job registration: Scheduling ' . $path_count . ' paths for invalidation ===' );
 		}
 
 		$result = wp_schedule_single_event( $time, 'c3_cron_invalidation' );
@@ -356,7 +359,8 @@ class Invalidation_Service {
 		
 		// デバッグログを追加
 		if ( $this->debug || $this->hook_service->apply_filters( 'c3_log_invalidation_list', false ) ) {
-			error_log( 'C3 Invalidation Logs Result: ' . print_r( $histories, true ) );
+			$history_count = is_array( $histories ) ? count( $histories ) : 0;
+			error_log( 'C3 Invalidation Logs Result: Found ' . $history_count . ' invalidation records' );
 		}
 		
 		// エラーが発生した場合はエラーを返す

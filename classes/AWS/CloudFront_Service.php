@@ -240,8 +240,6 @@ class CloudFront_Service {
 				}
 			}
 
-			error_log( 'C3 CloudFront: Raw API response: ' . print_r( $result, true ) );
-
 			if ( isset( $result['Quantity'] ) && $result['Quantity'] > 0 && isset( $result['Items']['InvalidationSummary'] ) ) {
 				error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
 				return $result['Items']['InvalidationSummary'];

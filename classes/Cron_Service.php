@@ -94,14 +94,17 @@ class Cron_Service {
 			return false;
 		}
 		$invalidation_batch = $this->transient_service->load_invalidation_query();
-		if ( $this->debug ) {
-			error_log( print_r( $invalidation_batch, true ) );
-		}
 		if ( ! $invalidation_batch || empty( $invalidation_batch ) ) {
 			if ( $this->debug ) {
 				error_log( '===== C3 Invalidation cron has been SKIPPED [No Target Item] ===' );
 			}
 			return false;
+		}
+		if ( $this->debug ) {
+			$path_count = is_object( $invalidation_batch ) && method_exists( $invalidation_batch, 'get_paths' ) 
+				? count( $invalidation_batch->get_paths() ) 
+				: ( is_array( $invalidation_batch ) ? count( $invalidation_batch ) : 0 );
+			error_log( '===== C3 Invalidation cron: Found ' . $path_count . ' paths to invalidate ===' );
 		}
 		$distribution_id = $this->cf_service->get_distribution_id();
 		$query           = array(
@@ -109,7 +112,7 @@ class Cron_Service {
 			'InvalidationBatch' => $invalidation_batch,
 		);
 		if ( $this->debug ) {
-			error_log( print_r( $query, true ) );
+			error_log( '===== C3 Invalidation cron: Creating invalidation request for distribution: ' . esc_attr( $distribution_id ) . ' ===' );
 		}
 
 		/**
@@ -117,7 +120,11 @@ class Cron_Service {
 		 */
 		$result = $this->cf_service->create_invalidation( $query );
 		if ( $this->debug ) {
-			error_log( print_r( $result, true ) );
+			if ( is_wp_error( $result ) ) {
+				error_log( '===== C3 Invalidation cron ERROR: ' . $result->get_error_message() . ' ===' );
+			} else {
+				error_log( '===== C3 Invalidation cron: Invalidation request completed successfully ===' );
+			}
 		}
 		$this->transient_service->delete_invalidation_query();
 		if ( $this->debug ) {

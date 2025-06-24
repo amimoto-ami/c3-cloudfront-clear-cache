@@ -73,7 +73,7 @@ class AWS_Signature_V4 {
 	 * @return array Signed headers for the request.
 	 */
 	public function sign_request( $method, $endpoint, $path, $payload = '', $headers = array() ) {
-		$now       = new \DateTime();
+		$now       = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
 		$amz_date  = $now->format( 'Ymd\THis\Z' );
 		$date_stamp = $now->format( 'Ymd' );
 

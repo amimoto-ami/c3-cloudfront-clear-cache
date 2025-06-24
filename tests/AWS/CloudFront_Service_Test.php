@@ -8,10 +8,7 @@
 use PHPUnit\Framework\TestCase;
 use C3_CloudFront_Cache_Controller\AWS\CloudFront_Service;
 use C3_CloudFront_Cache_Controller\WP;
-use C3_CloudFront_Cache_Controller\Test\Helpers\AWS_Mock_Helper;
 use C3_CloudFront_Cache_Controller\Test\Helpers\WP_Mock_Helper;
-use Aws\CloudFront\CloudFrontClient;
-use Aws\Exception\AwsException;
 
 /**
  * CloudFront Service Test
