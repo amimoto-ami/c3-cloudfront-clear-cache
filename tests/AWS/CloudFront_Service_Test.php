@@ -73,48 +73,52 @@ class CloudFront_Service_Test extends TestCase {
 	}
 
 	/**
-	 * Test create_credential with parameters
+	 * Test get_credentials with parameters
 	 */
-	public function test_create_credential_with_params() {
+	public function test_get_credentials_with_params() {
 		$mock_env = WP_Mock_Helper::create_mock_environment();
 		$mock_options = WP_Mock_Helper::create_mock_options_service();
 		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
 
 		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
 		
-		$credentials = $service->create_credential( 'test-key', 'test-secret' );
+		$credentials = $service->get_credentials( 'test-key', 'test-secret' );
 		
 		$this->assertNotNull( $credentials );
-		$this->assertInstanceOf( \Aws\Credentials\Credentials::class, $credentials );
+		$this->assertIsArray( $credentials );
+		$this->assertEquals( 'test-key', $credentials['key'] );
+		$this->assertEquals( 'test-secret', $credentials['secret'] );
 	}
 
 	/**
-	 * Test create_credential from environment
+	 * Test get_credentials from environment
 	 */
-	public function test_create_credential_from_env() {
+	public function test_get_credentials_from_env() {
 		$mock_env = WP_Mock_Helper::create_mock_environment( null, 'env-key', 'env-secret' );
 		$mock_options = WP_Mock_Helper::create_mock_options_service();
 		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
 
 		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
 		
-		$credentials = $service->create_credential();
+		$credentials = $service->get_credentials();
 		
 		$this->assertNotNull( $credentials );
-		$this->assertInstanceOf( \Aws\Credentials\Credentials::class, $credentials );
+		$this->assertIsArray( $credentials );
+		$this->assertEquals( 'env-key', $credentials['key'] );
+		$this->assertEquals( 'env-secret', $credentials['secret'] );
 	}
 
 	/**
-	 * Test create_credential returns null when no credentials available
+	 * Test get_credentials returns null when no credentials available
 	 */
-	public function test_create_credential_null() {
+	public function test_get_credentials_null() {
 		$mock_env = WP_Mock_Helper::create_mock_environment( null, null, null );
 		$mock_options = WP_Mock_Helper::create_mock_options_service();
 		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
 
 		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
 		
-		$credentials = $service->create_credential();
+		$credentials = $service->get_credentials();
 		
 		$this->assertNull( $credentials );
 	}
@@ -130,8 +134,8 @@ class CloudFront_Service_Test extends TestCase {
 
 		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
 		
-		// create_credentialがnullを返す場合のテスト
-		$credentials = $service->create_credential( null, null );
+		// get_credentialsがnullを返す場合のテスト
+		$credentials = $service->get_credentials( null, null );
 		
 		$this->assertNull( $credentials );
 	}
