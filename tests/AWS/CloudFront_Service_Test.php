@@ -7,11 +7,7 @@
 
 use PHPUnit\Framework\TestCase;
 use C3_CloudFront_Cache_Controller\AWS\CloudFront_Service;
-use C3_CloudFront_Cache_Controller\WP;
-use C3_CloudFront_Cache_Controller\Test\Helpers\AWS_Mock_Helper;
 use C3_CloudFront_Cache_Controller\Test\Helpers\WP_Mock_Helper;
-use Aws\CloudFront\CloudFrontClient;
-use Aws\Exception\AwsException;
 
 /**
  * CloudFront Service Test
@@ -73,66 +69,46 @@ class CloudFront_Service_Test extends TestCase {
 	}
 
 	/**
-	 * Test create_credential with parameters
+	 * Test get_credentials with explicit parameters
 	 */
-	public function test_create_credential_with_params() {
-		$mock_env = WP_Mock_Helper::create_mock_environment();
+	public function test_get_credentials_with_params() {
+		$mock_env     = WP_Mock_Helper::create_mock_environment();
 		$mock_options = WP_Mock_Helper::create_mock_options_service();
-		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
+		$mock_hooks   = WP_Mock_Helper::create_mock_hooks_service();
 
-		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
-		
-		$credentials = $service->create_credential( 'test-key', 'test-secret' );
-		
-		$this->assertNotNull( $credentials );
-		$this->assertInstanceOf( \Aws\Credentials\Credentials::class, $credentials );
+		$service     = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
+		$credentials = $service->get_credentials( 'test-key', 'test-secret' );
+
+		$this->assertIsArray( $credentials );
+		$this->assertEquals( [ 'key' => 'test-key', 'secret' => 'test-secret' ], $credentials );
 	}
 
 	/**
-	 * Test create_credential from environment
+	 * Test get_credentials falls back to environment variables
 	 */
-	public function test_create_credential_from_env() {
-		$mock_env = WP_Mock_Helper::create_mock_environment( null, 'env-key', 'env-secret' );
+	public function test_get_credentials_from_env() {
+		$mock_env     = WP_Mock_Helper::create_mock_environment( null, 'env-key', 'env-secret' );
 		$mock_options = WP_Mock_Helper::create_mock_options_service();
-		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
+		$mock_hooks   = WP_Mock_Helper::create_mock_hooks_service();
 
-		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
-		
-		$credentials = $service->create_credential();
-		
-		$this->assertNotNull( $credentials );
-		$this->assertInstanceOf( \Aws\Credentials\Credentials::class, $credentials );
+		$service     = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
+		$credentials = $service->get_credentials();
+
+		$this->assertIsArray( $credentials );
+		$this->assertEquals( [ 'key' => 'env-key', 'secret' => 'env-secret' ], $credentials );
 	}
 
 	/**
-	 * Test create_credential returns null when no credentials available
+	 * Test get_credentials returns null when no credentials are set
 	 */
-	public function test_create_credential_null() {
-		$mock_env = WP_Mock_Helper::create_mock_environment( null, null, null );
-		$mock_options = WP_Mock_Helper::create_mock_options_service();
-		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
+	public function test_get_credentials_null() {
+		$mock_env     = WP_Mock_Helper::create_mock_environment( null, null, null );
+		$mock_options  = WP_Mock_Helper::create_mock_options_service();
+		$mock_hooks    = WP_Mock_Helper::create_mock_hooks_service();
 
-		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
-		
-		$credentials = $service->create_credential();
-		
-		$this->assertNull( $credentials );
-	}
+		$service     = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
+		$credentials = $service->get_credentials();
 
-	/**
-	 * Test try_to_call_aws_api with null credentials
-	 */
-	public function test_try_to_call_aws_api_with_null_credentials() {
-		// AWS認証情報がnullの場合のテスト
-		$mock_env = WP_Mock_Helper::create_mock_environment();
-		$mock_options = WP_Mock_Helper::create_mock_options_service();
-		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
-
-		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
-		
-		// create_credentialがnullを返す場合のテスト
-		$credentials = $service->create_credential( null, null );
-		
 		$this->assertNull( $credentials );
 	}
 
