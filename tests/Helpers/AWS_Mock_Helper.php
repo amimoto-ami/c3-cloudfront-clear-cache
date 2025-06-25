@@ -7,10 +7,6 @@
 
 namespace C3_CloudFront_Cache_Controller\Test\Helpers;
 
-use Aws\CloudFront\CloudFrontClient;
-use Aws\Exception\AwsException;
-use Aws\Credentials\Credentials;
-
 /**
  * AWS Mock Helper class
  */
@@ -20,7 +16,7 @@ class AWS_Mock_Helper {
 	 * Create mock CloudFront client that succeeds
 	 */
 	public static function create_successful_cloudfront_client() {
-		$mock_client = \Mockery::mock( CloudFrontClient::class );
+		$mock_client = \Mockery::mock( 'CloudFrontClient' );
 		
 		$mock_client->shouldReceive( 'getDistribution' )
 			->andReturn( [
@@ -45,12 +41,10 @@ class AWS_Mock_Helper {
 	 * Create mock CloudFront client that fails with distribution not found
 	 */
 	public static function create_distribution_not_found_client() {
-		$mock_client = \Mockery::mock( CloudFrontClient::class );
+		$mock_client = \Mockery::mock( 'CloudFrontClient' );
 		
 		$mock_client->shouldReceive( 'getDistribution' )
-			->andThrow( new AwsException( 'Distribution not found', 
-				\Mockery::mock( \Aws\CommandInterface::class ), 
-				[ 'code' => 'NoSuchDistribution' ] ) );
+			->andThrow( new \Exception( 'Distribution not found: NoSuchDistribution' ) );
 		
 		return $mock_client;
 	}
@@ -59,12 +53,10 @@ class AWS_Mock_Helper {
 	 * Create mock CloudFront client that fails with invalid credentials
 	 */
 	public static function create_invalid_credentials_client() {
-		$mock_client = \Mockery::mock( CloudFrontClient::class );
+		$mock_client = \Mockery::mock( 'CloudFrontClient' );
 		
 		$mock_client->shouldReceive( 'getDistribution' )
-			->andThrow( new AwsException( 'Invalid credentials', 
-				\Mockery::mock( \Aws\CommandInterface::class ), 
-				[ 'code' => 'InvalidClientTokenId' ] ) );
+			->andThrow( new \Exception( 'Invalid credentials: InvalidClientTokenId' ) );
 		
 		return $mock_client;
 	}
@@ -73,6 +65,9 @@ class AWS_Mock_Helper {
 	 * Create mock AWS credentials
 	 */
 	public static function create_mock_credentials() {
-		return new Credentials( 'test-key', 'test-secret' );
+		return array(
+			'key' => 'test-key',
+			'secret' => 'test-secret'
+		);
 	}
-} 
+}  

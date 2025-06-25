@@ -117,7 +117,11 @@ class Cron_Service {
 		 */
 		$result = $this->cf_service->create_invalidation( $query );
 		if ( $this->debug ) {
-			error_log( print_r( $result, true ) );
+			if ( is_wp_error( $result ) ) {
+				error_log( 'C3 Cron: Invalidation failed: ' . $result->get_error_message() );
+			} else {
+				error_log( 'C3 Cron: Invalidation completed successfully' );
+			}
 		}
 		$this->transient_service->delete_invalidation_query();
 		if ( $this->debug ) {

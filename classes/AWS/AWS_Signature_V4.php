@@ -71,8 +71,12 @@ class AWS_Signature_V4 {
 	 * @param string $payload Request payload.
 	 * @param array  $headers Additional headers.
 	 * @return array Signed headers for the request.
+	 * @throws \InvalidArgumentException If required parameters are missing.
 	 */
 	public function sign_request( $method, $endpoint, $path, $payload = '', $headers = array() ) {
+		if ( empty( $method ) || empty( $endpoint ) || empty( $path ) ) {
+			throw new \InvalidArgumentException( 'Method, endpoint, and path are required parameters.' );
+		}
 		$now       = new \DateTime();
 		$amz_date  = $now->format( 'Ymd\THis\Z' );
 		$date_stamp = $now->format( 'Ymd' );

@@ -41,16 +41,26 @@ class CloudFront_HTTP_Client {
 	private $api_version = '2020-05-31';
 
 	/**
+	 * HTTP request timeout in seconds
+	 *
+	 * @var int
+	 */
+	private $timeout = 30;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $access_key_id AWS Access Key ID.
 	 * @param string $secret_access_key AWS Secret Access Key.
+	 * @param string $region AWS Region (optional, defaults to us-east-1).
 	 */
-	function __construct( $access_key_id, $secret_access_key ) {
+	function __construct( $access_key_id, $secret_access_key, $region = null ) {
+		$cloudfront_region = $region ?: ( defined( 'C3_CLOUDFRONT_REGION' ) ? C3_CLOUDFRONT_REGION : 'us-east-1' );
+		$this->timeout = defined( 'C3_HTTP_TIMEOUT' ) ? C3_HTTP_TIMEOUT : 30;
 		$this->signature_service = new AWS_Signature_V4(
 			$access_key_id,
 			$secret_access_key,
-			'us-east-1',
+			$cloudfront_region,
 			'cloudfront'
 		);
 	}
@@ -86,7 +96,7 @@ class CloudFront_HTTP_Client {
 				'method'  => 'POST',
 				'headers' => $signed_headers,
 				'body'    => $xml_payload,
-				'timeout' => 30,
+				'timeout' => $this->timeout,
 			)
 		);
 
@@ -117,7 +127,7 @@ class CloudFront_HTTP_Client {
 			array(
 				'method'  => 'GET',
 				'headers' => $signed_headers,
-				'timeout' => 30,
+				'timeout' => $this->timeout,
 			)
 		);
 
@@ -144,7 +154,7 @@ class CloudFront_HTTP_Client {
 			array(
 				'method'  => 'GET',
 				'headers' => $signed_headers,
-				'timeout' => 30,
+				'timeout' => $this->timeout,
 			)
 		);
 
@@ -212,7 +222,8 @@ class CloudFront_HTTP_Client {
 		}
 
 		libxml_use_internal_errors( true );
-		$xml = simplexml_load_string( $xml_body );
+		libxml_disable_entity_loader( true );
+		$xml = simplexml_load_string( $xml_body, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOENT );
 
 		if ( false === $xml ) {
 			return array( 'raw_response' => $xml_body );
@@ -229,7 +240,9 @@ class CloudFront_HTTP_Client {
 	 * @return string Error message.
 	 */
 	private function parse_error_response( $xml_body, $status_code ) {
-		$xml = simplexml_load_string( $xml_body );
+		libxml_use_internal_errors( true );
+		libxml_disable_entity_loader( true );
+		$xml = simplexml_load_string( $xml_body, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOENT );
 		if ( false !== $xml && isset( $xml->Message ) ) {
 			return (string) $xml->Message;
 		}

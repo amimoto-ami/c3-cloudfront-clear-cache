@@ -109,14 +109,23 @@ class CloudFront_Service {
 
 		if ( is_wp_error( $result ) ) {
 			$error_message = $result->get_error_message();
-			if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
-				$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
-			} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
-				$e = new \WP_Error( 'C3 Auth Error', 'AWS Access Key or AWS Secret Key is invalid.' );
+			$error_code = $result->get_error_code();
+			
+			if ( $error_code === 'cloudfront_api_error' ) {
+				if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
+					$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
+				} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
+					$e = new \WP_Error( 'C3 Auth Error', 'AWS Access Key or AWS Secret Key is invalid.' );
+				} else {
+					$e = new \WP_Error( 'C3 Auth Error', $error_message );
+				}
 			} else {
 				$e = new \WP_Error( 'C3 Auth Error', $error_message );
 			}
-			error_log( print_r( $e->get_error_messages(), true ), 0 );
+			
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'C3 CloudFront Auth Error: ' . $error_message );
+			}
 			return $e;
 		}
 		return null;
@@ -228,19 +237,31 @@ class CloudFront_Service {
 
 			if ( is_wp_error( $result ) ) {
 				$error_message = $result->get_error_message();
-				error_log( 'C3 CloudFront: API Error: ' . $error_message );
+				$error_code = $result->get_error_code();
 				
-				if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
-					error_log( 'C3 CloudFront: Distribution not found: ' . $distribution_id );
-					return new \WP_Error( 'C3 List Invalidations Error', "CloudFront Distribution ID: {$distribution_id} not found." );
-				} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
-					return new \WP_Error( 'C3 List Invalidations Error', 'AWS Access Key or AWS Secret Key is invalid.' );
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( 'C3 CloudFront: API Error: ' . $error_message );
+				}
+				
+				if ( $error_code === 'cloudfront_api_error' ) {
+					if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
+						if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+							error_log( 'C3 CloudFront: Distribution not found: ' . $distribution_id );
+						}
+						return new \WP_Error( 'C3 List Invalidations Error', "CloudFront Distribution ID: {$distribution_id} not found." );
+					} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
+						return new \WP_Error( 'C3 List Invalidations Error', 'AWS Access Key or AWS Secret Key is invalid.' );
+					} else {
+						return new \WP_Error( 'C3 List Invalidations Error', $error_message );
+					}
 				} else {
 					return new \WP_Error( 'C3 List Invalidations Error', $error_message );
 				}
 			}
 
-			error_log( 'C3 CloudFront: Raw API response: ' . print_r( $result, true ) );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'C3 CloudFront: API response received (quantity: ' . ( isset( $result['Quantity'] ) ? $result['Quantity'] : 'unknown' ) . ')' );
+			}
 
 			if ( isset( $result['Quantity'] ) && $result['Quantity'] > 0 && isset( $result['Items']['InvalidationSummary'] ) ) {
 				error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
