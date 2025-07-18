@@ -15,7 +15,7 @@
 /**
  * Load the class loader
  */
-require_once( __DIR__ . '/loader.php' );
+require_once __DIR__ . '/loader.php';
 
 use C3_CloudFront_Cache_Controller\WP;
 use C3_CloudFront_Cache_Controller\AWS;

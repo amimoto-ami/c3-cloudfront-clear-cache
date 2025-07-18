@@ -172,5 +172,4 @@ class Transient_Service {
 		$result = $this->transient->get_invalidation_target();
 		return $result;
 	}
-
 }

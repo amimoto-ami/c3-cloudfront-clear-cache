@@ -80,7 +80,7 @@ class CloudFront_Service {
 	public function get_credentials( ?string $access_key = null, ?string $secret_key = null ) {
 		$key    = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
 		$secret = isset( $secret_key ) ? $secret_key : $this->env->get_aws_secret_key();
-		
+
 		if ( $key && $secret ) {
 			return array(
 				'key'    => $key,
@@ -90,8 +90,8 @@ class CloudFront_Service {
 
 		if ( $this->should_use_instance_role() ) {
 			$metadata_service = new EC2_Metadata_Service();
-			$instance_creds = $metadata_service->get_instance_credentials();
-			
+			$instance_creds   = $metadata_service->get_instance_credentials();
+
 			if ( $instance_creds ) {
 				return array(
 					'key'    => $instance_creds['key'],
@@ -138,8 +138,8 @@ class CloudFront_Service {
 
 		if ( is_wp_error( $result ) ) {
 			$error_message = $result->get_error_message();
-			$error_code = $result->get_error_code();
-			
+			$error_code    = $result->get_error_code();
+
 			if ( $error_code === 'cloudfront_api_error' ) {
 				if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
 					$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
@@ -151,7 +151,7 @@ class CloudFront_Service {
 			} else {
 				$e = new \WP_Error( 'C3 Auth Error', $error_message );
 			}
-			
+
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				error_log( 'C3 CloudFront Auth Error: ' . $error_message );
 			}
@@ -189,7 +189,7 @@ class CloudFront_Service {
 		 */
 		if ( $credentials['key'] && $credentials['secret'] ) {
 			$session_token = isset( $credentials['token'] ) ? $credentials['token'] : null;
-			$client = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
+			$client        = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
 			return $client;
 		}
 
@@ -261,18 +261,18 @@ class CloudFront_Service {
 
 			$distribution_id = $this->get_distribution_id();
 			error_log( 'C3 CloudFront: Listing invalidations for distribution: ' . $distribution_id );
-			
-			$max_items       = $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 );
-			$result          = $client->list_invalidations( $distribution_id, $max_items );
+
+			$max_items = $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 );
+			$result    = $client->list_invalidations( $distribution_id, $max_items );
 
 			if ( is_wp_error( $result ) ) {
 				$error_message = $result->get_error_message();
-				$error_code = $result->get_error_code();
-				
+				$error_code    = $result->get_error_code();
+
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					error_log( 'C3 CloudFront: API Error: ' . $error_message );
 				}
-				
+
 				if ( $error_code === 'cloudfront_api_error' ) {
 					if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
 						if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -297,7 +297,7 @@ class CloudFront_Service {
 				error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
 				return $result['Items']['InvalidationSummary'];
 			}
-			
+
 			error_log( 'C3 CloudFront: No invalidations found' );
 			return array();
 		} catch ( \Exception $e ) {

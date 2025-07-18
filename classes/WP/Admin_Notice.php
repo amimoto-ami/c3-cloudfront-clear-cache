@@ -33,7 +33,7 @@ class Admin_Notice {
 			<p>
 				<?php if ( isset( $code ) ) { ?> 
 					<b><?php echo esc_html( $code ); ?></b>
-				<?php }; ?>
+				<?php } ?>
 				<?php echo esc_html( $message ); ?>
 			</p>
 			<button type="button" class="notice-dismiss">

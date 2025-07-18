@@ -48,9 +48,9 @@ class Settings {
 		$this->hook_service->add_filter(
 			'amimoto_c3_add_settings',
 			function () {
-				require_once( C3_PLUGIN_PATH . '/templates/Plugin_Options.php' );
-				require_once( C3_PLUGIN_PATH . '/templates/Manually_Invalidation.php' );
-				require_once( C3_PLUGIN_PATH . '/templates/Invalidation_Logs.php' );
+				require_once C3_PLUGIN_PATH . '/templates/Plugin_Options.php';
+				require_once C3_PLUGIN_PATH . '/templates/Manually_Invalidation.php';
+				require_once C3_PLUGIN_PATH . '/templates/Invalidation_Logs.php';
 			}
 		);
 		/**
@@ -72,7 +72,7 @@ class Settings {
 			'cloudfront_clear_cache',
 			Constants::MENU_ID,
 			function () {
-				require_once( C3_PLUGIN_PATH . '/templates/Settings.php' );
+				require_once C3_PLUGIN_PATH . '/templates/Settings.php';
 			}
 		);
 

@@ -61,10 +61,10 @@ class EC2_Metadata_Service {
 		if ( ! $credentials ) {
 			$credentials = $this->get_credentials_v1();
 		}
-		
+
 		if ( $credentials ) {
 			$this->cached_credentials = $credentials;
-			$this->cache_expiry = isset( $credentials['expiration'] ) ? strtotime( $credentials['expiration'] ) : time() + 3600;
+			$this->cache_expiry       = isset( $credentials['expiration'] ) ? strtotime( $credentials['expiration'] ) : time() + 3600;
 		}
 
 		return $credentials;

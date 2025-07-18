@@ -86,15 +86,15 @@ class AWS_Signature_V4 {
 		if ( empty( $method ) || empty( $endpoint ) || empty( $path ) ) {
 			throw new \InvalidArgumentException( 'Method, endpoint, and path are required parameters.' );
 		}
-		$now       = new \DateTime();
-		$amz_date  = $now->format( 'Ymd\THis\Z' );
+		$now        = new \DateTime();
+		$amz_date   = $now->format( 'Ymd\THis\Z' );
 		$date_stamp = $now->format( 'Ymd' );
 
 		// パスからクエリ文字列を分離
-		$parsed_url = parse_url( $path );
-		$canonical_uri = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '/';
+		$parsed_url             = parse_url( $path );
+		$canonical_uri          = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '/';
 		$canonical_query_string = '';
-		
+
 		if ( isset( $parsed_url['query'] ) ) {
 			// クエリパラメータをソートして正規化
 			parse_str( $parsed_url['query'], $query_params );

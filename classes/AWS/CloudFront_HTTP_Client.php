@@ -56,8 +56,8 @@ class CloudFront_HTTP_Client {
 	 * @param string $session_token AWS Session Token (optional, for temporary credentials).
 	 */
 	function __construct( $access_key_id, $secret_access_key, $region = null, $session_token = null ) {
-		$cloudfront_region = $region ?: ( defined( 'C3_CLOUDFRONT_REGION' ) ? C3_CLOUDFRONT_REGION : 'us-east-1' );
-		$this->timeout = defined( 'C3_HTTP_TIMEOUT' ) ? C3_HTTP_TIMEOUT : 30;
+		$cloudfront_region       = $region ?: ( defined( 'C3_CLOUDFRONT_REGION' ) ? C3_CLOUDFRONT_REGION : 'us-east-1' );
+		$this->timeout           = defined( 'C3_HTTP_TIMEOUT' ) ? C3_HTTP_TIMEOUT : 30;
 		$this->signature_service = new AWS_Signature_V4(
 			$access_key_id,
 			$secret_access_key,

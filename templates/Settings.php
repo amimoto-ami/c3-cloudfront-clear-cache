@@ -19,9 +19,9 @@ $text_domain = Constants::text_domain();
 	echo apply_filters( 'c3_after_title', $title );
 ?>
 <?php
-require_once( C3_PLUGIN_PATH . '/templates/Plugin_Options.php' );
-require_once( C3_PLUGIN_PATH . '/templates/Manually_Invalidation.php' );
-require_once( C3_PLUGIN_PATH . '/templates/Invalidation_Logs.php' );
+require_once C3_PLUGIN_PATH . '/templates/Plugin_Options.php';
+require_once C3_PLUGIN_PATH . '/templates/Manually_Invalidation.php';
+require_once C3_PLUGIN_PATH . '/templates/Invalidation_Logs.php';
 
 ?>
 </div>

@@ -338,10 +338,10 @@ class Invalidation_Service {
 
 	/**
 	 * List the invalidation logs
-	 * 
+	 *
 	 * To enable debug logging for this method, add the following filter:
 	 * add_filter( 'c3_log_invalidation_list', '__return_true' );
-	 * 
+	 *
 	 * This will log detailed information about the invalidation list process
 	 * to the WordPress error log for troubleshooting purposes.
 	 */
@@ -353,18 +353,18 @@ class Invalidation_Service {
 		}
 
 		$histories = $this->cf_service->list_invalidations();
-		
+
 		// デバッグログを追加
 		if ( $this->debug || $this->hook_service->apply_filters( 'c3_log_invalidation_list', false ) ) {
 			error_log( 'C3 Invalidation Logs Result: ' . print_r( $histories, true ) );
 		}
-		
+
 		// エラーが発生した場合はエラーを返す
 		if ( is_wp_error( $histories ) ) {
 			error_log( 'C3 List Invalidation Logs Error: ' . $histories->get_error_message() );
 			return $histories;
 		}
-		
+
 		return $histories;
 	}
 }
