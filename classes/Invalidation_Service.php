@@ -139,6 +139,10 @@ class Invalidation_Service {
 
 		$invalidation_target = $_POST['invalidation_target'];
 
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_list', false ) ) {
+			error_log( 'C3 Manual Invalidation Started - Target: ' . $invalidation_target );
+		}
+
 		try {
 			if ( ! isset( $invalidation_target ) ) {
 				throw new \Error( 'invalidation_target is required' );
@@ -152,6 +156,14 @@ class Invalidation_Service {
 			}
 		} catch ( \Exception $e ) {
 			$result = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
+		}
+
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_list', false ) ) {
+			if ( is_wp_error( $result ) ) {
+				error_log( 'C3 Manual Invalidation Failed: ' . $result->get_error_message() );
+			} else {
+				error_log( 'C3 Manual Invalidation Completed: ' . print_r( $result, true ) );
+			}
 		}
 
 		if ( ! isset( $result ) ) {
