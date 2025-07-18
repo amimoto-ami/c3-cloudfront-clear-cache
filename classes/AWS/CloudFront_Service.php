@@ -75,18 +75,47 @@ class CloudFront_Service {
 	 *
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
-	 * @return array|null Array with 'key' and 'secret' or null if not available.
+	 * @return array|null Array with 'key', 'secret', and optionally 'token' or null if not available.
 	 */
 	public function get_credentials( ?string $access_key = null, ?string $secret_key = null ) {
 		$key    = isset( $access_key ) ? $access_key : $this->env->get_aws_access_key();
 		$secret = isset( $secret_key ) ? $secret_key : $this->env->get_aws_secret_key();
-		if ( ! isset( $key ) || ! isset( $secret ) ) {
-			return null;
+		
+		if ( $key && $secret ) {
+			return array(
+				'key'    => $key,
+				'secret' => $secret,
+			);
 		}
-		return array(
-			'key'    => $key,
-			'secret' => $secret,
-		);
+
+		if ( $this->should_use_instance_role() ) {
+			$metadata_service = new EC2_Metadata_Service();
+			$instance_creds = $metadata_service->get_instance_credentials();
+			
+			if ( $instance_creds ) {
+				return array(
+					'key'    => $instance_creds['key'],
+					'secret' => $instance_creds['secret'],
+					'token'  => $instance_creds['token'],
+				);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if should use EC2 instance role
+	 *
+	 * @return bool
+	 */
+	private function should_use_instance_role() {
+		if ( $this->hook_service->apply_filters( 'c3_has_ec2_instance_role', false ) ) {
+			return true;
+		}
+
+		$metadata_service = new EC2_Metadata_Service();
+		return $metadata_service->is_ec2_instance();
 	}
 
 	/**
@@ -159,7 +188,8 @@ class CloudFront_Service {
 		 * If AWS credentials are available, create HTTP client.
 		 */
 		if ( $credentials['key'] && $credentials['secret'] ) {
-			$client = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'] );
+			$session_token = isset( $credentials['token'] ) ? $credentials['token'] : null;
+			$client = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
 			return $client;
 		}
 

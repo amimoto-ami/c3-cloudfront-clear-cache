@@ -48,18 +48,27 @@ class AWS_Signature_V4 {
 	private $service_name;
 
 	/**
+	 * AWS Session Token
+	 *
+	 * @var string|null
+	 */
+	private $session_token;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $access_key_id AWS Access Key ID.
 	 * @param string $secret_access_key AWS Secret Access Key.
 	 * @param string $region AWS Region.
 	 * @param string $service_name AWS Service name.
+	 * @param string $session_token AWS Session Token (optional, for temporary credentials).
 	 */
-	function __construct( $access_key_id, $secret_access_key, $region, $service_name ) {
+	function __construct( $access_key_id, $secret_access_key, $region, $service_name, $session_token = null ) {
 		$this->access_key_id     = $access_key_id;
 		$this->secret_access_key = $secret_access_key;
 		$this->region            = $region;
 		$this->service_name      = $service_name;
+		$this->session_token     = $session_token;
 	}
 
 	/**
@@ -102,6 +111,10 @@ class AWS_Signature_V4 {
 			'x-amz-date'           => $amz_date,
 			'x-amz-content-sha256' => hash( 'sha256', $payload ),
 		);
+
+		if ( $this->session_token ) {
+			$default_headers['x-amz-security-token'] = $this->session_token;
+		}
 
 		$all_headers = array_merge( $default_headers, $headers );
 		ksort( $all_headers );
