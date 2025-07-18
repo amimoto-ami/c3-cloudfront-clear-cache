@@ -177,7 +177,7 @@ class CloudFront_Service {
 				$client        = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
 				return $client;
 			}
-			return new \WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );
+			return new \WP_Error( 'C3 Create Client Error', 'AWS credentials are required.' );
 		}
 
 		/**

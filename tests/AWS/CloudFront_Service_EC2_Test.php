@@ -126,7 +126,7 @@ class CloudFront_Service_EC2_Test extends TestCase {
 		
 		$this->assertTrue( 
 			$client instanceof CloudFront_HTTP_Client || 
-			( $client instanceof \WP_Error && $client->get_error_message() === 'General setting params not defined.' )
+			( $client instanceof \WP_Error && $client->get_error_message() === 'AWS credentials are required.' )
 		);
 	}
 
@@ -146,7 +146,7 @@ class CloudFront_Service_EC2_Test extends TestCase {
 		$client = $service->create_client();
 		
 		$this->assertInstanceOf( \WP_Error::class, $client );
-		$this->assertEquals( 'General setting params not defined.', $client->get_error_message() );
+		$this->assertEquals( 'AWS credentials are required.', $client->get_error_message() );
 	}
 
 	public function test_create_client_returns_error_when_empty_credentials_and_no_fallback() {
@@ -178,7 +178,7 @@ class CloudFront_Service_EC2_Test extends TestCase {
 		$client = $service->create_client();
 		
 		$this->assertInstanceOf( \WP_Error::class, $client );
-		$this->assertEquals( 'General setting params not defined.', $client->get_error_message() );
+		$this->assertEquals( 'AWS credentials are required.', $client->get_error_message() );
 	}
 
 	public function test_create_client_with_ec2_role_enabled_but_no_credentials() {
@@ -210,7 +210,7 @@ class CloudFront_Service_EC2_Test extends TestCase {
 		$client = $service->create_client();
 		
 		$this->assertInstanceOf( \WP_Error::class, $client );
-		$this->assertEquals( 'General setting params not defined.', $client->get_error_message() );
+		$this->assertEquals( 'AWS credentials are required.', $client->get_error_message() );
 	}
 
 	public function test_try_to_call_aws_api_with_session_token() {
@@ -256,7 +256,7 @@ class CloudFront_Service_EC2_Test extends TestCase {
 		$client = $service->create_client();
 		
 		$this->assertInstanceOf( \WP_Error::class, $client );
-		$this->assertEquals( 'General setting params not defined.', $client->get_error_message() );
+		$this->assertEquals( 'AWS credentials are required.', $client->get_error_message() );
 	}
 
 	public function test_regression_create_client_calls_get_credentials_when_empty_options() {

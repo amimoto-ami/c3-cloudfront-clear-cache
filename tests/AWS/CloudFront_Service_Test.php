@@ -140,7 +140,7 @@ class CloudFront_Service_Test extends TestCase {
 		
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertEquals( 'C3 Create Client Error', $result->get_error_code() );
-		$this->assertEquals( 'General setting params not defined.', $result->get_error_message() );
+		$this->assertEquals( 'AWS credentials are required.', $result->get_error_message() );
 	}
 
 	/**
@@ -160,4 +160,4 @@ class CloudFront_Service_Test extends TestCase {
 		// オプションが設定されていることをテスト
 		$this->assertInstanceOf( CloudFront_Service::class, $service );
 	}
-} 
+}  

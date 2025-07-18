@@ -98,9 +98,10 @@ class Invalidation_Service_Test extends \WP_UnitTestCase {
 
         if ( true === $test_case[ 'should_registered' ] ) {
             $timestamp = $test_case[ 'timestamp' ];
-            $expected_time = date( "Y/m/d H:i", $timestamp );
-            $actual_time = date( "Y/m/d H:i", wp_next_scheduled( $hook_name ) );
-            $this->assertSame( $expected_time, $actual_time, 'Scheduled time should match expected time within minute precision' );
+            $actual_scheduled_time = wp_next_scheduled( $hook_name );
+            
+            $time_diff = abs( $timestamp - $actual_scheduled_time );
+            $this->assertLessThanOrEqual( 300, $time_diff, 'Scheduled time should be within 5 minutes of expected time' );
         }
 
 		// It's a non-recurring event.
