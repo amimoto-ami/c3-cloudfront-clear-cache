@@ -139,10 +139,6 @@ class Invalidation_Service {
 
 		$invalidation_target = $_POST['invalidation_target'];
 
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_list', false ) ) {
-			error_log( 'C3 Manual Invalidation Started - Target: ' . $invalidation_target );
-		}
-
 		try {
 			if ( ! isset( $invalidation_target ) ) {
 				throw new \Error( 'invalidation_target is required' );
@@ -156,14 +152,6 @@ class Invalidation_Service {
 			}
 		} catch ( \Exception $e ) {
 			$result = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
-		}
-
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_list', false ) ) {
-			if ( is_wp_error( $result ) ) {
-				error_log( 'C3 Manual Invalidation Failed: ' . $result->get_error_message() );
-			} else {
-				error_log( 'C3 Manual Invalidation Completed: ' . print_r( $result, true ) );
-			}
 		}
 
 		if ( ! isset( $result ) ) {
@@ -259,6 +247,11 @@ class Invalidation_Service {
 			return $query;
 		}
 
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+			error_log( 'C3 Invalidation Started - Query: ' . print_r( $query, true ) );
+			error_log( 'C3 Invalidation Started - Force: ' . ( $force ? 'true' : 'false' ) );
+		}
+
 		if ( $this->transient_service->should_regist_cron_job() && false === $force ) {
 			/**
 			 * Just regist a cron job.
@@ -274,6 +267,15 @@ class Invalidation_Service {
 		 */
 		$this->transient_service->set_invalidation_time();
 		$result = $this->cf_service->create_invalidation( $query );
+		
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+			if ( is_wp_error( $result ) ) {
+				error_log( 'C3 Invalidation Failed: ' . $result->get_error_message() );
+			} else {
+				error_log( 'C3 Invalidation Completed Successfully: ' . print_r( $result, true ) );
+			}
+		}
+		
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}

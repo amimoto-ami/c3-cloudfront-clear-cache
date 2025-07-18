@@ -247,10 +247,16 @@ class CloudFront_Service {
 				return $client;
 			}
 
-			$distribution_id = $params['DistributionId'];
-			$paths           = $params['InvalidationBatch']['Paths']['Items'];
+		$distribution_id = $params['DistributionId'];
+		$paths           = $params['InvalidationBatch']['Paths']['Items'];
 
-			$result = $client->create_invalidation( $distribution_id, $paths );
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+			error_log( 'C3 CloudFront Invalidation Request - Distribution ID: ' . $distribution_id );
+			error_log( 'C3 CloudFront Invalidation Request - Paths: ' . print_r( $paths, true ) );
+			error_log( 'C3 CloudFront Invalidation Request - Full Params: ' . print_r( $params, true ) );
+		}
+
+		$result = $client->create_invalidation( $distribution_id, $paths );
 			return $result;
 		} catch ( \Exception $e ) {
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
