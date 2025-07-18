@@ -133,8 +133,9 @@ class CloudFront_Service {
 			return new \WP_Error( 'C3 Auth Error', 'AWS credentials are not available.' );
 		}
 
-		$client = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'] );
-		$result = $client->get_distribution( $distribution_id );
+		$session_token = isset( $credentials['token'] ) ? $credentials['token'] : null;
+		$client        = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
+		$result        = $client->get_distribution( $distribution_id );
 
 		if ( is_wp_error( $result ) ) {
 			$error_message = $result->get_error_message();
@@ -170,6 +171,12 @@ class CloudFront_Service {
 		 */
 		$options = $this->options_service->get_options();
 		if ( ! $options ) {
+			$credentials = $this->get_credentials();
+			if ( $credentials ) {
+				$session_token = isset( $credentials['token'] ) ? $credentials['token'] : null;
+				$client        = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
+				return $client;
+			}
 			return new \WP_Error( 'C3 Create Client Error', 'General setting params not defined.' );
 		}
 
@@ -190,6 +197,13 @@ class CloudFront_Service {
 		if ( $credentials['key'] && $credentials['secret'] ) {
 			$session_token = isset( $credentials['token'] ) ? $credentials['token'] : null;
 			$client        = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
+			return $client;
+		}
+
+		$fallback_credentials = $this->get_credentials();
+		if ( $fallback_credentials ) {
+			$session_token = isset( $fallback_credentials['token'] ) ? $fallback_credentials['token'] : null;
+			$client        = new CloudFront_HTTP_Client( $fallback_credentials['key'], $fallback_credentials['secret'], null, $session_token );
 			return $client;
 		}
 
