@@ -2,13 +2,27 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package HAMWORKS\WP\Custom_Search\Test
+ * @package C3_CloudFront_Cache_Controller\Test
  */
 
 ?>
 
 <?php
 require dirname( __DIR__ ) . '/vendor/autoload.php';
+
+// Add polyfill for enum_exists() function for PHP < 8.1
+if ( ! function_exists( 'enum_exists' ) ) {
+    /**
+     * Polyfill for enum_exists() function.
+     * 
+     * @param string $enum The enum name to check.
+     * @param bool $autoload Whether to autoload if not already loaded.
+     * @return bool Always returns false for PHP < 8.1 since enums don't exist.
+     */
+    function enum_exists( $enum, $autoload = true ) {
+        return false;
+    }
+}
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {

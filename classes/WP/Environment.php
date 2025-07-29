@@ -121,5 +121,4 @@ class Environment {
 		}
 		return version_compare( $supported_version, $version, '<=' );
 	}
-
 }

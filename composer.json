@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "type": "wordpress-plugin",
   "require": {
-    "php": ">=7.4",
-    "aws/aws-sdk-php": "^3.261"
+    "php": ">=7.4"
   },
   "require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "*",
@@ -13,7 +12,9 @@
 		"wp-coding-standards/wpcs": "*",
 		"wp-phpunit/wp-phpunit": "*",
 		"phpunit/phpunit": "^9.5.10",
-		"yoast/phpunit-polyfills": "^1.0.1"
+		"yoast/phpunit-polyfills": "^1.0.1",
+    "mockery/mockery": "^1.6",
+    "10up/wp_mock": "^1.1"
 	  },
 	"autoload": {
 		"psr-4": {

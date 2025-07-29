@@ -23,6 +23,17 @@ if ( ! $options || ! isset( $options[ Constants::DISTRIBUTION_ID ] ) ) {
 $invalidation_service = new Invalidation_Service();
 $histories            = $invalidation_service->list_recent_invalidation_logs();
 
+// エラーハンドリングを追加
+if ( is_wp_error( $histories ) ) {
+	$error_message = $histories->get_error_message();
+	?>
+	<div class="notice notice-error">
+		<p><strong><?php _e( 'Error loading invalidation logs:', $text_domain ); ?></strong> <?php echo esc_html( $error_message ); ?></p>
+	</div>
+	<?php
+	return;
+}
+
 ?>
 
 

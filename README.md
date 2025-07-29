@@ -75,23 +75,9 @@ add_filter( 'c3_invalidation_items', function( $items, $post ) {
 }, 10, 2 );
 ```
 
-### Change or Stop loading bundled AWS SDK (Since v6.0.0)
+### Custom Implementation
 
-Use `c3_aws_sdk_path` filter, to relace the AWS SDK library path.
-
-```
-add_filter( 'c3_aws_sdk_path', function () {
-	return 'YOUR/CUSTOM/AWS/SDK/ENTRY/POINT.php';
-} );
-```
-
-If return null, the plugin will not load bundled AWS SDK.
-
-```
-add_filter( 'c3_aws_sdk_path', function () {
-	return null;
-} );
-```
+This plugin now uses a custom AWS CloudFront implementation instead of the official AWS SDK to reduce dependencies and improve performance.
 
 ### Logging cron job history(Since v6.0.0)
 

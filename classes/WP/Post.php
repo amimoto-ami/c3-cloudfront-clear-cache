@@ -54,7 +54,13 @@ class Post {
 	 */
 	public function parse_url( string $url ) {
 		$parsed_url = parse_url( $url );
-		$url        = $parsed_url['scheme'] . '://' . $parsed_url['host'];
+
+		// Check if required components exist
+		if ( ! isset( $parsed_url['scheme'] ) || ! isset( $parsed_url['host'] ) ) {
+			return $url; // Return original URL if parsing failed
+		}
+
+		$url = $parsed_url['scheme'] . '://' . $parsed_url['host'];
 		if ( isset( $parsed_url['path'] ) ) {
 			$url .= $parsed_url['path'];
 		}
