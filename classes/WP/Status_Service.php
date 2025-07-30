@@ -63,6 +63,7 @@ class Status_Service {
 		return array(
 			'current_status' => $this->get_current_status(),
 			'next_scheduled' => $this->get_next_scheduled_purge(),
+			'scheduled_paths' => $this->get_scheduled_paths(),
 			'last_successful' => $this->get_last_successful_purge(),
 			'last_error' => $this->get_last_error(),
 		);
@@ -107,6 +108,22 @@ class Status_Service {
 	 */
 	private function get_last_error() {
 		return $this->transient->get_last_error();
+	}
+
+	/**
+	 * Get scheduled invalidation paths
+	 *
+	 * @return array|null
+	 */
+	private function get_scheduled_paths() {
+		$transient_service = new Transient_Service( $this->transient );
+		$query = $transient_service->load_invalidation_query();
+		
+		if ( ! $query || ! isset( $query['Paths']['Items'] ) ) {
+			return null;
+		}
+		
+		return $query['Paths']['Items'];
 	}
 
 	/**

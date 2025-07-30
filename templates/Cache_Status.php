@@ -68,6 +68,25 @@ $status         = $status_service->get_cache_status();
 			<td><?php echo esc_html( $status['next_scheduled'] ); ?></td>
 		</tr>
 		<?php endif; ?>
+		<?php if ( $status['scheduled_paths'] && is_array( $status['scheduled_paths'] ) ) : ?>
+		<tr>
+			<td><strong><?php _e( 'Scheduled Paths', $text_domain ); ?></strong></td>
+			<td>
+				<?php if ( count( $status['scheduled_paths'] ) === 1 && $status['scheduled_paths'][0] === '/*' ) : ?>
+					<span class="notice-info" style="padding: 2px 8px; border-radius: 3px;">
+						<?php _e( 'Full cache clear (all paths)', $text_domain ); ?>
+					</span>
+				<?php else : ?>
+					<div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; background: #f9f9f9;">
+						<?php foreach ( $status['scheduled_paths'] as $path ) : ?>
+							<div><code><?php echo esc_html( $path ); ?></code></div>
+						<?php endforeach; ?>
+					</div>
+					<small><?php printf( _n( '%d path scheduled', '%d paths scheduled', count( $status['scheduled_paths'] ), $text_domain ), count( $status['scheduled_paths'] ) ); ?></small>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php endif; ?>
 		<?php if ( $status['last_successful'] ) : ?>
 		<tr>
 			<td><strong><?php _e( 'Last Successful Purge', $text_domain ); ?></strong></td>

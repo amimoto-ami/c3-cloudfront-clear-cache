@@ -17,11 +17,13 @@ class Status_Service_Test extends \WP_UnitTestCase {
         $this->transient_mock->method( 'get_current_status' )->willReturn( 'idle' );
         $this->transient_mock->method( 'get_last_successful_purge' )->willReturn( null );
         $this->transient_mock->method( 'get_last_error' )->willReturn( null );
+        $this->transient_mock->method( 'get_invalidation_target' )->willReturn( null );
         
         $status = $this->target->get_cache_status();
         $this->assertIsArray( $status );
         $this->assertArrayHasKey( 'current_status', $status );
         $this->assertArrayHasKey( 'next_scheduled', $status );
+        $this->assertArrayHasKey( 'scheduled_paths', $status );
         $this->assertArrayHasKey( 'last_successful', $status );
         $this->assertArrayHasKey( 'last_error', $status );
     }
@@ -60,5 +62,40 @@ class Status_Service_Test extends \WP_UnitTestCase {
             }), DAY_IN_SECONDS );
         
         $this->target->set_status_error( 'Test error message' );
+    }
+
+    public function test_get_scheduled_paths_returns_null_when_no_query() {
+        $this->transient_mock->method( 'get_invalidation_target' )->willReturn( null );
+        
+        $status = $this->target->get_cache_status();
+        $this->assertNull( $status['scheduled_paths'] );
+    }
+
+    public function test_get_scheduled_paths_returns_paths_array() {
+        $mock_query = array(
+            'Paths' => array(
+                'Items' => array( '/path1', '/path2', '/path3' ),
+                'Quantity' => 3
+            )
+        );
+        $this->transient_mock->method( 'get_invalidation_target' )->willReturn( $mock_query );
+        
+        $status = $this->target->get_cache_status();
+        $this->assertIsArray( $status['scheduled_paths'] );
+        $this->assertEquals( array( '/path1', '/path2', '/path3' ), $status['scheduled_paths'] );
+    }
+
+    public function test_get_scheduled_paths_handles_wildcard() {
+        $mock_query = array(
+            'Paths' => array(
+                'Items' => array( '/*' ),
+                'Quantity' => 1
+            )
+        );
+        $this->transient_mock->method( 'get_invalidation_target' )->willReturn( $mock_query );
+        
+        $status = $this->target->get_cache_status();
+        $this->assertIsArray( $status['scheduled_paths'] );
+        $this->assertEquals( array( '/*' ), $status['scheduled_paths'] );
     }
 }
