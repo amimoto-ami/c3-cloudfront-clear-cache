@@ -65,7 +65,10 @@ $status         = $status_service->get_cache_status();
 		<?php if ( $status['next_scheduled'] ) : ?>
 		<tr>
 			<td><strong><?php _e( 'Next Scheduled Purge', $text_domain ); ?></strong></td>
-			<td><?php echo esc_html( $status['next_scheduled'] ); ?></td>
+			<td>
+				<?php echo esc_html( $status['next_scheduled'] ); ?>
+				<small style="color: #666;"> (UTC)</small>
+			</td>
 		</tr>
 		<?php endif; ?>
 		<?php if ( $status['scheduled_paths'] && is_array( $status['scheduled_paths'] ) ) : ?>
@@ -92,6 +95,7 @@ $status         = $status_service->get_cache_status();
 			<td><strong><?php _e( 'Last Successful Purge', $text_domain ); ?></strong></td>
 			<td>
 				<?php echo esc_html( $status['last_successful']['timestamp'] ); ?>
+				<small style="color: #666;"> (UTC)</small>
 				<?php if ( isset( $status['last_successful']['invalidation_id'] ) ) : ?>
 					<br><small>ID: <?php echo esc_html( $status['last_successful']['invalidation_id'] ); ?></small>
 				<?php endif; ?>
@@ -103,7 +107,7 @@ $status         = $status_service->get_cache_status();
 			<td><strong><?php _e( 'Last Error', $text_domain ); ?></strong></td>
 			<td>
 				<span class="notice-error" style="padding: 2px 8px; border-radius: 3px;">
-					<?php echo esc_html( $status['last_error']['timestamp'] ); ?>: 
+					<?php echo esc_html( $status['last_error']['timestamp'] ); ?><small style="color: #666;"> (UTC)</small>: 
 					<?php echo esc_html( $status['last_error']['message'] ); ?>
 				</span>
 			</td>
