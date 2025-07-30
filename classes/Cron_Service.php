@@ -115,6 +115,9 @@ class Cron_Service {
 		/**
 		 * Execute the invalidation.
 		 */
+		$status_service = new WP\Status_Service();
+		$status_service->set_status_processing();
+		
 		$result = $this->cf_service->create_invalidation( $query );
 		if ( $this->debug ) {
 			if ( is_wp_error( $result ) ) {
@@ -123,6 +126,14 @@ class Cron_Service {
 				error_log( 'C3 Cron: Invalidation completed successfully' );
 			}
 		}
+		
+		if ( is_wp_error( $result ) ) {
+			$status_service->set_status_error( $result->get_error_message() );
+		} else {
+			$invalidation_id = isset( $result['Invalidation']['Id'] ) ? $result['Invalidation']['Id'] : null;
+			$status_service->set_status_completed( $invalidation_id );
+		}
+		
 		$this->transient_service->delete_invalidation_query();
 		if ( $this->debug ) {
 			error_log( '===== C3 Invalidation cron has been COMPLETED ===' );

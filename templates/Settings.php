@@ -21,6 +21,7 @@ $text_domain = Constants::text_domain();
 <?php
 require_once C3_PLUGIN_PATH . '/templates/Plugin_Options.php';
 require_once C3_PLUGIN_PATH . '/templates/Manually_Invalidation.php';
+require_once C3_PLUGIN_PATH . '/templates/Cache_Status.php';
 require_once C3_PLUGIN_PATH . '/templates/Invalidation_Logs.php';
 
 ?>

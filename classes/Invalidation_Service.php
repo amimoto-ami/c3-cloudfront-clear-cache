@@ -266,6 +266,10 @@ class Invalidation_Service {
 		 * Execute invalidation request
 		 */
 		$this->transient_service->set_invalidation_time();
+		
+		$status_service = new WP\Status_Service();
+		$status_service->set_status_processing();
+		
 		$result = $this->cf_service->create_invalidation( $query );
 		
 		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
@@ -277,8 +281,13 @@ class Invalidation_Service {
 		}
 		
 		if ( is_wp_error( $result ) ) {
+			$status_service->set_status_error( $result->get_error_message() );
 			return $result;
 		}
+		
+		$invalidation_id = isset( $result['Invalidation']['Id'] ) ? $result['Invalidation']['Id'] : null;
+		$status_service->set_status_completed( $invalidation_id );
+		
 		return array(
 			'type'    => 'Success',
 			'message' => 'Invalidation has been succeeded, please wait a few minutes to remove the cache.',

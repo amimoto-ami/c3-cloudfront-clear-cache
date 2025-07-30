@@ -22,6 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Transient {
 	const C3_INVALIDATION             = 'c3_invalidation';
 	const C3_CRON_INDALITATION_TARGET = 'c3_cron_invalidation_target';
+	const C3_LAST_SUCCESSFUL_PURGE    = 'c3_last_successful_purge';
+	const C3_LAST_ERROR               = 'c3_last_error';
+	const C3_CURRENT_STATUS           = 'c3_current_status';
 
 	/**
 	 * Get transiend by key name
@@ -91,5 +94,47 @@ class Transient {
 	 */
 	public function delete_invalidation_target() {
 		return $this->delete_transient( self::C3_CRON_INDALITATION_TARGET );
+	}
+
+	/**
+	 * Get the last successful purge data
+	 */
+	public function get_last_successful_purge() {
+		return $this->get_transient( self::C3_LAST_SUCCESSFUL_PURGE );
+	}
+
+	/**
+	 * Set the last successful purge data
+	 */
+	public function set_last_successful_purge( $data, ?int $expiration = null ) {
+		return $this->set_transient( self::C3_LAST_SUCCESSFUL_PURGE, $data, $expiration );
+	}
+
+	/**
+	 * Get the last error data
+	 */
+	public function get_last_error() {
+		return $this->get_transient( self::C3_LAST_ERROR );
+	}
+
+	/**
+	 * Set the last error data
+	 */
+	public function set_last_error( $data, ?int $expiration = null ) {
+		return $this->set_transient( self::C3_LAST_ERROR, $data, $expiration );
+	}
+
+	/**
+	 * Get the current status
+	 */
+	public function get_current_status() {
+		return $this->get_transient( self::C3_CURRENT_STATUS );
+	}
+
+	/**
+	 * Set the current status
+	 */
+	public function set_current_status( $status, ?int $expiration = null ) {
+		return $this->set_transient( self::C3_CURRENT_STATUS, $status, $expiration );
 	}
 }
