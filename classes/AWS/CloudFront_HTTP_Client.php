@@ -223,15 +223,12 @@ class CloudFront_HTTP_Client {
 			return array();
 		}
 
-		libxml_use_internal_errors( true );
-		libxml_disable_entity_loader( true );
-		$xml = simplexml_load_string( $xml_body, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOENT );
-
-		if ( false === $xml ) {
+		try {
+			$xml = $this->parseAwsXmlWithSimpleXML( $xml_body );
+			return json_decode( json_encode( $xml ), true );
+		} catch ( \Exception $e ) {
 			return array( 'raw_response' => $xml_body );
 		}
-
-		return json_decode( json_encode( $xml ), true );
 	}
 
 	/**
@@ -242,13 +239,78 @@ class CloudFront_HTTP_Client {
 	 * @return string Error message.
 	 */
 	private function parse_error_response( $xml_body, $status_code ) {
-		libxml_use_internal_errors( true );
-		libxml_disable_entity_loader( true );
-		$xml = simplexml_load_string( $xml_body, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOENT );
-		if ( false !== $xml && isset( $xml->Message ) ) {
-			return (string) $xml->Message;
+		try {
+			$xml = $this->parseAwsXmlWithSimpleXML( $xml_body );
+			if ( isset( $xml->Message ) ) {
+				return (string) $xml->Message;
+			}
+		} catch ( \Exception $e ) {
 		}
 
 		return "CloudFront API error (HTTP {$status_code}): {$xml_body}";
+	}
+
+	/**
+	 * AWS APIのXMLレスポンスを安全にパースする
+	 * @param string $xmlString XMLレスポンス文字列
+	 * @return DOMDocument パース済みのDOMDocument
+	 * @throws Exception パースに失敗した場合
+	 */
+	private function parseAwsXmlResponse( $xmlString ) {
+		if ( empty( $xmlString ) ) {
+			throw new \Exception( 'XML string is empty' );
+		}
+
+		$dom = new \DOMDocument();
+		$dom->resolveExternals = false;
+		$dom->substituteEntities = false;
+		
+		libxml_use_internal_errors( true );
+		libxml_clear_errors();
+		
+		$success = $dom->loadXML( $xmlString, LIBXML_NOCDATA | LIBXML_NONET );
+		
+		if ( ! $success ) {
+			$errors = libxml_get_errors();
+			$error_messages = array();
+			foreach ( $errors as $error ) {
+				$error_messages[] = trim( $error->message );
+			}
+			libxml_clear_errors();
+			throw new \Exception( 'XML parsing failed: ' . implode( '; ', $error_messages ) );
+		}
+		
+		libxml_clear_errors();
+		return $dom;
+	}
+
+	/**
+	 * SimpleXMLを使用したAWS XMLレスポンスパース
+	 * @param string $xmlString XMLレスポンス文字列
+	 * @return SimpleXMLElement パース済みのSimpleXMLElement
+	 * @throws Exception パースに失敗した場合
+	 */
+	private function parseAwsXmlWithSimpleXML( $xmlString ) {
+		if ( empty( $xmlString ) ) {
+			throw new \Exception( 'XML string is empty' );
+		}
+
+		libxml_use_internal_errors( true );
+		libxml_clear_errors();
+		
+		$xml = simplexml_load_string( $xmlString, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET );
+		
+		if ( false === $xml ) {
+			$errors = libxml_get_errors();
+			$error_messages = array();
+			foreach ( $errors as $error ) {
+				$error_messages[] = trim( $error->message );
+			}
+			libxml_clear_errors();
+			throw new \Exception( 'XML parsing failed: ' . implode( '; ', $error_messages ) );
+		}
+		
+		libxml_clear_errors();
+		return $xml;
 	}
 }
