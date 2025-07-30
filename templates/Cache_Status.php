@@ -62,6 +62,18 @@ $status         = $status_service->get_cache_status();
 				</span>
 			</td>
 		</tr>
+		<?php if ( $status['last_successful'] ) : ?>
+		<tr>
+			<td><strong><?php _e( 'Last Successful Purge', $text_domain ); ?></strong></td>
+			<td>
+				<?php echo esc_html( $status['last_successful']['timestamp'] ); ?>
+				<small style="color: #666;"> (UTC)</small>
+				<?php if ( isset( $status['last_successful']['invalidation_id'] ) ) : ?>
+					<br><small>ID: <?php echo esc_html( $status['last_successful']['invalidation_id'] ); ?></small>
+				<?php endif; ?>
+			</td>
+		</tr>
+		<?php endif; ?>
 		<?php if ( $status['next_scheduled'] ) : ?>
 		<tr>
 			<td><strong><?php _e( 'Next Scheduled Purge', $text_domain ); ?></strong></td>
@@ -86,18 +98,6 @@ $status         = $status_service->get_cache_status();
 						<?php endforeach; ?>
 					</div>
 					<small><?php printf( _n( '%d path scheduled', '%d paths scheduled', count( $status['scheduled_paths'] ), $text_domain ), count( $status['scheduled_paths'] ) ); ?></small>
-				<?php endif; ?>
-			</td>
-		</tr>
-		<?php endif; ?>
-		<?php if ( $status['last_successful'] ) : ?>
-		<tr>
-			<td><strong><?php _e( 'Last Successful Purge', $text_domain ); ?></strong></td>
-			<td>
-				<?php echo esc_html( $status['last_successful']['timestamp'] ); ?>
-				<small style="color: #666;"> (UTC)</small>
-				<?php if ( isset( $status['last_successful']['invalidation_id'] ) ) : ?>
-					<br><small>ID: <?php echo esc_html( $status['last_successful']['invalidation_id'] ); ?></small>
 				<?php endif; ?>
 			</td>
 		</tr>
