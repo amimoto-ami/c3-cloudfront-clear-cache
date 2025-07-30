@@ -89,7 +89,7 @@ class Status_Service {
 	 */
 	private function get_next_scheduled_purge() {
 		$timestamp = wp_next_scheduled( 'c3_cron_invalidation' );
-		return $timestamp ? date_i18n( 'Y-m-d H:i:s', $timestamp ) : null;
+		return $timestamp ? gmdate( 'Y-m-d H:i:s', $timestamp ) : null;
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Status_Service {
 	public function set_status_completed( $invalidation_id = null ) {
 		$this->transient->set_current_status( 'idle', 60 );
 		$this->transient->set_last_successful_purge( array(
-			'timestamp' => current_time( 'mysql' ),
+			'timestamp' => gmdate( 'Y-m-d H:i:s' ),
 			'invalidation_id' => $invalidation_id,
 		), DAY_IN_SECONDS );
 		$this->transient->delete_transient( Transient::C3_LAST_ERROR );
@@ -190,7 +190,7 @@ class Status_Service {
 	public function set_status_error( $error_message ) {
 		$this->transient->set_current_status( 'error', 300 );
 		$this->transient->set_last_error( array(
-			'timestamp' => current_time( 'mysql' ),
+			'timestamp' => gmdate( 'Y-m-d H:i:s' ),
 			'message' => $error_message,
 		), DAY_IN_SECONDS );
 	}
