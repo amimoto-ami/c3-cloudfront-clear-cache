@@ -41,10 +41,18 @@ features:
 
 Install the plugin and configure your AWS CloudFront settings:
 
-```bash
-# Clone the repository
-git clone https://github.com/amimoto-ami/c3-cloudfront-clear-cache.git
+### Installation
 
+```bash
+# Using WP-CLI (recommended)
+wp plugin install c3-cloudfront-clear-cache --activate
+
+# Or install via WordPress Admin: Plugins > Add New > Search "C3 CloudFront Clear Cache"
+```
+
+### Configuration
+
+```bash
 # Set environment variables
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
