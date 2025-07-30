@@ -216,8 +216,12 @@ jQuery(document).ready(function($) {
 						? data.InvalidationBatch.Paths.Items 
 						: [data.InvalidationBatch.Paths.Items];
 					
-					items.forEach(function(path) {
-						html += '<div>' + path + '</div>';
+					items.forEach(function(pathItem) {
+						var pathString = typeof pathItem === 'string' ? pathItem : 
+							(pathItem && typeof pathItem === 'object' ? 
+								(pathItem['#text'] || pathItem.toString() || JSON.stringify(pathItem)) : 
+								String(pathItem));
+						html += '<div>' + pathString + '</div>';
 					});
 					
 					html += '</div></div>';
