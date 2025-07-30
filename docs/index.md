@@ -52,8 +52,17 @@ wp plugin install c3-cloudfront-clear-cache --activate
 
 ### Configuration
 
+After installation, configure the plugin through the WordPress admin:
+
+1. Go to **Settings > C3 CloudFront Cache**
+2. Enter your CloudFront Distribution ID
+3. Enter your AWS Access Key and Secret Key
+4. Click **Save Changes**
+
+Alternatively, you can set environment variables for enhanced security:
+
 ```bash
-# Set environment variables
+# Set environment variables (optional)
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
 export C3_DISTRIBUTION_ID=your_distribution_id

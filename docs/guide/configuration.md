@@ -33,9 +33,20 @@ Create an IAM policy with these minimum permissions:
 
 ## Configuration Methods
 
-### Method 1: Environment Variables (Recommended)
+### Method 1: WordPress Admin Interface (Recommended)
 
-Set these environment variables in your server configuration:
+1. Go to **Settings > C3 CloudFront Cache**
+2. Fill in the required fields:
+   - **CloudFront Distribution ID**
+   - **AWS Access Key ID**
+   - **AWS Secret Access Key**
+3. Click **Save Changes**
+
+The plugin will test your credentials and save them securely in the WordPress options table.
+
+### Method 2: Environment Variables (Advanced)
+
+For enhanced security or server environments, you can set environment variables:
 
 ```bash
 # Required
@@ -71,19 +82,8 @@ environment:
   - C3_DISTRIBUTION_ID=your_cloudfront_distribution_id
 ```
 
-### Method 2: WordPress Admin Interface
-
-1. Go to **Settings > C3 CloudFront Cache**
-2. Fill in the required fields:
-   - **AWS Access Key ID**
-   - **AWS Secret Access Key**  
-   - **CloudFront Distribution ID**
-3. Optionally configure:
-   - **HTTP Timeout** (default: 30 seconds)
-4. Click **Save Changes**
-
-::: warning Security Note
-Environment variables are more secure than storing credentials in the database. Use the admin interface only for development or when environment variables aren't possible.
+::: info Security Note
+Environment variables provide enhanced security by keeping credentials out of the database. However, the WordPress admin interface is perfectly suitable for most use cases and provides a user-friendly configuration experience.
 :::
 
 ### Method 3: Programmatic Configuration
@@ -118,6 +118,18 @@ After configuration, test that everything works:
 4. Click **Invalidate**
 
 If successful, you should see a confirmation message and the invalidation should appear in your CloudFront console.
+
+### WP-CLI Testing
+
+You can also test configuration using WP-CLI:
+
+```bash
+# Check configuration status
+wp c3 status
+
+# Test invalidation
+wp c3 invalidate /
+```
 
 ## Advanced Configuration Options
 
@@ -159,9 +171,10 @@ add_filter('c3_log_cron_invalidation_task', '__return_true');
 ### Common Issues
 
 **Invalid Credentials**
-- Verify your AWS Access Key ID and Secret Access Key
+- Verify your AWS Access Key ID and Secret Access Key in the WordPress admin
 - Check that the IAM user has necessary permissions
 - Ensure credentials are properly URL-encoded if special characters are present
+- If using environment variables, verify they are correctly set and accessible
 
 **Distribution Not Found**
 - Verify the CloudFront Distribution ID is correct
