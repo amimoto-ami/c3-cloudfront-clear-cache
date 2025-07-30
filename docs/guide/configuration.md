@@ -44,46 +44,45 @@ Create an IAM policy with these minimum permissions:
 
 The plugin will test your credentials and save them securely in the WordPress options table.
 
-### Method 2: Environment Variables (Advanced)
+### Method 2: wp-config.php Constants (Advanced)
 
-For enhanced security or server environments, you can set environment variables:
+For enhanced security, you can define constants in your `wp-config.php` file:
 
-```bash
-# Required
-export AWS_ACCESS_KEY_ID="your_access_key_here"
-export AWS_SECRET_ACCESS_KEY="your_secret_key_here"
-export C3_DISTRIBUTION_ID="your_cloudfront_distribution_id"
-
-# Optional
-export C3_HTTP_TIMEOUT="30"  # HTTP timeout in seconds (default: 30)
+```php
+// Add to wp-config.php (before the "That's all, stop editing!" line)
+define( 'AWS_ACCESS_KEY_ID', 'your_access_key_here' );
+define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key_here' );
+define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
 ```
 
 #### For Different Hosting Environments
 
-**Apache (.htaccess)**
-```apache
-SetEnv AWS_ACCESS_KEY_ID "your_access_key_here"
-SetEnv AWS_SECRET_ACCESS_KEY "your_secret_key_here"
-SetEnv C3_DISTRIBUTION_ID "your_cloudfront_distribution_id"
+**Shared Hosting**
+```php
+// Add to wp-config.php
+define( 'AWS_ACCESS_KEY_ID', 'your_access_key_here' );
+define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key_here' );
+define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
 ```
 
-**Nginx**
-```nginx
-fastcgi_param AWS_ACCESS_KEY_ID "your_access_key_here";
-fastcgi_param AWS_SECRET_ACCESS_KEY "your_secret_key_here";
-fastcgi_param C3_DISTRIBUTION_ID "your_cloudfront_distribution_id";
+**VPS/Dedicated Server**
+```php
+// Add to wp-config.php
+define( 'AWS_ACCESS_KEY_ID', 'your_access_key_here' );
+define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key_here' );
+define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
 ```
 
 **Docker**
-```yaml
-environment:
-  - AWS_ACCESS_KEY_ID=your_access_key_here
-  - AWS_SECRET_ACCESS_KEY=your_secret_key_here
-  - C3_DISTRIBUTION_ID=your_cloudfront_distribution_id
+```php
+// Add to wp-config.php
+define( 'AWS_ACCESS_KEY_ID', 'your_access_key_here' );
+define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key_here' );
+define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
 ```
 
 ::: info Security Note
-Environment variables provide enhanced security by keeping credentials out of the database. However, the WordPress admin interface is perfectly suitable for most use cases and provides a user-friendly configuration experience.
+Using `wp-config.php` constants provides enhanced security by keeping credentials out of the database. However, the WordPress admin interface is perfectly suitable for most use cases and provides a user-friendly configuration experience.
 :::
 
 ### Method 3: Programmatic Configuration
@@ -174,7 +173,7 @@ add_filter('c3_log_cron_invalidation_task', '__return_true');
 - Verify your AWS Access Key ID and Secret Access Key in the WordPress admin
 - Check that the IAM user has necessary permissions
 - Ensure credentials are properly URL-encoded if special characters are present
-- If using environment variables, verify they are correctly set and accessible
+- If using wp-config.php constants, verify they are correctly defined
 
 **Distribution Not Found**
 - Verify the CloudFront Distribution ID is correct

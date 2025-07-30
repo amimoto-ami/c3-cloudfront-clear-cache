@@ -59,13 +59,13 @@ After installation, configure the plugin through the WordPress admin:
 3. Enter your AWS Access Key and Secret Key
 4. Click **Save Changes**
 
-Alternatively, you can set environment variables for enhanced security:
+Alternatively, you can define constants in `wp-config.php` for enhanced security:
 
-```bash
-# Set environment variables (optional)
-export AWS_ACCESS_KEY_ID=your_access_key
-export AWS_SECRET_ACCESS_KEY=your_secret_key
-export C3_DISTRIBUTION_ID=your_distribution_id
+```php
+// Add to wp-config.php
+define( 'AWS_ACCESS_KEY_ID', 'your_access_key' );
+define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key' );
+define( 'C3_DISTRIBUTION_ID', 'your_distribution_id' );
 ```
 
 ## Why C3 CloudFront Cache Controller?
