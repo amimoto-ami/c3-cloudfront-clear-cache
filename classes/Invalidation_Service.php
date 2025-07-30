@@ -115,6 +115,13 @@ class Invalidation_Service {
 				'invalidate_manually',
 			)
 		);
+		$this->hook_service->add_action(
+			'wp_ajax_c3_get_invalidation_details',
+			array(
+				$this,
+				'handle_invalidation_details_ajax',
+			)
+		);
 		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_register_task', false );
 	}
 
@@ -380,5 +387,46 @@ class Invalidation_Service {
 		}
 
 		return $histories;
+	}
+
+	/**
+	 * Get detailed invalidation information
+	 *
+	 * @param string $invalidation_id Invalidation ID.
+	 * @return array|WP_Error Invalidation details or error.
+	 */
+	public function get_invalidation_details( $invalidation_id ) {
+		$options = $this->get_plugin_option();
+		if ( is_wp_error( $options ) ) {
+			return $options;
+		}
+
+		return $this->cf_service->get_invalidation_details( $invalidation_id );
+	}
+
+	/**
+	 * Handle AJAX request for invalidation details
+	 */
+	public function handle_invalidation_details_ajax() {
+		if ( ! check_ajax_referer( 'c3_invalidation_details_nonce', 'nonce', false ) ) {
+			wp_die( 'Security check failed' );
+		}
+
+		if ( ! current_user_can( 'cloudfront_clear_cache' ) ) {
+			wp_die( 'Insufficient permissions' );
+		}
+
+		$invalidation_id = sanitize_text_field( $_POST['invalidation_id'] ?? '' );
+		if ( empty( $invalidation_id ) ) {
+			wp_send_json_error( 'Invalid invalidation ID' );
+		}
+
+		$details = $this->get_invalidation_details( $invalidation_id );
+
+		if ( is_wp_error( $details ) ) {
+			wp_send_json_error( $details->get_error_message() );
+		}
+
+		wp_send_json_success( $details );
 	}
 }
