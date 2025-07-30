@@ -40,7 +40,7 @@ if ( is_wp_error( $histories ) ) {
 <table class='wp-list-table widefat plugins'>
 	<thead>
 		<tr>
-			<th colspan='3'>
+			<th colspan='4'>
 				<h2><?php _e( 'CloudFront Invalidation Logs', $text_domain ); ?></h2>
 			</th>
 		</tr>
