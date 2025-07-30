@@ -217,10 +217,32 @@ jQuery(document).ready(function($) {
 						: [data.InvalidationBatch.Paths.Items];
 					
 					items.forEach(function(pathItem) {
-						var pathString = typeof pathItem === 'string' ? pathItem : 
-							(pathItem && typeof pathItem === 'object' ? 
-								(pathItem['#text'] || pathItem.toString() || JSON.stringify(pathItem)) : 
-								String(pathItem));
+						console.log('Path item structure:', pathItem);
+						console.log('Path item type:', typeof pathItem);
+						console.log('Path item keys:', Object.keys(pathItem || {}));
+						
+						var pathString = '';
+						if (typeof pathItem === 'string') {
+							pathString = pathItem;
+						} else if (pathItem && typeof pathItem === 'object') {
+							if (pathItem['#text']) {
+								pathString = pathItem['#text'];
+							} else if (pathItem['0']) {
+								pathString = pathItem['0'];
+							} else if (pathItem.hasOwnProperty('')) {
+								pathString = pathItem[''];
+							} else if (typeof pathItem.valueOf === 'function') {
+								pathString = pathItem.valueOf();
+							} else if (Object.keys(pathItem).length === 1) {
+								var key = Object.keys(pathItem)[0];
+								pathString = pathItem[key];
+							} else {
+								pathString = JSON.stringify(pathItem).replace(/[{}"\[\]]/g, '').replace(/:/g, '=');
+							}
+						} else {
+							pathString = String(pathItem);
+						}
+						
 						html += '<div>' + pathString + '</div>';
 					});
 					
