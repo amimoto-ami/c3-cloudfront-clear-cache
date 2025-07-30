@@ -79,6 +79,7 @@ class Status_Service_Test extends \WP_UnitTestCase {
             )
         );
         $this->transient_mock->method( 'get_invalidation_target' )->willReturn( $mock_query );
+        $this->transient_mock->method( 'get_last_successful_purge' )->willReturn( null );
         
         $status = $this->target->get_cache_status();
         $this->assertIsArray( $status['scheduled_paths'] );
@@ -93,9 +94,29 @@ class Status_Service_Test extends \WP_UnitTestCase {
             )
         );
         $this->transient_mock->method( 'get_invalidation_target' )->willReturn( $mock_query );
+        $this->transient_mock->method( 'get_last_successful_purge' )->willReturn( null );
         
         $status = $this->target->get_cache_status();
         $this->assertIsArray( $status['scheduled_paths'] );
         $this->assertEquals( array( '/*' ), $status['scheduled_paths'] );
+    }
+
+    public function test_get_scheduled_paths_clears_completed_invalidations() {
+        $mock_query = array(
+            'Paths' => array(
+                'Items' => array( '/path1', '/path2' ),
+                'Quantity' => 2
+            )
+        );
+        $mock_last_successful = array(
+            'timestamp' => '2025-01-01 00:00:00',
+            'invalidation_id' => 'I123456789'
+        );
+        
+        $this->transient_mock->method( 'get_invalidation_target' )->willReturn( $mock_query );
+        $this->transient_mock->method( 'get_last_successful_purge' )->willReturn( $mock_last_successful );
+        
+        $status = $this->target->get_cache_status();
+        $this->assertArrayHasKey( 'scheduled_paths', $status );
     }
 }

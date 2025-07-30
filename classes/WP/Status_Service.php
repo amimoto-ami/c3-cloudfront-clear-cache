@@ -123,7 +123,42 @@ class Status_Service {
 			return null;
 		}
 		
+		$last_successful = $this->get_last_successful_purge();
+		if ( $last_successful && isset( $last_successful['invalidation_id'] ) ) {
+			if ( $this->is_invalidation_completed( $last_successful['invalidation_id'] ) ) {
+				$transient_service->delete_invalidation_query();
+				return null;
+			}
+		}
+		
 		return $query['Paths']['Items'];
+	}
+
+	/**
+	 * Check if invalidation is completed via CloudFront API
+	 *
+	 * @param string $invalidation_id CloudFront invalidation ID.
+	 * @return bool
+	 */
+	private function is_invalidation_completed( $invalidation_id ) {
+		try {
+			$cf_service = new \C3_CloudFront_Cache_Controller\AWS\CloudFront_Service();
+			$invalidations = $cf_service->list_invalidations();
+			
+			if ( is_wp_error( $invalidations ) || ! is_array( $invalidations ) ) {
+				return false;
+			}
+			
+			foreach ( $invalidations as $invalidation ) {
+				if ( isset( $invalidation['Id'] ) && $invalidation['Id'] === $invalidation_id ) {
+					return isset( $invalidation['Status'] ) && $invalidation['Status'] === 'Completed';
+				}
+			}
+			
+			return true;
+		} catch ( \Exception $e ) {
+			return false;
+		}
 	}
 
 	/**
