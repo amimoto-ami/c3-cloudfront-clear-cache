@@ -217,33 +217,34 @@ jQuery(document).ready(function($) {
 						: [data.InvalidationBatch.Paths.Items];
 					
 					items.forEach(function(pathItem) {
-						console.log('Path item structure:', pathItem);
-						console.log('Path item type:', typeof pathItem);
-						console.log('Path item keys:', Object.keys(pathItem || {}));
-						
-						var pathString = '';
 						if (typeof pathItem === 'string') {
-							pathString = pathItem;
+							html += '<div>' + pathItem + '</div>';
+						} else if (pathItem && typeof pathItem === 'object' && pathItem.Path && Array.isArray(pathItem.Path)) {
+							pathItem.Path.forEach(function(actualPath) {
+								html += '<div>' + actualPath + '</div>';
+							});
 						} else if (pathItem && typeof pathItem === 'object') {
+							var pathString = '';
 							if (pathItem['#text']) {
 								pathString = pathItem['#text'];
-							} else if (pathItem['0']) {
-								pathString = pathItem['0'];
-							} else if (pathItem.hasOwnProperty('')) {
-								pathString = pathItem[''];
-							} else if (typeof pathItem.valueOf === 'function') {
-								pathString = pathItem.valueOf();
 							} else if (Object.keys(pathItem).length === 1) {
 								var key = Object.keys(pathItem)[0];
-								pathString = pathItem[key];
+								var value = pathItem[key];
+								if (Array.isArray(value)) {
+									value.forEach(function(actualPath) {
+										html += '<div>' + actualPath + '</div>';
+									});
+									return;
+								} else {
+									pathString = String(value);
+								}
 							} else {
-								pathString = JSON.stringify(pathItem).replace(/[{}"\[\]]/g, '').replace(/:/g, '=');
+								pathString = String(pathItem);
 							}
+							html += '<div>' + pathString + '</div>';
 						} else {
-							pathString = String(pathItem);
+							html += '<div>' + String(pathItem) + '</div>';
 						}
-						
-						html += '<div>' + pathString + '</div>';
 					});
 					
 					html += '</div></div>';
