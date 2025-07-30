@@ -224,7 +224,7 @@ class CloudFront_HTTP_Client {
 		}
 
 		try {
-			$xml = $this->parseAwsXmlWithSimpleXML( $xml_body );
+			$xml = $this->parse_aws_xml_with_simple_xml( $xml_body );
 			return json_decode( json_encode( $xml ), true );
 		} catch ( \Exception $e ) {
 			return array( 'raw_response' => $xml_body );
@@ -240,7 +240,7 @@ class CloudFront_HTTP_Client {
 	 */
 	private function parse_error_response( $xml_body, $status_code ) {
 		try {
-			$xml = $this->parseAwsXmlWithSimpleXML( $xml_body );
+			$xml = $this->parse_aws_xml_with_simple_xml( $xml_body );
 			if ( isset( $xml->Message ) ) {
 				return (string) $xml->Message;
 			}
@@ -251,62 +251,41 @@ class CloudFront_HTTP_Client {
 	}
 
 	/**
-	 * AWS APIのXMLレスポンスを安全にパースする
-	 * @param string $xmlString XMLレスポンス文字列
-	 * @return DOMDocument パース済みのDOMDocument
-	 * @throws Exception パースに失敗した場合
+	 * Parse AWS XML response using SimpleXML with security measures
+	 * @param string $xml_string XML response string
+	 * @return SimpleXMLElement Parsed SimpleXMLElement
+	 * @throws InvalidArgumentException If XML string is empty
+	 * @throws RuntimeException If XML parsing fails
 	 */
-	private function parseAwsXmlResponse( $xmlString ) {
-		if ( empty( $xmlString ) ) {
-			throw new \Exception( 'Empty XML string provided' );
-		}
-
-		$dom = new \DOMDocument();
-		
-		$dom->resolveExternals = false;
-		$dom->substituteEntities = false;
-		
-		libxml_use_internal_errors( true );
-		
-		$success = $dom->loadXML( $xmlString, LIBXML_NOCDATA | LIBXML_NONET );
-		
-		if ( ! $success ) {
-			$errors = libxml_get_errors();
-			$error_messages = array();
-			foreach ( $errors as $error ) {
-				$error_messages[] = trim( $error->message );
-			}
-			libxml_clear_errors();
-			throw new \Exception( 'XML parsing failed: ' . implode( ', ', $error_messages ) );
-		}
-		
-		libxml_clear_errors();
-		return $dom;
-	}
-
-	/**
-	 * SimpleXMLを使用したAWS XMLレスポンスパース
-	 * @param string $xmlString XMLレスポンス文字列
-	 * @return SimpleXMLElement パース済みのSimpleXMLElement
-	 * @throws Exception パースに失敗した場合
-	 */
-	private function parseAwsXmlWithSimpleXML( $xmlString ) {
-		if ( empty( $xmlString ) ) {
-			throw new \Exception( 'Empty XML string provided' );
+	private function parse_aws_xml_with_simple_xml( $xml_string ) {
+		if ( empty( $xml_string ) ) {
+			throw new \InvalidArgumentException( 'Empty XML string provided for parsing' );
 		}
 
 		libxml_use_internal_errors( true );
 		
-		$xml = simplexml_load_string( $xmlString, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET );
+		$xml = simplexml_load_string( $xml_string, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET | LIBXML_NOENT );
 		
 		if ( $xml === false ) {
 			$errors = libxml_get_errors();
 			$error_messages = array();
 			foreach ( $errors as $error ) {
-				$error_messages[] = trim( $error->message );
+				$error_messages[] = sprintf( 
+					'Line %d: %s', 
+					$error->line, 
+					trim( $error->message ) 
+				);
 			}
 			libxml_clear_errors();
-			throw new \Exception( 'XML parsing failed: ' . implode( ', ', $error_messages ) );
+			
+			$context = strlen( $xml_string ) > 200 ? substr( $xml_string, 0, 200 ) . '...' : $xml_string;
+			throw new \RuntimeException( 
+				sprintf( 
+					'XML parsing failed with errors: %s. XML content: %s', 
+					implode( '; ', $error_messages ),
+					$context
+				)
+			);
 		}
 		
 		libxml_clear_errors();
