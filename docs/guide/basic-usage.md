@@ -239,6 +239,6 @@ wp c3 flush 1
 
 ## Next Steps
 
-- Learn about [advanced filters and hooks](/guide/filters)
+- Learn about [advanced filters and hooks](/development/filters)
 - Explore [WP-CLI commands](/guide/wp-cli)
-- See [integration examples](/examples/integration)
+- See [troubleshooting guide](/guide/troubleshooting) for more examples

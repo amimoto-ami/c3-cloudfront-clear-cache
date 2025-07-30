@@ -289,4 +289,4 @@ For more troubleshooting help, see the [Troubleshooting Guide](/guide/troublesho
 
 ## Next Steps
 
-With configuration complete, learn about [basic usage](/guide/basic-usage) and explore [advanced features](/guide/filters).
+With configuration complete, learn about [basic usage](/guide/basic-usage) and explore [advanced features](/development/filters).

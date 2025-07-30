@@ -515,6 +515,6 @@ tail -n 50 /path/to/wp-content/debug.log | grep -i c3
 
 ## Next Steps
 
-- Review [API documentation](/api/filters) for advanced customization
-- Check [examples](/examples/basic-usage) for implementation patterns
+- Review [filter documentation](/development/filters) for advanced customization
+- Check [basic usage guide](/guide/basic-usage) for implementation patterns
 - Learn about [development setup](/development/contributing)
