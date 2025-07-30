@@ -1,120 +1,115 @@
 # WP-CLI Commands
 
-C3 CloudFront Cache Controller provides comprehensive WP-CLI support for managing cache invalidation from the command line. This is especially useful for automation, CI/CD pipelines, and server management.
+C3 CloudFront Cache Controller provides WP-CLI support for managing cache invalidation from the command line. This comprehensive guide covers all available commands, use cases, and best practices for automation, CI/CD pipelines, and server management.
+
+## Command Overview
+
+| Command | Description | Since |
+|---------|-------------|-------|
+| `wp c3 flush` | Clear CloudFront cache for specific posts or all | 2.3.0 |
+| `wp c3 update` | Update plugin configuration settings | 2.4.0 |
 
 ## Available Commands
 
-### `wp c3 invalidate`
+### `wp c3 flush`
 
-Invalidate specific paths in CloudFront cache.
+Clear CloudFront cache for specific posts or all content.
 
 **Syntax:**
 ```bash
-wp c3 invalidate <path> [<path>...] [--distribution-id=<id>]
+wp c3 flush <post_id|all> [--force]
 ```
 
 **Parameters:**
-- `<path>`: One or more paths to invalidate
-- `--distribution-id=<id>`: Override the configured distribution ID
+
+#### Required
+- `<post_id|all>`: Post ID (numeric), comma-separated list of post IDs, or 'all' for complete cache flush
+
+#### Optional
+- `--force`: Activate Force Clear Mode (bypasses invalidation flag)
+
+**Response:**
+
+**Success:**
+```
+Success: Create Invalidation Request. Please wait few minutes to finished clear CloudFront Cache.
+```
+
+**Error:**
+```
+Error: Please input parameter:post_id(numeric) or all
+```
+
+**Exit Codes:**
+- `0` - Success
+- `1` - General error (invalid parameters, AWS API error, etc.)
 
 **Examples:**
 
 ```bash
-# Invalidate a single path
-wp c3 invalidate /
+# Flush cache for specific post
+wp c3 flush 1
 
-# Invalidate multiple paths
-wp c3 invalidate / /about/ /contact/
+# Flush cache for multiple posts
+wp c3 flush 1,2,4
 
-# Invalidate with specific distribution ID
-wp c3 invalidate / --distribution-id=E1234567890123
+# Flush all CloudFront cache
+wp c3 flush all
 
-# Invalidate all cache (wildcard)
-wp c3 invalidate "/*"
-
-# Invalidate CSS and JS files
-wp c3 invalidate /wp-content/themes/mytheme/style.css /wp-content/themes/mytheme/script.js
+# Force flush all cache
+wp c3 flush all --force
 ```
 
-### `wp c3 flush`
+### `wp c3 update`
 
-Clear all CloudFront cache using wildcard invalidation.
+Update C3 CloudFront Cache Controller configuration settings.
 
 **Syntax:**
 ```bash
-wp c3 flush [--distribution-id=<id>]
+wp c3 update <setting_type> <value>
 ```
+
+**Parameters:**
+
+#### Required
+- `<setting_type>`: Type of setting to update: `distribution_id`, `access_key`, or `secret_key`
+- `<value>`: New value for the setting
+
+**Available Settings:**
+- `distribution_id` - CloudFront Distribution ID
+- `access_key` - AWS Access Key ID
+- `secret_key` - AWS Secret Access Key
+
+**Response:**
+
+**Success:**
+```
+Success: Update Option
+```
+
+**Error:**
+```
+Error: No type selected
+Error: No value defined
+Error: No Match Setting Type.
+```
+
+**Security Considerations:**
+- Access keys and secret keys are stored in WordPress options table
+- Consider using environment variables for production environments
+- Values are escaped using `esc_attr()` before storage
 
 **Examples:**
 
 ```bash
-# Flush all cache
-wp c3 flush
+# Update distribution ID
+wp c3 update distribution_id E1234567890123
 
-# Flush with specific distribution ID
-wp c3 flush --distribution-id=E1234567890123
-```
+# Update access key
+wp c3 update access_key AKIAIOSFODNN7EXAMPLE
 
-### `wp c3 status`
-
-Check the current configuration and connection status.
-
-**Syntax:**
-```bash
-wp c3 status
-```
-
-**Example output:**
-```
-AWS Access Key ID: AKIA****************
-Distribution ID: E1234567890123
-Connection: OK
-Last Invalidation: 2024-01-15 10:30:00
-Queued Invalidations: 0
-```
-
-### `wp c3 config`
-
-Display or update configuration settings.
-
-**Syntax:**
-```bash
-wp c3 config [--get=<setting>] [--set=<setting>=<value>]
-```
-
-**Examples:**
-
-```bash
-# Show all configuration
-wp c3 config
-
-# Get specific setting
-wp c3 config --get=distribution_id
-
-# Set configuration value
-wp c3 config --set=timeout=60
-```
-
-### `wp c3 queue`
-
-Manage the invalidation queue.
-
-**Syntax:**
-```bash
-wp c3 queue [--list] [--clear] [--process]
-```
-
-**Examples:**
-
-```bash
-# List queued invalidations
-wp c3 queue --list
-
-# Clear the queue
-wp c3 queue --clear
-
-# Process queued invalidations immediately
-wp c3 queue --process
+# Update secret key
+wp c3 update secret_key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
 ## Common Use Cases
@@ -130,11 +125,8 @@ Invalidate cache after deployment:
 # Deploy your application
 ./deploy.sh
 
-# Clear specific cache paths
-wp c3 invalidate / /wp-content/themes/mytheme/style.css /wp-content/themes/mytheme/script.js
-
-# Or clear everything
-wp c3 flush
+# Clear all cache after deployment
+wp c3 flush all
 ```
 
 ### Content Publishing Pipeline
@@ -146,32 +138,11 @@ Invalidate specific content after publishing:
 # publish-content.sh
 
 POST_ID=$1
-POST_URL=$(wp post url $POST_ID)
 
-# Invalidate the post and related pages
-wp c3 invalidate "$POST_URL" / /blog/
+# Invalidate the specific post
+wp c3 flush $POST_ID
 
-echo "Cache invalidated for post: $POST_URL"
-```
-
-### Maintenance Scripts
-
-Regular cache maintenance:
-
-```bash
-#!/bin/bash
-# maintenance.sh
-
-# Check status
-echo "Checking C3 status..."
-wp c3 status
-
-# Process any queued invalidations
-echo "Processing queued invalidations..."
-wp c3 queue --process
-
-# Clear old static assets
-wp c3 invalidate /wp-content/cache/* /wp-content/uploads/*.css /wp-content/uploads/*.js
+echo "Cache invalidated for post ID: $POST_ID"
 ```
 
 ### CI/CD Integration
@@ -195,7 +166,7 @@ jobs:
         
       - name: Clear CloudFront Cache
         run: |
-          wp c3 flush
+          wp c3 flush all
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -209,7 +180,7 @@ deploy:
   stage: deploy
   script:
     - ./deploy.sh
-    - wp c3 flush
+    - wp c3 flush all
   environment:
     name: production
   variables:
@@ -218,23 +189,31 @@ deploy:
     C3_DISTRIBUTION_ID: $C3_DISTRIBUTION_ID
 ```
 
-### Monitoring and Alerts
+### Configuration Management
 
-Check invalidation status in monitoring scripts:
+Set up C3 configuration via command line:
 
 ```bash
 #!/bin/bash
-# monitor-cache.sh
+# configure-c3.sh
 
-STATUS=$(wp c3 status --format=json)
-QUEUE_COUNT=$(echo $STATUS | jq '.queued_invalidations')
+# Set up C3 configuration
+DISTRIBUTION_ID="E1234567890123"
+ACCESS_KEY="AKIAIOSFODNN7EXAMPLE"
+SECRET_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 
-if [ "$QUEUE_COUNT" -gt 100 ]; then
-    echo "WARNING: High number of queued invalidations: $QUEUE_COUNT"
-    # Send alert to monitoring system
-    curl -X POST "https://your-monitoring-system.com/alert" \
-         -d "message=High C3 queue count: $QUEUE_COUNT"
-fi
+echo "Configuring C3 CloudFront Cache Controller..."
+
+# Update distribution ID
+wp c3 update distribution_id $DISTRIBUTION_ID
+
+# Update access key
+wp c3 update access_key $ACCESS_KEY
+
+# Update secret key
+wp c3 update secret_key $SECRET_KEY
+
+echo "Configuration complete"
 ```
 
 ## Advanced Usage
@@ -248,12 +227,17 @@ Process multiple posts:
 # batch-invalidate.sh
 
 # Get all published posts from last 24 hours
-RECENT_POSTS=$(wp post list --post_status=publish --after="24 hours ago" --field=url)
+RECENT_POST_IDS=$(wp post list --post_status=publish --after="24 hours ago" --field=ID)
 
-for POST_URL in $RECENT_POSTS; do
-    echo "Invalidating: $POST_URL"
-    wp c3 invalidate "$POST_URL"
-done
+# Convert to comma-separated list
+POST_IDS=$(echo $RECENT_POST_IDS | tr ' ' ',')
+
+if [ -n "$POST_IDS" ]; then
+    echo "Invalidating posts: $POST_IDS"
+    wp c3 flush $POST_IDS
+else
+    echo "No recent posts to invalidate"
+fi
 ```
 
 ### Environment-Specific Operations
@@ -267,42 +251,15 @@ ENVIRONMENT=$(wp option get environment_type)
 case $ENVIRONMENT in
     "production")
         # More conservative invalidation for production
-        wp c3 invalidate / /blog/
+        echo "Production environment - skipping full cache clear"
         ;;
     "staging")
         # Full cache clear for staging
-        wp c3 flush
+        wp c3 flush all
         ;;
     "development")
         echo "Skipping cache invalidation in development"
         exit 0
-        ;;
-esac
-```
-
-### Custom WordPress Hooks Integration
-
-Trigger invalidation from custom events:
-
-```bash
-#!/bin/bash
-# custom-hook-handler.sh
-
-# Called from WordPress custom hook
-# Example: do_action('custom_content_update', $content_id);
-
-CONTENT_ID=$1
-CONTENT_TYPE=$2
-
-case $CONTENT_TYPE in
-    "product")
-        wp c3 invalidate /shop/ /products/
-        ;;
-    "news")
-        wp c3 invalidate /news/ /
-        ;;
-    *)
-        wp c3 invalidate /
         ;;
 esac
 ```
@@ -315,7 +272,7 @@ esac
 #!/bin/bash
 set -e  # Exit on any error
 
-if wp c3 invalidate /; then
+if wp c3 flush all; then
     echo "Cache invalidation successful"
 else
     echo "Cache invalidation failed"
@@ -329,31 +286,31 @@ fi
 #!/bin/bash
 # robust-invalidation.sh
 
-invalidate_with_retry() {
-    local path=$1
+flush_with_retry() {
+    local post_id=$1
     local max_attempts=3
     local attempt=1
     
     while [ $attempt -le $max_attempts ]; do
-        echo "Attempt $attempt: Invalidating $path"
+        echo "Attempt $attempt: Flushing cache for post $post_id"
         
-        if wp c3 invalidate "$path"; then
-            echo "Success: $path invalidated"
+        if wp c3 flush $post_id; then
+            echo "Success: Post $post_id cache flushed"
             return 0
         else
-            echo "Failed: Attempt $attempt for $path"
+            echo "Failed: Attempt $attempt for post $post_id"
             attempt=$((attempt + 1))
             sleep 5
         fi
     done
     
-    echo "Error: Failed to invalidate $path after $max_attempts attempts"
+    echo "Error: Failed to flush cache for post $post_id after $max_attempts attempts"
     return 1
 }
 
 # Usage
-invalidate_with_retry "/"
-invalidate_with_retry "/blog/"
+flush_with_retry "1"
+flush_with_retry "all"
 ```
 
 ## Configuration Management
@@ -375,7 +332,7 @@ export C3_DISTRIBUTION_ID="staging_distribution_id"
 
 # Load environment-specific config
 source "${ENVIRONMENT}.env"
-wp c3 invalidate /
+wp c3 flush all
 ```
 
 ### Configuration Validation
@@ -392,41 +349,47 @@ if ! command -v wp &> /dev/null; then
     exit 1
 fi
 
-# Check C3 status
-if wp c3 status &> /dev/null; then
+# Test configuration by attempting a flush operation
+if wp c3 flush 1 &> /dev/null; then
     echo "✓ C3 configuration is valid"
 else
     echo "✗ C3 configuration error"
-    wp c3 status
     exit 1
 fi
 ```
 
 ## Performance Optimization
 
-### Parallel Processing
+### Batch Post Invalidation
 
-Process multiple invalidations in parallel:
+For multiple post invalidations, use comma-separated lists:
 
 ```bash
 #!/bin/bash
-# parallel-invalidation.sh
+# batch-post-invalidation.sh
 
-PATHS=("/" "/blog/" "/shop/" "/about/" "/contact/")
+# Instead of individual calls
+# wp c3 flush 1
+# wp c3 flush 2
+# wp c3 flush 3
 
-# Function to invalidate a single path
-invalidate_path() {
-    local path=$1
-    echo "Starting invalidation: $path"
-    wp c3 invalidate "$path"
-    echo "Completed invalidation: $path"
-}
+# Use single command with comma-separated list
+wp c3 flush 1,2,3
+```
 
-# Export function for parallel processing
-export -f invalidate_path
+### Force Mode Usage
 
-# Run invalidations in parallel
-printf '%s\n' "${PATHS[@]}" | xargs -I {} -P 5 bash -c 'invalidate_path "$@"' _ {}
+The `--force` flag bypasses the invalidation flag filter:
+
+```bash
+#!/bin/bash
+# force-clear.sh
+
+# Normal flush (respects invalidation flag)
+wp c3 flush all
+
+# Force flush (ignores invalidation flag)
+wp c3 flush all --force
 ```
 
 ## Troubleshooting
@@ -437,18 +400,18 @@ Enable verbose output:
 
 ```bash
 # Add --debug flag for detailed output
-wp c3 invalidate / --debug
+wp c3 flush all --debug
 
 # Check WordPress debug log
-wp c3 invalidate / && tail -f /path/to/wp-content/debug.log
+wp c3 flush all && tail -f /path/to/wp-content/debug.log
 ```
 
 ### Common Issues
 
 **Permission Denied:**
 ```bash
-# Check AWS credentials
-wp c3 status
+# Check AWS credentials by testing a flush operation
+wp c3 flush 1
 
 # Verify IAM permissions
 aws sts get-caller-identity
@@ -456,27 +419,78 @@ aws sts get-caller-identity
 
 **Network Timeouts:**
 ```bash
-# Increase timeout
-wp c3 config --set=timeout=120
-
 # Test connectivity
 curl -I https://cloudfront.amazonaws.com
 ```
 
-**Queue Issues:**
+**Invalid Parameters:**
 ```bash
-# Check queue status
-wp c3 queue --list
-
-# Clear stuck queue
-wp c3 queue --clear
-
-# Process manually
-wp c3 queue --process
+# Check parameter format
+wp c3 flush 1,2,3  # Correct: comma-separated
+wp c3 flush "1 2 3"  # Incorrect: space-separated
 ```
+
+## Best Practices
+
+1. **Use specific post IDs** when possible instead of clearing all cache
+2. **Monitor AWS CloudFront costs** - invalidations have associated costs
+3. **Test in staging** before running in production
+4. **Use force mode sparingly** - only when necessary
+5. **Consider timing** - avoid clearing cache during peak traffic periods
+6. **Use comma-separated lists** for multiple post IDs
+7. **Handle errors gracefully** in automation scripts
+
+## Global Options
+
+All C3 commands support these global WP-CLI options:
+
+### Environment
+- `--path=<path>` - Path to WordPress installation
+- `--url=<url>` - WordPress site URL
+- `--ssh=<ssh>` - SSH connection string
+
+### Output
+- `--quiet` - Suppress informational messages
+- `--debug` - Enable debug output
+
+**Examples:**
+```bash
+# Remote WordPress installation
+wp --ssh=user@server.com --path=/var/www/html c3 flush all
+
+# Quiet mode
+wp c3 flush 1 --quiet
+
+# Debug mode
+wp c3 update distribution_id E1234567890123 --debug
+```
+
+## Error Handling
+
+### Common Error Scenarios
+
+| Scenario | Error Message | Resolution |
+|----------|---------------|------------|
+| No parameters provided | `Please input parameter:post_id(numeric) or all` | Provide required post ID or 'all' |
+| Invalid setting type | `No Match Setting Type.` | Use valid setting: distribution_id, access_key, secret_key |
+| Missing setting value | `No value defined` | Provide value for the setting |
+| Invalid post ID | `Please input parameter:post_id(numeric) or all` | Use numeric post ID or 'all' |
+
+### AWS API Errors
+
+When AWS API calls fail, the error message from AWS will be displayed:
+
+```
+Error: [AWS Error Message]
+```
+
+Common AWS errors include:
+- Invalid credentials
+- Distribution not found
+- Network connectivity issues
+- Rate limiting
 
 ## Next Steps
 
 - Learn about [troubleshooting common issues](/guide/troubleshooting)
-- Explore [integration examples](/examples/integration)
-- Review [API reference](/api/wp-cli)
+- Explore [filters and hooks](/development/filters) for advanced customization

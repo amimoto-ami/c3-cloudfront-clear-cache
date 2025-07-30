@@ -234,7 +234,7 @@ add_filter('c3_log_invalidation_list', '__return_true');
 Test invalidation with WP-CLI:
 
 ```bash
-wp c3 invalidate /test-page/
+wp c3 flush 1
 ```
 
 ## Next Steps

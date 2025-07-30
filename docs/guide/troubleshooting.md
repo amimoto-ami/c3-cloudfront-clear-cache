@@ -60,7 +60,7 @@ php -v
 
 1. Check credential configuration:
    ```bash
-   wp c3 status
+   wp c3 flush 1
    ```
 
 2. Verify environment variables:
@@ -229,8 +229,8 @@ ini_set('memory_limit', '256M');
 wp cron event delete c3_invalidation_cron
 wp cron event delete c3_process_cron
 
-# Process queue manually
-wp c3 queue --process
+# Test cache flush manually
+wp c3 flush all
 ```
 
 ### Performance Issues
@@ -242,9 +242,9 @@ wp c3 queue --process
 
 #### Diagnosis
 
-1. Check invalidation batch size:
+1. Test cache flush functionality:
    ```bash
-   wp c3 config --get=item_limits
+   wp c3 flush 1
    ```
 
 2. Monitor server resources:
@@ -443,15 +443,11 @@ fi
 
 # Check configuration
 echo "🔧 Configuration:"
-wp c3 status
+wp c3 flush 1
 
 # Check cron
 echo "⏰ Cron jobs:"
 wp cron event list | grep c3
-
-# Check queue
-echo "📋 Queue status:"
-wp c3 queue --list
 
 echo "=== Health check complete ==="
 ```
@@ -492,7 +488,7 @@ When seeking help, include:
 3. **PHP version**: `php -v`
 4. **Server environment**: Apache/Nginx, hosting provider
 5. **Error messages**: From debug logs
-6. **Configuration**: `wp c3 status` (redact sensitive info)
+6. **Configuration**: Test with `wp c3 flush 1` (redact sensitive info)
 
 ### Support Channels
 
@@ -512,7 +508,7 @@ echo "WordPress Version: $(wp core version)"
 echo "PHP Version: $(php -v | head -n1)"
 echo "Server: $(uname -a)"
 echo "Configuration:"
-wp c3 status
+wp c3 flush 1
 echo "Recent Errors:"
 tail -n 50 /path/to/wp-content/debug.log | grep -i c3
 ```

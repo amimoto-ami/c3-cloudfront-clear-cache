@@ -10,8 +10,6 @@ export default defineConfig({
     
     nav: [
       { text: 'Guide', link: '/guide/installation' },
-      { text: 'API', link: '/api/filters' },
-      { text: 'Examples', link: '/examples/basic-usage' },
       { text: 'Development', link: '/development/contributing' },
       { 
         text: 'GitHub', 
@@ -32,32 +30,8 @@ export default defineConfig({
         {
           text: 'Advanced',
           items: [
-            { text: 'Filters & Hooks', link: '/guide/filters' },
             { text: 'WP-CLI Commands', link: '/guide/wp-cli' },
             { text: 'Troubleshooting', link: '/guide/troubleshooting' }
-          ]
-        }
-      ],
-      
-      '/api/': [
-        {
-          text: 'API Reference',
-          items: [
-            { text: 'Filters', link: '/api/filters' },
-            { text: 'Classes', link: '/api/classes' },
-            { text: 'WP-CLI', link: '/api/wp-cli' }
-          ]
-        }
-      ],
-      
-      '/examples/': [
-        {
-          text: 'Examples',
-          items: [
-            { text: 'Basic Usage', link: '/examples/basic-usage' },
-            { text: 'Custom Invalidation', link: '/examples/custom-invalidation' },
-            { text: 'Advanced Configuration', link: '/examples/advanced-config' },
-            { text: 'Integration Examples', link: '/examples/integration' }
           ]
         }
       ],
@@ -67,8 +41,7 @@ export default defineConfig({
           text: 'Development',
           items: [
             { text: 'Contributing', link: '/development/contributing' },
-            { text: 'Testing', link: '/development/testing' },
-            { text: 'Architecture', link: '/development/architecture' }
+            { text: 'Filters & Hooks', link: '/development/filters' }
           ]
         }
       ]

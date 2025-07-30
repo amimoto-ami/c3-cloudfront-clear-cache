@@ -52,12 +52,6 @@ git clone https://github.com/amimoto-ami/c3-cloudfront-clear-cache.git
 cd c3-cloudfront-clear-cache
 ```
 
-### Composer (Development)
-
-```bash
-composer require amimoto-ami/c3-cloudfront-clear-cache
-```
-
 ## Verification
 
 After installation, verify the plugin is working:
