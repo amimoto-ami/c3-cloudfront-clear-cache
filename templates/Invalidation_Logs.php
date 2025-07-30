@@ -212,7 +212,11 @@ jQuery(document).ready(function($) {
 						'<div class="c3-detail-label"><?php _e( 'Invalidated Paths', $text_domain ); ?> (' + data.InvalidationBatch.Paths.Quantity + '):</div>' +
 						'<div class="c3-paths-list">';
 					
-					data.InvalidationBatch.Paths.Items.forEach(function(path) {
+					var items = Array.isArray(data.InvalidationBatch.Paths.Items) 
+						? data.InvalidationBatch.Paths.Items 
+						: [data.InvalidationBatch.Paths.Items];
+					
+					items.forEach(function(path) {
 						html += '<div>' + path + '</div>';
 					});
 					
