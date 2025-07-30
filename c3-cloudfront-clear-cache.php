@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: C3 Cloudfront Cache Controller
- * Version: 6.1.6
+ * Version: 7.0.0
  * Plugin URI:https://github.com/amimoto-ami/c3-cloudfront-clear-cache
  * Description: Manage CloudFront Cache and provide some fixtures.
  * Author: hideokamoto

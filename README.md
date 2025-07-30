@@ -20,6 +20,7 @@ The plugin can be configured by defining the following environment variables:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `C3_DISTRIBUTION_ID`
+- `C3_HTTP_TIMEOUT` (optional) - HTTP timeout in seconds (default: 30)
 
 ## Filters
 
@@ -84,6 +85,28 @@ This plugin now uses a custom AWS CloudFront implementation instead of the offic
 ```
 add_filter( 'c3_log_cron_invalidation_task', '__return_true' );
 ```
+
+### Comprehensive invalidation logging(Since v7.0.0)
+
+Log all invalidation operations (manual, automatic, and cron-based) with detailed information.
+
+```
+add_filter( 'c3_log_invalidation_list', '__return_true' );
+```
+
+This filter provides more comprehensive logging compared to `c3_log_cron_invalidation_task` and covers all types of invalidation operations.
+
+## Deprecated Features
+
+The following features are deprecated since v7.0.0 due to the removal of AWS SDK dependency:
+
+### AWS SDK related filters
+- `c3_aws_sdk_path` - This filter is no longer needed as the plugin no longer uses AWS SDK
+- Any custom AWS SDK path configurations should be removed
+
+### AWS SDK autoloader
+- The plugin no longer includes or requires AWS SDK autoloader
+- Remove any custom AWS SDK autoloader configurations
 
 ## Local testing
 

@@ -3,7 +3,7 @@
     "@wordpress/env": "8.2.0"
   },
   "name": "trunk",
-  "version": "6.1.4",
+  "version": "7.0.0",
   "main": "index.js",
   "directories": {
     "test": "tests"
