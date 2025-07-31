@@ -6,6 +6,9 @@ export default defineConfig({
   base: '/c3-cloudfront-clear-cache/',
   
   themeConfig: {
+    search: {
+      provider: 'local'
+    },
     logo: '/logo.svg',
     
     nav: [
