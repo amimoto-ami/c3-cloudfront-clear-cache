@@ -55,4 +55,13 @@ class Post_Test extends \WP_UnitTestCase {
         $result = $post->parse_url( 'http://example.com/hello-world' );
         $this->assertEquals( 'http://example.com/hello-world', $result );
     }
+
+    /**
+     * parse_url should return an instance of WP_Error when url is empty
+     */
+    public function test_parse_url_empty() {
+        $post = new WP\Post();
+        $result = $post->parse_url( '' );
+        $this->assertInstanceOf( 'WP_Error', $result );
+    }
 }
