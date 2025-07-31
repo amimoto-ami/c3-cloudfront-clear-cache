@@ -62,6 +62,8 @@ This plugin send following page url to CloudFront Invalidation API.
 }
 `
 
+**Note:** The `cloudfront:GetInvalidation` permission is required for viewing detailed invalidation information. If this permission is not granted, the detail view feature will be disabled gracefully without affecting other plugin functionality.
+
 ## Adding your configuration through env vars
 
 The plugin can be configured by defining the following variables:

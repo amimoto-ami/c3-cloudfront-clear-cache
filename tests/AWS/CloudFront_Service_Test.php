@@ -160,4 +160,21 @@ class CloudFront_Service_Test extends TestCase {
 		// オプションが設定されていることをテスト
 		$this->assertInstanceOf( CloudFront_Service::class, $service );
 	}
-}  
+
+	/**
+	 * Test get_invalidation_details with invalid credentials
+	 */
+	public function test_get_invalidation_details_invalid_credentials() {
+		$mock_env = WP_Mock_Helper::create_mock_environment();
+		$mock_options = WP_Mock_Helper::create_mock_options_service( null );
+		$mock_hooks = WP_Mock_Helper::create_mock_hooks_service();
+
+		$service = new CloudFront_Service( $mock_env, $mock_options, $mock_hooks );
+		
+		$result = $service->get_invalidation_details( 'I123456789' );
+		
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertEquals( 'C3 Get Invalidation Error', $result->get_error_code() );
+		$this->assertStringContainsString( 'Failed to create CloudFront client', $result->get_error_message() );
+	}
+}      
