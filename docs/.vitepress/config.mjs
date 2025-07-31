@@ -56,7 +56,7 @@ export default defineConfig({
 
     footer: {
       message: 'Released under the GPL License.',
-      copyright: 'Copyright © 2024 Hidetaka Okamoto'
+      copyright: 'Copyright © 2025 DigitalCube Co., Ltd.'
     },
 
     editLink: {
@@ -74,7 +74,7 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', href: '/c3-cloudfront-clear-cache/favicon.ico' }],
+    ['link', { rel: 'icon', href: '/c3-cloudfront-clear-cache/images/icon-256x256.jpg' }],
     ['meta', { name: 'theme-color', content: '#3c4043' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],

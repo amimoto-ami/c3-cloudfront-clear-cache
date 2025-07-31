@@ -6,7 +6,7 @@ hero:
   text: "WordPress Plugin"
   tagline: "Efficiently manage CloudFront cache invalidation for your WordPress site"
   image:
-    src: /logo.svg
+    src: /images/icon-256x256.jpg
     alt: C3 CloudFront Cache Controller
   actions:
     - theme: brand
