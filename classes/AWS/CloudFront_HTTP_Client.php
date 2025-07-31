@@ -223,15 +223,12 @@ class CloudFront_HTTP_Client {
 			return array();
 		}
 
-		libxml_use_internal_errors( true );
-		libxml_disable_entity_loader( true );
-		$xml = simplexml_load_string( $xml_body, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOENT );
-
-		if ( false === $xml ) {
+		try {
+			$xml = $this->parse_aws_xml_with_simple_xml( $xml_body );
+			return json_decode( json_encode( $xml ), true );
+		} catch ( \Exception $e ) {
 			return array( 'raw_response' => $xml_body );
 		}
-
-		return json_decode( json_encode( $xml ), true );
 	}
 
 	/**
@@ -242,13 +239,56 @@ class CloudFront_HTTP_Client {
 	 * @return string Error message.
 	 */
 	private function parse_error_response( $xml_body, $status_code ) {
-		libxml_use_internal_errors( true );
-		libxml_disable_entity_loader( true );
-		$xml = simplexml_load_string( $xml_body, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOENT );
-		if ( false !== $xml && isset( $xml->Message ) ) {
-			return (string) $xml->Message;
+		try {
+			$xml = $this->parse_aws_xml_with_simple_xml( $xml_body );
+			if ( isset( $xml->Message ) ) {
+				return (string) $xml->Message;
+			}
+		} catch ( \Exception $e ) {
 		}
 
 		return "CloudFront API error (HTTP {$status_code}): {$xml_body}";
+	}
+
+	/**
+	 * Parse AWS XML response using SimpleXML with security measures
+	 * @param string $xml_string XML response string
+	 * @return SimpleXMLElement Parsed SimpleXMLElement
+	 * @throws InvalidArgumentException If XML string is empty
+	 * @throws RuntimeException If XML parsing fails
+	 */
+	private function parse_aws_xml_with_simple_xml( $xml_string ) {
+		if ( empty( $xml_string ) ) {
+			throw new \InvalidArgumentException( 'Empty XML string provided for parsing' );
+		}
+
+		libxml_use_internal_errors( true );
+		
+		$xml = simplexml_load_string( $xml_string, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET | LIBXML_NOENT );
+		
+		if ( $xml === false ) {
+			$errors = libxml_get_errors();
+			$error_messages = array();
+			foreach ( $errors as $error ) {
+				$error_messages[] = sprintf( 
+					'Line %d: %s', 
+					$error->line, 
+					trim( $error->message ) 
+				);
+			}
+			libxml_clear_errors();
+			
+			$context = strlen( $xml_string ) > 200 ? substr( $xml_string, 0, 200 ) . '...' : $xml_string;
+			throw new \RuntimeException( 
+				sprintf( 
+					'XML parsing failed with errors: %s. XML content: %s', 
+					implode( '; ', $error_messages ),
+					$context
+				)
+			);
+		}
+		
+		libxml_clear_errors();
+		return $xml;
 	}
 }
