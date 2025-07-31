@@ -204,4 +204,26 @@ class Invalidation_Service_Test extends \WP_UnitTestCase {
         $result = $service->invalidate_post_cache( null );
         $this->assertEquals( is_wp_error( $result ), true );
     }
+
+    public function test_get_invalidation_details_no_options() {
+        $service = new Invalidation_Service();
+        $result = $service->get_invalidation_details( 'I123456789' );
+        $this->assertTrue( is_wp_error( $result ) );
+        $this->assertEquals( 'C3 Invalidation Error', $result->get_error_code() );
+        $this->assertStringContainsString( 'distribution_id is required', $result->get_error_message() );
+    }
+
+    public function test_get_invalidation_details_with_valid_options() {
+        update_option( Constants::OPTION_NAME, [
+            'distribution_id' => 'E123456789',
+            'access_key' => 'test-key',
+            'secret_key' => 'test-secret'
+        ] );
+        
+        $service = new Invalidation_Service();
+        
+        $this->assertInstanceOf( Invalidation_Service::class, $service );
+        
+        delete_option( Constants::OPTION_NAME );
+    }
 }

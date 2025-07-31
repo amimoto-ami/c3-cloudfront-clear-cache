@@ -328,4 +328,44 @@ class CloudFront_Service {
 			return new \WP_Error( 'C3 List Invalidations Error', $e->getMessage() );
 		}
 	}
+
+	/**
+	 * Get detailed invalidation information
+	 *
+	 * @param string $invalidation_id Invalidation ID.
+	 * @return array|WP_Error Invalidation details or error.
+	 */
+	public function get_invalidation_details( $invalidation_id ) {
+		try {
+			$client = $this->create_client();
+			if ( is_wp_error( $client ) ) {
+				return new \WP_Error( 'C3 Get Invalidation Error', 'Failed to create CloudFront client: ' . $client->get_error_message() );
+			}
+
+			$distribution_id = $this->get_distribution_id();
+			$result = $client->get_invalidation( $distribution_id, $invalidation_id );
+
+			if ( is_wp_error( $result ) ) {
+				$error_message = $result->get_error_message();
+				$error_code = $result->get_error_code();
+
+				if ( $error_code === 'cloudfront_api_error' ) {
+					if ( strpos( $error_message, 'AccessDenied' ) !== false ) {
+						return new \WP_Error( 'C3 Get Invalidation Error', 'Insufficient permissions to view invalidation details. Please ensure your IAM policy includes cloudfront:GetInvalidation permission.' );
+					} elseif ( strpos( $error_message, 'NoSuchInvalidation' ) !== false ) {
+						return new \WP_Error( 'C3 Get Invalidation Error', 'Invalidation not found.' );
+					} elseif ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
+						return new \WP_Error( 'C3 Get Invalidation Error', "CloudFront Distribution ID: {$distribution_id} not found." );
+					} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
+						return new \WP_Error( 'C3 Get Invalidation Error', 'AWS Access Key or AWS Secret Key is invalid.' );
+					}
+				}
+				return new \WP_Error( 'C3 Get Invalidation Error', $error_message );
+			}
+
+			return $result;
+		} catch ( \Exception $e ) {
+			return new \WP_Error( 'C3 Get Invalidation Error', $e->getMessage() );
+		}
+	}
 }

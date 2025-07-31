@@ -137,6 +137,34 @@ class CloudFront_HTTP_Client {
 	}
 
 	/**
+	 * Get CloudFront invalidation details
+	 *
+	 * @param string $distribution_id CloudFront distribution ID.
+	 * @param string $invalidation_id Invalidation ID.
+	 * @return array|WP_Error API response or error.
+	 */
+	public function get_invalidation( $distribution_id, $invalidation_id ) {
+		$path = "/{$this->api_version}/distribution/{$distribution_id}/invalidation/{$invalidation_id}";
+
+		$signed_headers = $this->signature_service->sign_request(
+			'GET',
+			$this->endpoint,
+			$path
+		);
+
+		$response = wp_remote_request(
+			"https://{$this->endpoint}{$path}",
+			array(
+				'method'  => 'GET',
+				'headers' => $signed_headers,
+				'timeout' => $this->timeout,
+			)
+		);
+
+		return $this->handle_response( $response );
+	}
+
+	/**
 	 * Get CloudFront distribution information
 	 *
 	 * @param string $distribution_id CloudFront distribution ID.
