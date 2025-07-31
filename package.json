@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "@wordpress/env": "8.2.0"
+    "@wordpress/env": "8.2.0",
+    "vitepress": "^1.6.3"
   },
   "name": "trunk",
   "version": "7.0.0",
@@ -8,14 +9,16 @@
   "directories": {
     "test": "tests"
   },
-  "dependencies": {},
   "scripts": {
     "test": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress vendor/bin/phpunit -c phpunit.xml --verbose",
     "dev": "wp-env start",
     "wpenv": "wp-env",
     "composer": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress composer",
     "composer:install": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress composer install",
-    "composer:update": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress composer update"
+    "composer:update": "wp-env run --env-cwd='wp-content/plugins/c3-cloudfront-clear-cache' tests-wordpress composer update",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "wp-env": {
     "plugin-dir": "c3-cloudfront-clear-cache",

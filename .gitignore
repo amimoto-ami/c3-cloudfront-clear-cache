@@ -9,3 +9,8 @@ node_modules/
 *.tar.gz
 *.zip
 .phpunit.*.cache
+
+# VitePress
+docs/.vitepress/dist
+docs/.vitepress/cache
+.temp
