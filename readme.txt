@@ -4,7 +4,7 @@ Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
 Tested up to: 6.8.1
-Stable tag: 7.0.0
+Stable tag: 7.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -94,6 +94,9 @@ If post published,this plugin post invalidation request to CloudFront.
 This plugin now uses a custom AWS CloudFront implementation instead of the official AWS SDK to reduce dependencies and improve performance.
 
 == Changelog ==
+
+== 7.0.1 ==
+* [Update] Improved AWS API call processing for better security and PHP 8.x compatibility
 
 == 7.0.0 ==
 * [Breaking Change] Remove AWS SDK dependency and implement custom HTTP CloudFront API client
