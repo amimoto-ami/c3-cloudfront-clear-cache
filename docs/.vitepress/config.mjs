@@ -9,7 +9,7 @@ export default defineConfig({
     search: {
       provider: 'local'
     },
-    logo: '/logo.svg',
+    logo: '/public/images/icon-256x256.jpg',
     
     nav: [
       { text: 'Guide', link: '/guide/installation' },
@@ -74,7 +74,7 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', href: '/c3-cloudfront-clear-cache/images/icon-256x256.jpg' }],
+    ['link', { rel: 'icon', href: '/c3-cloudfront-clear-cache/public/images/icon-256x256.jpg' }],
     ['meta', { name: 'theme-color', content: '#3c4043' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
