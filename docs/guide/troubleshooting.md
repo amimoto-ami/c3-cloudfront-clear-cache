@@ -45,9 +45,13 @@ wp plugin activate c3-cloudfront-clear-cache
 
 **PHP Version:**
 ```bash
-# Check PHP version (minimum 7.4 required)
+# Check PHP version (minimum 7.4 required, supports up to 8.2)
 php -v
 ```
+
+::: info PHP 8.2 Support
+The plugin includes enhanced security features and XML parsing improvements that are fully compatible with PHP 8.2. If you encounter any XML-related issues, ensure you're using the latest version (7.0.1+).
+:::
 
 ### AWS Credential Issues
 
@@ -298,9 +302,6 @@ add_filter('c3_log_invalidation_list', '__return_true');
 #### Check Debug Logs
 
 ```bash
-# WordPress debug log
-tail -f /path/to/wp-content/debug.log
-
 # Apache error log
 tail -f /var/log/apache2/error.log
 
@@ -489,6 +490,39 @@ When seeking help, include:
 4. **Server environment**: Apache/Nginx, hosting provider
 5. **Error messages**: From debug logs
 6. **Configuration**: Test with `wp c3 flush 1` (redact sensitive info)
+
+### XML Security and Parsing Issues
+
+#### Symptoms
+- XML parsing errors in CloudFront responses
+- Security warnings related to XML processing
+- Issues with PHP 8.1+ compatibility
+
+#### Background
+Since version 7.0.1, the plugin includes enhanced secure XML parsing that prevents XXE (XML External Entity) attacks and improves PHP 8.2 compatibility.
+
+#### Solutions
+
+**Update to Latest Version:**
+```bash
+# Ensure you're using version 7.0.1 or later
+wp plugin update c3-cloudfront-clear-cache
+```
+
+**Check XML Processing:**
+```php
+// Add to wp-config.php for debugging XML issues
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+
+```
+
+**Verify libxml Settings:**
+```bash
+# Check libxml version (should support secure parsing)
+php -m | grep libxml
+php -r "echo libxml_version();"
+```
 
 ### Support Channels
 

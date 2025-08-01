@@ -45,9 +45,13 @@ wp plugin activate c3-cloudfront-clear-cache
 
 **PHPバージョン:**
 ```bash
-# PHPバージョンをチェック（最小7.4が必要）
+# PHPバージョンをチェック（最小7.4が必要、8.2まで対応）
 php -v
 ```
+
+::: info PHP 8.2 対応
+プラグインにはセキュリティ強化機能とXMLパースィング改善が含まれており、PHP 8.2と完全に互換性があります。XML関連の問題が発生した場合は、最新バージョン（7.0.1以上）を使用していることを確認してください。
+:::
 
 ### AWS認証情報の問題
 
@@ -253,16 +257,11 @@ add_filter('c3_log_invalidation_list', '__return_true');
 
 #### ログの確認
 
-1. WordPressデバッグログ：
-   ```bash
-   tail -f /path/to/wp-content/debug.log
-   ```
-
-2. C3無効化ログ：
+1. C3無効化ログ：
    - WordPress管理画面で **設定 > C3 CloudFront Cache**
    - **無効化ログ**セクションを確認
 
-3. サーバーログ：
+2. サーバーログ：
    ```bash
    # Apache
    tail -f /var/log/apache2/error.log
@@ -309,6 +308,39 @@ wp option get c3_secret_key >> c3_backup.txt
 
 # 設定の復元
 wp c3 update distribution_id $(grep distribution_id c3_backup.txt | cut -d' ' -f2)
+```
+
+### XMLセキュリティとパースィング問題
+
+#### 症状
+- CloudFrontレスポンスでのXMLパースィングエラー
+- XML処理に関するセキュリティ警告
+- PHP 8.1以上での互換性問題
+
+#### 背景
+バージョン7.0.1以降、プラグインにはXXE（XML外部エンティティ）攻撃を防ぐセキュアなXMLパースィング機能が強化され、PHP 8.2との互換性が向上しています。
+
+#### 解決策
+
+**最新バージョンに更新:**
+```bash
+# バージョン7.0.1以上を使用していることを確認
+wp plugin update c3-cloudfront-clear-cache
+```
+
+**XML処理をチェック:**
+```php
+// XML問題のデバッグのためにwp-config.phpに追加
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+
+```
+
+**libxml設定を確認:**
+```bash
+# libxmlバージョンを確認（セキュアパースィングをサポートしている必要があります）
+php -m | grep libxml
+php -r "echo libxml_version();"
 ```
 
 ## 次のステップ

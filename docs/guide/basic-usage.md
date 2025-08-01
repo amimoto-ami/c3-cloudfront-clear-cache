@@ -237,6 +237,51 @@ Test invalidation with WP-CLI:
 wp c3 flush 1
 ```
 
+## Invalidation Detail View
+
+Since version 7.0.1, the plugin includes an enhanced invalidation detail view that provides comprehensive information about each invalidation request.
+
+### Accessing Invalidation Details
+
+1. Go to **Settings > C3 CloudFront Cache**
+2. Navigate to the **Invalidation Logs** section
+3. Click on any invalidation entry to view detailed information
+
+### What You Can See
+
+The detail view displays:
+
+- **Invalidation ID**: AWS CloudFront invalidation request ID
+- **Status**: Current status (In Progress, Completed, Failed)
+- **Creation Time**: When the invalidation was initiated
+- **Paths**: Complete list of invalidated paths
+- **Progress**: Real-time status updates from CloudFront
+- **Error Details**: If applicable, detailed error information
+
+### Features
+
+**Real-time Status Updates:**
+- Automatic refresh of invalidation status
+- Progress tracking for large invalidation batches
+- Completion notifications
+
+**Path Details:**
+- Full list of invalidated URLs
+- Path validation and formatting
+- Duplicate path detection
+
+**Error Handling:**
+- Graceful handling of permission errors
+- Detailed error messages for troubleshooting
+- Retry suggestions for failed invalidations
+
+### Permission Considerations
+
+If you see limited information in the detail view:
+- Ensure your AWS credentials have `cloudfront:GetInvalidation` permission
+- The plugin gracefully handles cases where detailed information isn't accessible
+- Basic invalidation functionality continues to work even without detail view permissions
+
 ## Next Steps
 
 - Learn about [advanced filters and hooks](/development/filters)
