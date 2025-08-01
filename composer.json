@@ -12,7 +12,7 @@
 		"wp-coding-standards/wpcs": "*",
 		"wp-phpunit/wp-phpunit": "*",
 		"phpunit/phpunit": "^9.5.10",
-		"yoast/phpunit-polyfills": "^1.0.1",
+		"yoast/phpunit-polyfills": "^4.0.0",
     "mockery/mockery": "^1.6",
     "10up/wp_mock": "^1.1"
 	  },
