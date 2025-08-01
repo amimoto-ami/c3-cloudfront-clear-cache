@@ -107,7 +107,8 @@ class Invalidation_Batch_Service {
 	 */
 	public function create_batch_by_post( string $home_url, string $distribution_id, ?\WP_Post $post = null ) {
 		$invalidation_batch = new Invalidation_Batch();
-		$invalidation_batch->put_invalidation_path( $home_url );
+		$home_path = $this->hook_service->apply_filters( 'c3_invalidation_post_batch_home_path', $home_url, $post );
+		$invalidation_batch->put_invalidation_path( $home_path );
 		$invalidation_batch = $this->put_post_invalidation_batch( $invalidation_batch, $post );
 		return $invalidation_batch->get_invalidation_request_parameter( $distribution_id );
 	}
@@ -121,7 +122,8 @@ class Invalidation_Batch_Service {
 	 */
 	public function create_batch_by_posts( string $home_url, string $distribution_id, array $posts = array() ) {
 		$invalidation_batch = new Invalidation_Batch();
-		$invalidation_batch->put_invalidation_path( $home_url );
+		$home_path = $this->hook_service->apply_filters( 'c3_invalidation_posts_batch_home_path', $home_url, $posts );
+		$invalidation_batch->put_invalidation_path( $home_path );
 		foreach ( $posts as $post ) {
 			$invalidation_batch = $this->put_post_invalidation_batch( $invalidation_batch, $post );
 		}
@@ -136,7 +138,8 @@ class Invalidation_Batch_Service {
 	 */
 	public function create_batch_for_all( string $distribution_id ) {
 		$invalidation_batch = new Invalidation_Batch();
-		$invalidation_batch->put_invalidation_path( '/*' );
+		$all_path = $this->hook_service->apply_filters( 'c3_invalidation_manual_batch_all_path', '/*' );
+		$invalidation_batch->put_invalidation_path( $all_path );
 		return $invalidation_batch->get_invalidation_request_parameter( $distribution_id );
 	}
 }

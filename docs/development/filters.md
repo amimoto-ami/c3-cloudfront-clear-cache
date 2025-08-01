@@ -43,6 +43,100 @@ add_filter('c3_invalidation_items', function($items, $post) {
 }, 10, 2);
 ```
 
+### `c3_invalidation_post_batch_home_path`
+
+Customize the home path when invalidating a single post.
+
+**Hook Type:** Filter  
+**Since:** 7.2.0  
+**Parameters:**
+- `$home_path` (string): The home URL/path to be invalidated
+- `$post` (WP_Post|null): The post object that triggered the invalidation
+
+**Return:** `string` - Modified home path
+
+**Examples:**
+
+```php
+// Use different home path for specific post types
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    if ($post && $post->post_type === 'product') {
+        return '/shop/'; // Invalidate shop page instead of home
+    }
+    return $home_path;
+}, 10, 2);
+
+// Skip home invalidation for draft posts
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    if ($post && $post->post_status === 'draft') {
+        return null; // Skip home invalidation
+    }
+    return $home_path;
+}, 10, 2);
+```
+
+### `c3_invalidation_posts_batch_home_path`
+
+Customize the home path when invalidating multiple posts.
+
+**Hook Type:** Filter  
+**Since:** 7.2.0  
+**Parameters:**
+- `$home_path` (string): The home URL/path to be invalidated
+- `$posts` (array): Array of WP_Post objects being invalidated
+
+**Return:** `string` - Modified home path
+
+**Examples:**
+
+```php
+// Use different home path for bulk operations
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    if (count($posts) > 5) {
+        return '/'; // Use root path for large bulk operations
+    }
+    return $home_path;
+}, 10, 2);
+
+// Custom path based on post types in batch
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    $post_types = array_unique(array_column($posts, 'post_type'));
+    if (in_array('product', $post_types)) {
+        return '/shop/';
+    }
+    return $home_path;
+}, 10, 2);
+```
+
+### `c3_invalidation_manual_batch_all_path`
+
+Customize the path for manual "clear all cache" operations.
+
+**Hook Type:** Filter  
+**Since:** 7.2.0  
+**Parameters:**
+- `$all_path` (string): The path pattern for clearing all cache (default: '/*')
+
+**Return:** `string` - Modified path pattern
+
+**Examples:**
+
+```php
+// Use more specific path for manual clear all
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    // Only clear content directories instead of everything
+    return '/content/*';
+});
+
+// Environment-specific clear all behavior
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    if (wp_get_environment_type() === 'staging') {
+        return '/staging/*';
+    }
+    return $all_path;
+});
+```
+
 ### `c3_credential`
 
 Override AWS credentials programmatically.
@@ -371,4 +465,4 @@ add_action('c3_before_invalidation', function($paths, $post_id) {
 }, 10, 2);
 ```
 
-This comprehensive reference provides all the tools you need to customize C3 CloudFront Cache Controller for your specific use case. 
+This comprehensive reference provides all the tools you need to customize C3 CloudFront Cache Controller for your specific use case.  
