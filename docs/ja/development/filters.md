@@ -43,6 +43,100 @@ add_filter('c3_invalidation_items', function($items, $post) {
 }, 10, 2);
 ```
 
+### `c3_invalidation_post_batch_home_path`
+
+単一投稿の無効化時のホームパスをカスタマイズします。
+
+**フックタイプ:** フィルター  
+**バージョン:** 7.2.0  
+**パラメータ:**
+- `$home_path` (string): 無効化されるホームURL/パス
+- `$post` (WP_Post|null): 無効化をトリガーした投稿オブジェクト
+
+**戻り値:** `string` - 修正されたホームパス
+
+**例:**
+
+```php
+// 特定の投稿タイプに異なるホームパスを使用
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    if ($post && $post->post_type === 'product') {
+        return '/shop/'; // ホームの代わりにショップページを無効化
+    }
+    return $home_path;
+}, 10, 2);
+
+// 下書き投稿のホーム無効化をスキップ
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    if ($post && $post->post_status === 'draft') {
+        return null; // ホーム無効化をスキップ
+    }
+    return $home_path;
+}, 10, 2);
+```
+
+### `c3_invalidation_posts_batch_home_path`
+
+複数投稿の無効化時のホームパスをカスタマイズします。
+
+**フックタイプ:** フィルター  
+**バージョン:** 7.2.0  
+**パラメータ:**
+- `$home_path` (string): 無効化されるホームURL/パス
+- `$posts` (array): 無効化される投稿オブジェクトの配列
+
+**戻り値:** `string` - 修正されたホームパス
+
+**例:**
+
+```php
+// 一括操作に異なるホームパスを使用
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    if (count($posts) > 5) {
+        return '/'; // 大規模な一括操作にはルートパスを使用
+    }
+    return $home_path;
+}, 10, 2);
+
+// バッチ内の投稿タイプに基づくカスタムパス
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    $post_types = array_unique(array_column($posts, 'post_type'));
+    if (in_array('product', $post_types)) {
+        return '/shop/';
+    }
+    return $home_path;
+}, 10, 2);
+```
+
+### `c3_invalidation_manual_batch_all_path`
+
+手動「全キャッシュクリア」操作のパスをカスタマイズします。
+
+**フックタイプ:** フィルター  
+**バージョン:** 7.2.0  
+**パラメータ:**
+- `$all_path` (string): 全キャッシュクリア用のパスパターン（デフォルト: '/*'）
+
+**戻り値:** `string` - 修正されたパスパターン
+
+**例:**
+
+```php
+// 手動全クリアにより具体的なパスを使用
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    // すべてではなくコンテンツディレクトリのみをクリア
+    return '/content/*';
+});
+
+// 環境固有の全クリア動作
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    if (wp_get_environment_type() === 'staging') {
+        return '/staging/*';
+    }
+    return $all_path;
+});
+```
+
 ### `c3_credential`
 
 AWS認証情報をプログラムでオーバーライドします。
@@ -371,4 +465,4 @@ add_action('c3_before_invalidation', function($paths, $post_id) {
 }, 10, 2);
 ```
 
-この包括的なリファレンスは、特定のユースケースに合わせてC3 CloudFront Cache Controllerをカスタマイズするために必要なすべてのツールを提供します。 
+この包括的なリファレンスは、特定のユースケースに合わせてC3 CloudFront Cache Controllerをカスタマイズするために必要なすべてのツールを提供します。  

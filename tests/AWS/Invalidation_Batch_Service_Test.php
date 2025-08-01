@@ -142,4 +142,72 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             "Quantity" => 3
         ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
     }
+
+    public function test_c3_invalidation_post_batch_home_path_filter() {
+        add_filter( 'c3_invalidation_post_batch_home_path', function( $home_path, $post ) {
+            if ( $post && 'custom-home' === $post->post_name ) {
+                return '/custom-homepage/';
+            }
+            return $home_path;
+        }, 10, 2 );
+        
+        $post = $this->factory->post->create_and_get( array(
+            'post_status' => 'publish',
+            'post_name' => 'custom-home',
+        ) );
+        
+        $target = new AWS\Invalidation_Batch_Service();
+        $result = $target->create_batch_by_post( 'localhost', 'EXXXX', $post );
+        $this->assertEquals([
+            'Items' => [
+                '/custom-homepage/',
+                '/custom-home/*'
+            ],
+            'Quantity' => 2
+        ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
+    }
+
+    public function test_c3_invalidation_posts_batch_home_path_filter() {
+        add_filter( 'c3_invalidation_posts_batch_home_path', function( $home_path, $posts ) {
+            if ( count( $posts ) > 1 ) {
+                return '/bulk-update-homepage/';
+            }
+            return $home_path;
+        }, 10, 2 );
+        
+        $post1 = $this->factory->post->create_and_get( array(
+            'post_status' => 'publish',
+            'post_name' => 'post-one',
+        ) );
+        $post2 = $this->factory->post->create_and_get( array(
+            'post_status' => 'publish',
+            'post_name' => 'post-two',
+        ) );
+        
+        $target = new AWS\Invalidation_Batch_Service();
+        $result = $target->create_batch_by_posts( 'localhost', 'EXXXX', [$post1, $post2] );
+        $this->assertEquals([
+            'Items' => [
+                '/bulk-update-homepage/',
+                '/post-one/*',
+                '/post-two/*'
+            ],
+            'Quantity' => 3
+        ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
+    }
+
+    public function test_c3_invalidation_manual_batch_all_path_filter() {
+        add_filter( 'c3_invalidation_manual_batch_all_path', function( $all_path ) {
+            return '/custom-all-path/*';
+        } );
+        
+        $target = new AWS\Invalidation_Batch_Service();
+        $result = $target->create_batch_for_all( 'EXXXX' );
+        $this->assertEquals([
+            'Items' => [
+                '/custom-all-path/*'
+            ],
+            'Quantity' => 1
+        ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
+    }
 }

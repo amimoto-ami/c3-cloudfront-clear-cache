@@ -76,6 +76,37 @@ add_filter( 'c3_invalidation_items', function( $items, $post ) {
 }, 10, 2 );
 ```
 
+### New Path Adjustment Hooks (v7.2.0+)
+
+For more specific control over path invalidation, use these new hooks:
+
+#### Customize home path for single post invalidation
+```php
+add_filter( 'c3_invalidation_post_batch_home_path', function( $home_path, $post ) {
+    if ( $post && $post->post_type === 'product' ) {
+        return '/shop/'; // Invalidate shop page instead of home
+    }
+    return $home_path;
+}, 10, 2 );
+```
+
+#### Customize home path for multiple posts invalidation
+```php
+add_filter( 'c3_invalidation_posts_batch_home_path', function( $home_path, $posts ) {
+    if ( count( $posts ) > 5 ) {
+        return '/'; // Use root path for large bulk operations
+    }
+    return $home_path;
+}, 10, 2 );
+```
+
+#### Customize path for manual "clear all" operations
+```php
+add_filter( 'c3_invalidation_manual_batch_all_path', function( $all_path ) {
+    return '/content/*'; // Only clear content directories
+});
+```
+
 ### Custom Implementation
 
 This plugin now uses a custom AWS CloudFront implementation instead of the official AWS SDK to reduce dependencies and improve performance.
