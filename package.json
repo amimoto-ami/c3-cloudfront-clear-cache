@@ -4,7 +4,7 @@
     "vitepress": "^1.6.3"
   },
   "name": "trunk",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "main": "index.js",
   "directories": {
     "test": "tests"
