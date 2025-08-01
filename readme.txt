@@ -97,6 +97,10 @@ This plugin now uses a custom AWS CloudFront implementation instead of the offic
 
 == Changelog ==
 
+== 7.1.0 ==
+* [Feature] Add invalidation detail view with modal popup showing invalidation paths, caller reference, and status
+* [Fix] Fix invalid path returned for post type without archive page
+
 == 7.0.1 ==
 * [Update] Improved AWS API call processing for better security and PHP 8.x compatibility
 
