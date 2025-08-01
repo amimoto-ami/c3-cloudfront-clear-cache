@@ -340,7 +340,7 @@ define('WP_DEBUG_LOG', true);
 ```bash
 # libxmlバージョンを確認（セキュアパースィングをサポートしている必要があります）
 php -m | grep libxml
-php -r "echo libxml_version();"
+php -r "phpinfo();" | grep -i libxml
 ```
 
 ## 次のステップ

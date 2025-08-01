@@ -521,7 +521,7 @@ define('WP_DEBUG_LOG', true);
 ```bash
 # Check libxml version (should support secure parsing)
 php -m | grep libxml
-php -r "echo libxml_version();"
+php -r "phpinfo();" | grep -i libxml
 ```
 
 ### Support Channels
