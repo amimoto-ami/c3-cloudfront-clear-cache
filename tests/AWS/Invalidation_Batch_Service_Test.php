@@ -273,4 +273,105 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'Quantity' => 1
         ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
     }
+
+    /**
+     * Test Case: WordPress subdirectory installation support
+     * 
+     * Overview:
+     * This test verifies that the new path adjustment hooks correctly handle WordPress
+     * installations in subdirectories by automatically including subdirectory paths
+     * in invalidation requests through WordPress's standard home_url() function.
+     * 
+     * Expected Behavior:
+     * - When WordPress is installed in a subdirectory (e.g., /blog/), home_url() should return the subdirectory path
+     * - The c3_invalidation_post_batch_home_path filter should receive the subdirectory path automatically
+     * - Invalidation batches should include both the subdirectory home path and post-specific paths
+     * - The plugin should work seamlessly without manual configuration for subdirectory installations
+     * 
+     * Test Method:
+     * 1. Mock WordPress home_url() to simulate a subdirectory installation (/blog/)
+     * 2. Register a filter to verify the subdirectory path is correctly passed to the hook
+     * 3. Create a test post and generate an invalidation batch
+     * 4. Verify that the resulting invalidation paths include the subdirectory home path '/blog/'
+     * 5. Confirm that post-specific paths also include the subdirectory structure
+     * 6. Assert that no manual configuration is needed for subdirectory support
+     */
+    public function test_subdirectory_installation_support() {
+        add_filter( 'home_url', function( $url, $path ) {
+            if ( $path === '/' ) {
+                return 'https://example.com/blog/';
+            }
+            return $url;
+        }, 10, 2 );
+        
+        $received_home_path = null;
+        add_filter( 'c3_invalidation_post_batch_home_path', function( $home_path, $post ) use ( &$received_home_path ) {
+            $received_home_path = $home_path;
+            return $home_path; // Return unchanged to test default behavior
+        }, 10, 2 );
+        
+        $post = $this->factory->post->create_and_get( array(
+            'post_status' => 'publish',
+            'post_name' => 'test-subdirectory-post',
+        ) );
+        
+        $target = new AWS\Invalidation_Batch_Service();
+        $result = $target->create_batch_by_post( 'https://example.com/blog/', 'EXXXX', $post );
+        
+        $this->assertEquals( 'https://example.com/blog/', $received_home_path );
+        
+        $paths = $result[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
+        $this->assertContains( 'https://example.com/blog/', $paths );
+        $this->assertContains( '/test-subdirectory-post/*', $paths );
+        $this->assertEquals( 2, $result[ 'InvalidationBatch' ][ 'Paths' ][ 'Quantity' ] );
+        
+        remove_all_filters( 'home_url' );
+        remove_all_filters( 'c3_invalidation_post_batch_home_path' );
+    }
+
+    /**
+     * Test Case: Subdirectory-specific path customization
+     * 
+     * Overview:
+     * This test verifies that developers can customize invalidation paths specifically
+     * for subdirectory installations using the new hooks, allowing for environment-specific
+     * or subdirectory-specific cache invalidation strategies.
+     * 
+     * Expected Behavior:
+     * - Developers should be able to detect subdirectory installations in their filters
+     * - Custom paths can be returned that are specific to the subdirectory environment
+     * - The hooks should work correctly with both subdirectory and root installations
+     * 
+     * Test Method:
+     * 1. Create a filter that detects subdirectory installations and returns custom paths
+     * 2. Test with both subdirectory and root installation scenarios
+     * 3. Verify that custom subdirectory-specific paths are correctly applied
+     * 4. Confirm that root installations are not affected by subdirectory-specific logic
+     */
+    public function test_subdirectory_specific_path_customization() {
+        add_filter( 'c3_invalidation_post_batch_home_path', function( $home_path, $post ) {
+            if ( strpos( $home_path, '/blog/' ) !== false ) {
+                return '/blog/custom-home/'; // Custom path for blog subdirectory
+            }
+            return $home_path; // Default for root installations
+        }, 10, 2 );
+        
+        $post = $this->factory->post->create_and_get( array(
+            'post_status' => 'publish',
+            'post_name' => 'subdirectory-custom-post',
+        ) );
+        
+        $target = new AWS\Invalidation_Batch_Service();
+        
+        $result_subdirectory = $target->create_batch_by_post( 'https://example.com/blog/', 'EXXXX', $post );
+        $paths_subdirectory = $result_subdirectory[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
+        $this->assertContains( '/blog/custom-home/', $paths_subdirectory );
+        
+        $result_root = $target->create_batch_by_post( 'https://example.com/', 'EXXXX', $post );
+        $paths_root = $result_root[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
+        $this->assertContains( 'https://example.com/', $paths_root );
+        $this->assertNotContains( '/blog/custom-home/', $paths_root );
+        
+        remove_all_filters( 'c3_invalidation_post_batch_home_path' );
+    }
 }

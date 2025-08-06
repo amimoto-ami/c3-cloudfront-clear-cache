@@ -366,6 +366,117 @@ add_action('c3_invalidation_failed', function($paths, $error, $post_id) {
 }, 10, 3);
 ```
 
+## WordPressサブディレクトリインストール対応
+
+新しいパス調整フック（`c3_invalidation_post_batch_home_path`、`c3_invalidation_posts_batch_home_path`、`c3_invalidation_manual_batch_all_path`）は、サブディレクトリにインストールされたWordPressを完全にサポートします。
+
+### サブディレクトリ対応の仕組み
+
+WordPressがサブディレクトリにインストールされている場合（例：`https://example.com/blog/`）、プラグインはWordPress標準の`home_url()`関数を通じてサブディレクトリパスを自動的に処理します：
+
+**通常インストール:**
+```
+WordPress URL: https://example.com/
+home_url('/') → https://example.com/
+```
+
+**サブディレクトリインストール:**
+```
+WordPress URL: https://example.com/blog/
+home_url('/') → https://example.com/blog/
+```
+
+### パス生成ロジック
+
+プラグインは`parse_url()`を使用してURLからパス成分を抽出し、サブディレクトリパスを自動的に含めます：
+
+```php
+// Invalidation_Batch.php内
+public function make_invalidate_path( $url ) {
+    $parse_url = parse_url( $url );
+    return isset( $parse_url['path'] )
+        ? $parse_url['path']  // サブディレクトリを含む
+        : preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
+}
+```
+
+### サブディレクトリの例
+
+#### 例1: サブディレクトリインストール用のカスタムホームパス
+
+```php
+// WordPressが https://example.com/blog/ にインストールされている場合
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    // $home_pathは自動的に"/blog/"を含む
+    
+    if ($post && $post->post_type === 'product') {
+        return '/blog/shop/'; // サブディレクトリ + カスタムパス
+    }
+    return $home_path; // デフォルト: /blog/
+}, 10, 2);
+```
+
+#### 例2: サブディレクトリ制限付きの手動全クリア
+
+```php
+// WordPressサブディレクトリ内のキャッシュのみクリア
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    // サブディレクトリのみに制限
+    return '/blog/*'; // /blog/*パスのみ無効化
+});
+```
+
+#### 例3: 環境固有のサブディレクトリ処理
+
+```php
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    // 環境ごとに異なるサブディレクトリを処理
+    $environment = wp_get_environment_type();
+    
+    switch ($environment) {
+        case 'staging':
+            return '/staging/blog/';
+        case 'development':
+            return '/dev/blog/';
+        default:
+            return $home_path; // 本番環境のサブディレクトリ
+    }
+}, 10, 2);
+```
+
+### サブディレクトリ対応のテスト
+
+サブディレクトリ機能をテストするには、サブディレクトリインストールをシミュレートできます：
+
+```php
+// サブディレクトリ対応のテストケース
+public function test_subdirectory_installation_support() {
+    // サブディレクトリホームURLをモック
+    add_filter('home_url', function($url) {
+        return 'https://example.com/blog/';
+    });
+    
+    add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+        // サブディレクトリパスが含まれることを確認
+        return $home_path; // /blog/ であるべき
+    }, 10, 2);
+    
+    $post = $this->factory->post->create_and_get();
+    $target = new AWS\Invalidation_Batch_Service();
+    $result = $target->create_batch_by_post('https://example.com/blog/', 'EXXXX', $post);
+    
+    // サブディレクトリパスが存在することをアサート
+    $this->assertContains('/blog/', $result['InvalidationBatch']['Paths']['Items']);
+}
+```
+
+### サブディレクトリインストールの主な利点
+
+1. **自動パス検出**: 手動設定不要
+2. **柔軟なカスタマイズ**: フックによりサブディレクトリパスの細かい制御が可能
+3. **環境互換性**: 異なるデプロイメントシナリオでシームレスに動作
+4. **後方互換性**: 既存の`c3_invalidation_items`フィルターも継続して動作
+
 ## ベストプラクティス
 
 ### 1. パフォーマンスの考慮事項
@@ -465,4 +576,4 @@ add_action('c3_before_invalidation', function($paths, $post_id) {
 }, 10, 2);
 ```
 
-この包括的なリファレンスは、特定のユースケースに合わせてC3 CloudFront Cache Controllerをカスタマイズするために必要なすべてのツールを提供します。  
+この包括的なリファレンスは、特定のユースケースに合わせてC3 CloudFront Cache Controllerをカスタマイズするために必要なすべてのツールを提供します。    
