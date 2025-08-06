@@ -25,9 +25,10 @@ class Hooks {
 	 *
 	 * @param string $name Hook name.
 	 * @param mixed  $value Hooked value.
+	 * @param mixed  ...$args Additional arguments to pass to the filter.
 	 */
-	public function apply_filters( string $name, $value ) {
-		return apply_filters( $name, $value );
+	public function apply_filters( string $name, $value, ...$args ) {
+		return apply_filters( $name, $value, ...$args );
 	}
 
 	/**
