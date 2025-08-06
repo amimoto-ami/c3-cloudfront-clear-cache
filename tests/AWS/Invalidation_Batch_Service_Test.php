@@ -23,6 +23,13 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         $wp_rewrite->set_permalink_structure( '/%postname%/' );
     }
 
+    /**
+     * Clean up after each test
+     */
+    protected function tearDown(): void {
+        parent::tearDown();
+    }
+
     public function test_get_the_published_post_invalidation_paths() {
         $post = $this->factory->post->create_and_get( array(
             'post_status' => 'publish',
@@ -324,9 +331,6 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         $this->assertThat( $paths, $this->contains( 'https://example.com/blog/' ) );
         $this->assertThat( $paths, $this->contains( '/test-subdirectory-post/*' ) );
         $this->assertEquals( 2, $result[ 'InvalidationBatch' ][ 'Paths' ][ 'Quantity' ] );
-        
-        remove_all_filters( 'home_url' );
-        remove_all_filters( 'c3_invalidation_post_batch_home_path' );
     }
 
     /**
@@ -371,7 +375,5 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         $paths_root = $result_root[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
         $this->assertThat( $paths_root, $this->contains( 'https://example.com/' ) );
         $this->assertThat( $paths_root, $this->logicalNot( $this->contains( '/blog/custom-home/' ) ) );
-        
-        remove_all_filters( 'c3_invalidation_post_batch_home_path' );
     }
 }
