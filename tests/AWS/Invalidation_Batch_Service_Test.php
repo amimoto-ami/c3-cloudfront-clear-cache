@@ -328,8 +328,8 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         $this->assertEquals( 'https://example.com/blog/', $received_home_path );
         
         $paths = $result[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
-        $this->assertThat( $paths, $this->contains( 'https://example.com/blog/' ) );
-        $this->assertThat( $paths, $this->contains( '/test-subdirectory-post/*' ) );
+        $this->assertContains( '/blog/', $paths );
+        $this->assertContains( '/test-subdirectory-post/*', $paths );
         $this->assertEquals( 2, $result[ 'InvalidationBatch' ][ 'Paths' ][ 'Quantity' ] );
     }
 
@@ -369,11 +369,11 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         
         $result_subdirectory = $target->create_batch_by_post( 'https://example.com/blog/', 'EXXXX', $post );
         $paths_subdirectory = $result_subdirectory[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
-        $this->assertThat( $paths_subdirectory, $this->contains( '/blog/custom-home/' ) );
+        $this->assertContains( '/blog/custom-home/', $paths_subdirectory );
         
         $result_root = $target->create_batch_by_post( 'https://example.com/', 'EXXXX', $post );
         $paths_root = $result_root[ 'InvalidationBatch' ][ 'Paths' ][ 'Items' ];
-        $this->assertThat( $paths_root, $this->contains( 'https://example.com/' ) );
-        $this->assertThat( $paths_root, $this->logicalNot( $this->contains( '/blog/custom-home/' ) ) );
+        $this->assertContains( '/', $paths_root );
+        $this->assertNotContains( '/blog/custom-home/', $paths_root );
     }
 }
