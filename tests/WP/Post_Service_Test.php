@@ -6,11 +6,42 @@ use C3_CloudFront_Cache_Controller\WP\Hooks;
 class Post_Service_Test extends \WP_UnitTestCase {
     
     /**
-     * Test case overview: Verify that Post_Service uses 'post_type' => 'any' by default
-     * Expected behavior: WP_Query should include all post types when searching by post IDs
-     * Test methodology: Mock WP_Query and verify the arguments passed include 'post_type' => 'any'
+     * Test case overview: Verify that Post_Service uses 'post_type' => 'post' by default (WordPress standard)
+     * Expected behavior: WP_Query should only include 'post' type by default, maintaining WordPress standard behavior
+     * Test methodology: Create posts of different types and verify only 'post' type is returned by default
      */
-    public function test_list_posts_by_ids_default_post_type_any() {
+    public function test_list_posts_by_ids_default_post_type_post() {
+        $post_service = new Post_Service();
+        
+        $regular_post = $this->factory->post->create(array(
+            'post_type' => 'post',
+            'post_status' => 'publish'
+        ));
+        
+        $page = $this->factory->post->create(array(
+            'post_type' => 'page',
+            'post_status' => 'publish'
+        ));
+        
+        $post_ids = array($regular_post, $page);
+        $results = $post_service->list_posts_by_ids($post_ids);
+        
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('post', $results[0]->post_type);
+        $this->assertEquals($regular_post, $results[0]->ID);
+    }
+    
+    /**
+     * Test case overview: Verify that c3_post_service_query_args filter allows enabling custom post type support
+     * Expected behavior: Filter should allow changing post_type to 'any' to include all post types (Issue #84 fix)
+     * Test methodology: Add filter to set post_type to 'any' and verify both post and page are found
+     */
+    public function test_c3_post_service_query_args_filter_enable_any_post_type() {
+        add_filter('c3_post_service_query_args', function($args, $post_ids) {
+            $args['post_type'] = 'any';
+            return $args;
+        }, 10, 2);
+        
         $post_service = new Post_Service();
         
         $regular_post = $this->factory->post->create(array(
@@ -35,36 +66,6 @@ class Post_Service_Test extends \WP_UnitTestCase {
         
         $this->assertContains('post', $found_types);
         $this->assertContains('page', $found_types);
-    }
-    
-    /**
-     * Test case overview: Verify that c3_post_service_query_args filter works correctly
-     * Expected behavior: Filter should allow customization of WP_Query arguments
-     * Test methodology: Add filter to modify query args and verify the behavior changes
-     */
-    public function test_c3_post_service_query_args_filter() {
-        add_filter('c3_post_service_query_args', function($args, $post_ids) {
-            $args['post_type'] = 'post';
-            return $args;
-        }, 10, 2);
-        
-        $post_service = new Post_Service();
-        
-        $regular_post = $this->factory->post->create(array(
-            'post_type' => 'post',
-            'post_status' => 'publish'
-        ));
-        
-        $page = $this->factory->post->create(array(
-            'post_type' => 'page',
-            'post_status' => 'publish'
-        ));
-        
-        $post_ids = array($regular_post, $page);
-        $results = $post_service->list_posts_by_ids($post_ids);
-        
-        $this->assertEquals(1, count($results));
-        $this->assertEquals('post', $results[0]->post_type);
         
         remove_all_filters('c3_post_service_query_args');
     }
@@ -82,7 +83,7 @@ class Post_Service_Test extends \WP_UnitTestCase {
                    ->with(
                        $this->equalTo('c3_post_service_query_args'),
                        $this->callback(function($args) {
-                           return isset($args['post_type']) && $args['post_type'] === 'any';
+                           return isset($args['post_type']) && $args['post_type'] === 'post';
                        }),
                        $this->isType('array')
                    )
