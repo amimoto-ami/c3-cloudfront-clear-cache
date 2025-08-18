@@ -97,6 +97,14 @@ This plugin now uses a custom AWS CloudFront implementation instead of the offic
 
 == Changelog ==
 
+= 7.2.0 =
+* [Feature] Add 3 new path adjustment hooks for more granular invalidation control:
+  - `c3_invalidation_post_batch_home_path` - Customize home path for single post invalidation
+  - `c3_invalidation_posts_batch_home_path` - Customize home path for multiple posts invalidation
+  - `c3_invalidation_manual_batch_all_path` - Customize path for manual "clear all" operations
+* [Enhancement] Update Hooks.php to support variable arguments in apply_filters method
+* [Compatibility] Maintain full backward compatibility with existing c3_invalidation_items filter
+
 == 7.1.0 ==
 * [Feature] Add invalidation detail view with modal popup showing invalidation paths, caller reference, and status
 * [Fix] Fix invalid path returned for post type without archive page
@@ -186,13 +194,6 @@ This plugin now uses a custom AWS CloudFront implementation instead of the offic
 * Fix small bug
 * Add some feature for AMIMOTO Managed hosting user
 
-= 7.2.0 =
-* [Feature] Add 3 new path adjustment hooks for more granular invalidation control:
-  - `c3_invalidation_post_batch_home_path` - Customize home path for single post invalidation
-  - `c3_invalidation_posts_batch_home_path` - Customize home path for multiple posts invalidation
-  - `c3_invalidation_manual_batch_all_path` - Customize path for manual "clear all" operations
-* [Enhancement] Update Hooks.php to support variable arguments in apply_filters method
-* [Compatibility] Maintain full backward compatibility with existing c3_invalidation_items filter
 
 = 4.3.1 =
 * Fix cron interval
