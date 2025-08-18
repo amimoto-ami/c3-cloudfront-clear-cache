@@ -43,6 +43,100 @@ add_filter('c3_invalidation_items', function($items, $post) {
 }, 10, 2);
 ```
 
+### `c3_invalidation_post_batch_home_path`
+
+Customize the home path when invalidating a single post.
+
+**Hook Type:** Filter  
+**Since:** 7.2.0  
+**Parameters:**
+- `$home_path` (string): The home URL/path to be invalidated
+- `$post` (WP_Post|null): The post object that triggered the invalidation
+
+**Return:** `string` - Modified home path
+
+**Examples:**
+
+```php
+// Use different home path for specific post types
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    if ($post && $post->post_type === 'product') {
+        return '/shop/'; // Invalidate shop page instead of home
+    }
+    return $home_path;
+}, 10, 2);
+
+// Skip home invalidation for draft posts
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    if ($post && $post->post_status === 'draft') {
+        return null; // Skip home invalidation
+    }
+    return $home_path;
+}, 10, 2);
+```
+
+### `c3_invalidation_posts_batch_home_path`
+
+Customize the home path when invalidating multiple posts.
+
+**Hook Type:** Filter  
+**Since:** 7.2.0  
+**Parameters:**
+- `$home_path` (string): The home URL/path to be invalidated
+- `$posts` (array): Array of WP_Post objects being invalidated
+
+**Return:** `string` - Modified home path
+
+**Examples:**
+
+```php
+// Use different home path for bulk operations
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    if (count($posts) > 5) {
+        return '/'; // Use root path for large bulk operations
+    }
+    return $home_path;
+}, 10, 2);
+
+// Custom path based on post types in batch
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    $post_types = array_unique(array_column($posts, 'post_type'));
+    if (in_array('product', $post_types)) {
+        return '/shop/';
+    }
+    return $home_path;
+}, 10, 2);
+```
+
+### `c3_invalidation_manual_batch_all_path`
+
+Customize the path for manual "clear all cache" operations.
+
+**Hook Type:** Filter  
+**Since:** 7.2.0  
+**Parameters:**
+- `$all_path` (string): The path pattern for clearing all cache (default: '/*')
+
+**Return:** `string` - Modified path pattern
+
+**Examples:**
+
+```php
+// Use more specific path for manual clear all
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    // Only clear content directories instead of everything
+    return '/content/*';
+});
+
+// Environment-specific clear all behavior
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    if (wp_get_environment_type() === 'staging') {
+        return '/staging/*';
+    }
+    return $all_path;
+});
+```
+
 ### `c3_credential`
 
 Override AWS credentials programmatically.
@@ -272,6 +366,117 @@ add_action('c3_invalidation_failed', function($paths, $error, $post_id) {
 }, 10, 3);
 ```
 
+## WordPress Subdirectory Installation Support
+
+The new path adjustment hooks (`c3_invalidation_post_batch_home_path`, `c3_invalidation_posts_batch_home_path`, and `c3_invalidation_manual_batch_all_path`) fully support WordPress installations in subdirectories.
+
+### How Subdirectory Support Works
+
+When WordPress is installed in a subdirectory (e.g., `https://example.com/blog/`), the plugin automatically handles subdirectory paths through WordPress's standard `home_url()` function:
+
+**Normal Installation:**
+```
+WordPress URL: https://example.com/
+home_url('/') → https://example.com/
+```
+
+**Subdirectory Installation:**
+```
+WordPress URL: https://example.com/blog/
+home_url('/') → https://example.com/blog/
+```
+
+### Path Generation Logic
+
+The plugin uses `parse_url()` to extract path components from URLs, which automatically includes subdirectory paths:
+
+```php
+// In Invalidation_Batch.php
+public function make_invalidate_path( $url ) {
+    $parse_url = parse_url( $url );
+    return isset( $parse_url['path'] )
+        ? $parse_url['path']  // Includes subdirectory
+        : preg_replace( array( '#^https?://[^/]*#', '#\?.*$#' ), '', $url );
+}
+```
+
+### Subdirectory Examples
+
+#### Example 1: Custom Home Path for Subdirectory Installation
+
+```php
+// WordPress installed at https://example.com/blog/
+add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+    // $home_path automatically contains "/blog/"
+    
+    if ($post && $post->post_type === 'product') {
+        return '/blog/shop/'; // Subdirectory + custom path
+    }
+    return $home_path; // Default: /blog/
+}, 10, 2);
+```
+
+#### Example 2: Manual Clear All with Subdirectory Restriction
+
+```php
+// Only clear cache within the WordPress subdirectory
+add_filter('c3_invalidation_manual_batch_all_path', function($all_path) {
+    // Restrict clearing to subdirectory only
+    return '/blog/*'; // Only invalidate /blog/* paths
+});
+```
+
+#### Example 3: Environment-Specific Subdirectory Handling
+
+```php
+add_filter('c3_invalidation_posts_batch_home_path', function($home_path, $posts) {
+    // Handle different subdirectories per environment
+    $environment = wp_get_environment_type();
+    
+    switch ($environment) {
+        case 'staging':
+            return '/staging/blog/';
+        case 'development':
+            return '/dev/blog/';
+        default:
+            return $home_path; // Production subdirectory
+    }
+}, 10, 2);
+```
+
+### Testing Subdirectory Support
+
+To test subdirectory functionality, you can simulate a subdirectory installation:
+
+```php
+// Test case for subdirectory support
+public function test_subdirectory_installation_support() {
+    // Mock subdirectory home URL
+    add_filter('home_url', function($url) {
+        return 'https://example.com/blog/';
+    });
+    
+    add_filter('c3_invalidation_post_batch_home_path', function($home_path, $post) {
+        // Verify subdirectory path is included
+        return $home_path; // Should be /blog/
+    }, 10, 2);
+    
+    $post = $this->factory->post->create_and_get();
+    $target = new AWS\Invalidation_Batch_Service();
+    $result = $target->create_batch_by_post('https://example.com/blog/', 'EXXXX', $post);
+    
+    // Assert subdirectory path is present
+    $this->assertContains('/blog/', $result['InvalidationBatch']['Paths']['Items']);
+}
+```
+
+### Key Benefits for Subdirectory Installations
+
+1. **Automatic Path Detection**: No manual configuration needed
+2. **Flexible Customization**: Hooks allow fine-tuned control over subdirectory paths
+3. **Environment Compatibility**: Works seamlessly across different deployment scenarios
+4. **Backward Compatibility**: Existing `c3_invalidation_items` filter continues to work
+
 ## Best Practices
 
 ### 1. Performance Considerations
@@ -371,4 +576,4 @@ add_action('c3_before_invalidation', function($paths, $post_id) {
 }, 10, 2);
 ```
 
-This comprehensive reference provides all the tools you need to customize C3 CloudFront Cache Controller for your specific use case. 
+This comprehensive reference provides all the tools you need to customize C3 CloudFront Cache Controller for your specific use case.    
