@@ -70,4 +70,44 @@ class AWS_Mock_Helper {
 			'secret' => 'test-secret'
 		);
 	}
-}  
+
+	public static function create_mock_imdsv2_token_success_response() {
+		return array(
+			'response' => array(
+				'code' => 200,
+			),
+			'body' => 'AQAAANpzGgoAAAABAAZ1c2Utd2VzdC0yAKABOpguwwKSABVhc2lhbi1wYWNpZmljLXNvdXRoZWFzdC0xAKABOpguwwKSAAVhc2lhbi1wYWNpZmljLXNvdXRoZWFzdC0xAKABOpguwwKSAAVhc2lhbi1wYWNpZmljLXNvdXRoZWFzdC0x',
+		);
+	}
+
+	public static function create_mock_imdsv2_token_failure_response() {
+		return array(
+			'response' => array(
+				'code' => 401,
+			),
+			'body' => '',
+		);
+	}
+
+	public static function create_mock_metadata_success_response() {
+		return array(
+			'response' => array(
+				'code' => 200,
+			),
+			'body' => 'ami-id',
+		);
+	}
+
+	public static function create_mock_metadata_failure_response( $code = 404 ) {
+		return array(
+			'response' => array(
+				'code' => $code,
+			),
+			'body' => '',
+		);
+	}
+
+	public static function create_mock_wp_error_response( $message = 'Connection timeout' ) {
+		return new \WP_Error( 'http_request_failed', $message );
+	}
+}      
