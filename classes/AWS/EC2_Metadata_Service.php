@@ -173,8 +173,10 @@ class EC2_Metadata_Service {
 	 * @return bool
 	 */
 	public function is_ec2_instance() {
+		// First, get a token with IMDSv2
 		$token = $this->get_imdsv2_token();
 		if ( $token ) {
+			// Accessing metadata using tokens
 			$response = wp_remote_request(
 				$this->metadata_endpoint . '/latest/meta-data/',
 				array(
@@ -188,6 +190,7 @@ class EC2_Metadata_Service {
 			}
 		}
 
+		// If IMDSv2 fails, fall back to IMDSv1
 		$response = wp_remote_request(
 			$this->metadata_endpoint . '/latest/meta-data/',
 			array(
@@ -195,7 +198,6 @@ class EC2_Metadata_Service {
 				'timeout' => 2,
 			)
 		);
-
 		return ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200;
 	}
 }
