@@ -52,7 +52,6 @@ class Post_Service {
 	public function list_posts_by_ids( $post_ids ) {
 		$default_args = array(
 			'post__in' => $post_ids,
-			'post_type' => 'post',
 		);
 		
 		$query_args = $this->hook_service->apply_filters( 'c3_post_service_query_args', $default_args, $post_ids );
