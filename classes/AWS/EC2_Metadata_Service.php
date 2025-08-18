@@ -173,6 +173,21 @@ class EC2_Metadata_Service {
 	 * @return bool
 	 */
 	public function is_ec2_instance() {
+		$token = $this->get_imdsv2_token();
+		if ( $token ) {
+			$response = wp_remote_request(
+				$this->metadata_endpoint . '/latest/meta-data/',
+				array(
+					'method'  => 'GET',
+					'headers' => array( 'X-aws-ec2-metadata-token' => $token ),
+					'timeout' => 2,
+				)
+			);
+			if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+				return true;
+			}
+		}
+
 		$response = wp_remote_request(
 			$this->metadata_endpoint . '/latest/meta-data/',
 			array(
