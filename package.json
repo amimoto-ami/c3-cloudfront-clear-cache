@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@wordpress/env": "10.28.0",
+    "@wordpress/env": "10.31.0",
     "vitepress": "^1.6.3"
   },
   "name": "trunk",
