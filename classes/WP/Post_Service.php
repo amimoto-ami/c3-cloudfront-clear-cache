@@ -28,6 +28,7 @@ class Post_Service {
 		$query = new \WP_Query(
 			array(
 				'post__in' => $post_ids,
+				'post_type' => 'any'
 			)
 		);
 		$posts = $query->get_posts();
