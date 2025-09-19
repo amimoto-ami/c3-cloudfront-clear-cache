@@ -106,3 +106,47 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 	}
 	?>
 </form>
+
+<h3><?php _e( 'Debug Settings', $text_domain ); ?></h3>
+<form method="post" action="options.php">
+	<table class='widefat form-table' style="margin-bottom: 2rem;"><tbody>
+		<tr>
+			<td>
+				<?php _e( 'Log Cron Register Task', $text_domain ); ?>
+			</td>
+			<td>
+				<label>
+					<input
+						type="checkbox"
+						name="<?php echo Constants::OPTION_NAME . '[' . Constants::DEBUG_CRON_REGISTER . ']'; ?>"
+						value="1"
+						<?php checked( isset( $plugin_options[ Constants::DEBUG_CRON_REGISTER ] ) ? $plugin_options[ Constants::DEBUG_CRON_REGISTER ] : '', '1' ); ?>
+					/>
+					<?php _e( 'Enable logging for cron register task operations', $text_domain ); ?>
+				</label>
+				<p><small><?php _e( 'Logs detailed information about cron job registration to WordPress error log.', $text_domain ); ?></small></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<?php _e( 'Log Invalidation Parameters', $text_domain ); ?>
+			</td>
+			<td>
+				<label>
+					<input
+						type="checkbox"
+						name="<?php echo Constants::OPTION_NAME . '[' . Constants::DEBUG_INVALIDATION_PARAMS . ']'; ?>"
+						value="1"
+						<?php checked( isset( $plugin_options[ Constants::DEBUG_INVALIDATION_PARAMS ] ) ? $plugin_options[ Constants::DEBUG_INVALIDATION_PARAMS ] : '', '1' ); ?>
+					/>
+					<?php _e( 'Enable logging for invalidation parameters', $text_domain ); ?>
+				</label>
+				<p><small><?php _e( 'Logs invalidation requests and responses to WordPress error log for troubleshooting.', $text_domain ); ?></small></p>
+			</td>
+		</tr>
+	</tbody></table>
+	<?php
+	settings_fields( Constants::MENU_ID );
+	submit_button();
+	?>
+</form>

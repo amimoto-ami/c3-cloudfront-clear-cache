@@ -75,7 +75,7 @@ class Cron_Service {
 				'run_schedule_invalidate',
 			)
 		);
-		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_invalidation_task', false );
+		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_invalidation_task', $this->get_debug_setting( Constants::DEBUG_CRON_REGISTER ) );
 	}
 
 	/**
@@ -128,5 +128,17 @@ class Cron_Service {
 			error_log( '===== C3 Invalidation cron has been COMPLETED ===' );
 		}
 		return true;
+	}
+
+	/**
+	 * Get debug setting from options
+	 *
+	 * @param string $setting_key Debug setting key.
+	 * @return boolean Debug setting value.
+	 */
+	private function get_debug_setting( $setting_key ) {
+		$options_service = new WP\Options_Service();
+		$options = $options_service->get_options();
+		return isset( $options[ $setting_key ] ) && '1' === $options[ $setting_key ];
 	}
 }

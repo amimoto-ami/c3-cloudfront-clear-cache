@@ -250,7 +250,7 @@ class CloudFront_Service {
 		$distribution_id = $params['DistributionId'];
 		$paths           = $params['InvalidationBatch']['Paths']['Items'];
 
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', $this->get_debug_setting( Constants::DEBUG_INVALIDATION_PARAMS ) ) ) {
 			error_log( 'C3 CloudFront Invalidation Request - Distribution ID: ' . $distribution_id );
 			error_log( 'C3 CloudFront Invalidation Request - Paths: ' . print_r( $paths, true ) );
 			error_log( 'C3 CloudFront Invalidation Request - Full Params: ' . print_r( $params, true ) );
@@ -365,7 +365,19 @@ class CloudFront_Service {
 
 			return $result;
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'C3 Get Invalidation Error', $e->getMessage() );
+		return new \WP_Error( 'C3 Get Invalidation Error', $e->getMessage() );
 		}
+	}
+
+	/**
+	 * Get debug setting from options
+	 *
+	 * @param string $setting_key Debug setting key.
+	 * @return boolean Debug setting value.
+	 */
+	private function get_debug_setting( $setting_key ) {
+		$options_service = new WP\Options_Service();
+		$options = $options_service->get_options();
+		return isset( $options[ $setting_key ] ) && '1' === $options[ $setting_key ];
 	}
 }

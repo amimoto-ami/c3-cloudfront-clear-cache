@@ -122,7 +122,7 @@ class Invalidation_Service {
 				'handle_invalidation_details_ajax',
 			)
 		);
-		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_register_task', false );
+		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_register_task', $this->get_debug_setting( Constants::DEBUG_CRON_REGISTER ) );
 	}
 
 	/**
@@ -254,7 +254,7 @@ class Invalidation_Service {
 			return $query;
 		}
 
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', $this->get_debug_setting( Constants::DEBUG_INVALIDATION_PARAMS ) ) ) {
 			error_log( 'C3 Invalidation Started - Query: ' . print_r( $query, true ) );
 			error_log( 'C3 Invalidation Started - Force: ' . ( $force ? 'true' : 'false' ) );
 		}
@@ -275,7 +275,7 @@ class Invalidation_Service {
 		$this->transient_service->set_invalidation_time();
 		$result = $this->cf_service->create_invalidation( $query );
 		
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', $this->get_debug_setting( Constants::DEBUG_INVALIDATION_PARAMS ) ) ) {
 			if ( is_wp_error( $result ) ) {
 				error_log( 'C3 Invalidation Failed: ' . $result->get_error_message() );
 			} else {
@@ -428,5 +428,16 @@ class Invalidation_Service {
 		}
 
 		wp_send_json_success( $details );
+	}
+
+	/**
+	 * Get debug setting from options
+	 *
+	 * @param string $setting_key Debug setting key.
+	 * @return boolean Debug setting value.
+	 */
+	private function get_debug_setting( $setting_key ) {
+		$options = $this->option_service->get_options();
+		return isset( $options[ $setting_key ] ) && '1' === $options[ $setting_key ];
 	}
 }

@@ -107,6 +107,8 @@ class Settings {
 			Constants::DISTRIBUTION_ID,
 			Constants::ACCESS_KEY,
 			Constants::SECRET_KEY,
+			Constants::DEBUG_CRON_REGISTER,
+			Constants::DEBUG_INVALIDATION_PARAMS,
 		);
 		$items      = array();
 		foreach ( $allow_keys as $key ) {

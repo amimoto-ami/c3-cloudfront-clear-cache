@@ -35,6 +35,8 @@ class Constants {
 	const DISTRIBUTION_ID = 'distribution_id';
 	const ACCESS_KEY      = 'access_key';
 	const SECRET_KEY      = 'secret_key';
+	const DEBUG_CRON_REGISTER = 'debug_cron_register';
+	const DEBUG_INVALIDATION_PARAMS = 'debug_invalidation_params';
 
 	/**
 	 * Get Plugin text_domain
