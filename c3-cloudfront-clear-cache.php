@@ -28,6 +28,7 @@ function c3_init() {
 	new C3_CloudFront_Cache_Controller\Cron_Service();
 	new C3_CloudFront_Cache_Controller\Settings_Service();
 	new C3_CloudFront_Cache_Controller\Views\Settings();
+	new C3_CloudFront_Cache_Controller\Views\Debug_Settings();
 	new WP\Fixtures();
 }
 c3_init();
