@@ -109,6 +109,15 @@ class Invalidation_Service {
 			3
 		);
 		$this->hook_service->add_action(
+			'delete_attachment',
+			array(
+				$this,
+				'invalidate_attachment_cache',
+			),
+			10,
+			1
+		);
+		$this->hook_service->add_action(
 			'admin_init',
 			array(
 				$this,
@@ -428,5 +437,37 @@ class Invalidation_Service {
 		}
 
 		wp_send_json_success( $details );
+	}
+
+	/**
+	 * Execute invalidation process when attachment is deleted.
+	 *
+	 * @param int $attachment_id The attachment ID being deleted.
+	 */
+	public function invalidate_attachment_cache( $attachment_id ) {
+		$attachment_url = wp_get_attachment_url( $attachment_id );
+		
+		if ( ! $attachment_url ) {
+			return;
+		}
+		
+		$parsed_url = parse_url( $attachment_url );
+		if ( ! isset( $parsed_url['path'] ) ) {
+			return;
+		}
+		
+		$path_info = pathinfo( $parsed_url['path'] );
+		$wildcard_path = $path_info['dirname'] . '/' . $path_info['filename'] . '*';
+		
+		$options = $this->get_plugin_option();
+		if ( is_wp_error( $options ) ) {
+			return $options;
+		}
+		
+		$invalidation_batch = new AWS\Invalidation_Batch();
+		$invalidation_batch->put_invalidation_path( $wildcard_path );
+		$query = $invalidation_batch->get_invalidation_request_parameter( $options['distribution_id'] );
+		
+		return $this->invalidate_by_query( $query );
 	}
 }
