@@ -70,9 +70,17 @@ class Invalidation_Service {
 	private $debug;
 
 	/**
-	 * Inject a external services
+	 * Initialize the service, register WordPress hooks, and optionally inject dependencies.
 	 *
-	 * @param mixed ...$args Inject class.
+	 * The constructor creates default implementations for hooks, options, invalidation batch,
+	 * transients, CloudFront, and admin notices, then registers action handlers used by the
+	 * invalidation workflow (post status transitions, attachment deletions, manual admin
+	 * invalidation, and AJAX detail requests). Any provided variadic arguments are treated
+	 * as dependency overrides and will replace the corresponding default instance when they
+	 * are an instance of one of the known service types (WP\Hooks, WP\Transient_Service,
+	 * WP\Options_Service, AWS\Invalidation_Batch_Service, AWS\CloudFront_Service,
+	 * WP\Admin_Notice). Finally, the constructor reads the `c3_log_cron_register_task`
+	 * filter to set the debug flag.
 	 */
 	function __construct( ...$args ) {
 		$this->hook_service       = new WP\Hooks();
@@ -414,7 +422,24 @@ class Invalidation_Service {
 	}
 
 	/**
-	 * Handle AJAX request for invalidation details
+	 * Handle AJAX requests for fetching CloudFront invalidation details.
+	 *
+	 * Verifies the AJAX nonce ('c3_invalidation_details_nonce' via POST key 'nonce')
+	 * and the current user's 'cloudfront_clear_cache' capability. Reads and
+	 * sanitizes the POST parameter 'invalidation_id', then returns the invalidation
+	 * details as a JSON success response or a JSON error message on failure.
+	 *
+	 * Security and responses:
+	 * - Fails immediately with wp_die on nonce check or capability failure.
+	 * - If 'invalidation_id' is missing or empty, sends a JSON error.
+	 * - If get_invalidation_details() returns a WP_Error, sends its message as a JSON error.
+	 * - Otherwise sends the details with wp_send_json_success().
+	 *
+	 * Expected POST fields:
+	 * - nonce: string (AJAX nonce to validate request)
+	 * - invalidation_id: string (ID of the invalidation to fetch)
+	 *
+	 * @return void Sends a JSON response (and exits) or terminates via wp_die on security failures.
 	 */
 	public function handle_invalidation_details_ajax() {
 		if ( ! check_ajax_referer( 'c3_invalidation_details_nonce', 'nonce', false ) ) {
@@ -440,9 +465,13 @@ class Invalidation_Service {
 	}
 
 	/**
-	 * Execute invalidation process when attachment is deleted.
+	 * Trigger CloudFront invalidation for a deleted attachment.
 	 *
-	 * @param int $attachment_id The attachment ID being deleted.
+	 * Builds a wildcard path from the deleted attachment's URL (dirname/filename*) and delegates
+	 * the invalidation request to invalidate_by_query().
+	 *
+	 * @param int $attachment_id ID of the attachment being deleted.
+	 * @return mixed|null WP_Error if plugin options are missing, the result returned by invalidate_by_query() on success, or null if the attachment URL/path cannot be determined.
 	 */
 	public function invalidate_attachment_cache( $attachment_id ) {
 		$attachment_url = wp_get_attachment_url( $attachment_id );
