@@ -9,6 +9,7 @@
 
 namespace C3_CloudFront_Cache_Controller;
 use C3_CloudFront_Cache_Controller\WP\Post_Service;
+use C3_CloudFront_Cache_Controller\Constants;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -139,7 +140,7 @@ class Invalidation_Service {
 				'handle_invalidation_details_ajax',
 			)
 		);
-		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_register_task', false );
+		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_register_task', $this->get_debug_setting( Constants::DEBUG_LOG_CRON_REGISTER_TASK ) );
 	}
 
 	/**
@@ -271,7 +272,7 @@ class Invalidation_Service {
 			return $query;
 		}
 
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', $this->get_debug_setting( Constants::DEBUG_LOG_INVALIDATION_PARAMS ) ) ) {
 			error_log( 'C3 Invalidation Started - Query: ' . print_r( $query, true ) );
 			error_log( 'C3 Invalidation Started - Force: ' . ( $force ? 'true' : 'false' ) );
 		}
@@ -292,7 +293,7 @@ class Invalidation_Service {
 		$this->transient_service->set_invalidation_time();
 		$result = $this->cf_service->create_invalidation( $query );
 		
-		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', false ) ) {
+		if ( $this->hook_service->apply_filters( 'c3_log_invalidation_params', $this->get_debug_setting( Constants::DEBUG_LOG_INVALIDATION_PARAMS ) ) ) {
 			if ( is_wp_error( $result ) ) {
 				error_log( 'C3 Invalidation Failed: ' . $result->get_error_message() );
 			} else {
@@ -498,5 +499,17 @@ class Invalidation_Service {
 		$query = $invalidation_batch->get_invalidation_request_parameter( $options['distribution_id'] );
 		
 		return $this->invalidate_by_query( $query );
+	}
+
+	/**
+	 * Get debug setting value
+	 *
+	 * @param string $setting_key Debug setting key.
+	 * @return boolean Debug setting value.
+	 */
+	private function get_debug_setting( $setting_key ) {
+		$debug_options = get_option( Constants::DEBUG_OPTION_NAME, array() );
+		$value = isset( $debug_options[ $setting_key ] ) ? $debug_options[ $setting_key ] : false;
+		return $value;
 	}
 }

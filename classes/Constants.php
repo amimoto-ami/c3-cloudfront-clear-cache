@@ -36,6 +36,10 @@ class Constants {
 	const ACCESS_KEY      = 'access_key';
 	const SECRET_KEY      = 'secret_key';
 
+	const DEBUG_OPTION_NAME = 'c3_debug_settings';
+	const DEBUG_LOG_CRON_REGISTER_TASK = 'log_cron_register_task';
+	const DEBUG_LOG_INVALIDATION_PARAMS = 'log_invalidation_params';
+
 	/**
 	 * Get Plugin text_domain
 	 *
