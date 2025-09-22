@@ -315,7 +315,16 @@ class CloudFront_Service {
 
 			if ( isset( $result['Quantity'] ) && $result['Quantity'] > 0 && isset( $result['Items']['InvalidationSummary'] ) ) {
 				error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
-				return $result['Items']['InvalidationSummary'];
+				
+				// InvalidationSummaryが単一のオブジェクトの場合は配列に変換
+				$invalidations = $result['Items']['InvalidationSummary'];
+				if ( ! is_array( $invalidations ) || ( isset( $invalidations[0] ) === false && isset( $invalidations['Id'] ) ) ) {
+					// 単一のオブジェクトの場合は配列にラップ
+					$invalidations = array( $invalidations );
+				}
+				
+				error_log( 'C3 CloudFront: Processed invalidations data: ' . print_r( $invalidations, true ) );
+				return $invalidations;
 			}
 
 			error_log( 'C3 CloudFront: No invalidations found' );
