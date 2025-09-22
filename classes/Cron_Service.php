@@ -35,11 +35,11 @@ class Cron_Service {
 	private $transient_service;
 
 	/**
-	 * Debug flag
+	 * Log cron register task flag
 	 *
 	 * @var boolean
 	 */
-	private $debug;
+	private $log_cron_register_task;
 
 	/**
 	 * CloudFront service
@@ -76,7 +76,7 @@ class Cron_Service {
 				'run_schedule_invalidate',
 			)
 		);
-		$this->debug = $this->hook_service->apply_filters( 'c3_log_cron_invalidation_task', $this->get_debug_setting( Constants::DEBUG_LOG_CRON_REGISTER_TASK ) );
+		$this->log_cron_register_task = $this->hook_service->apply_filters( 'c3_log_cron_invalidation_task', $this->get_debug_setting( Constants::DEBUG_LOG_CRON_REGISTER_TASK ) );
 	}
 
 	/**
@@ -85,21 +85,21 @@ class Cron_Service {
 	 * @return boolean
 	 */
 	public function run_schedule_invalidate() {
-		if ( $this->debug ) {
+		if ( $this->log_cron_register_task ) {
 			error_log( '===== C3 Invalidation cron is started ===' );
 		}
 		if ( $this->hook_service->apply_filters( 'c3_disabled_cron_retry', false ) ) {
-			if ( $this->debug ) {
+			if ( $this->log_cron_register_task ) {
 				error_log( '===== C3 Invalidation cron has been SKIPPED [Disabled] ===' );
 			}
 			return false;
 		}
 		$invalidation_batch = $this->transient_service->load_invalidation_query();
-		if ( $this->debug ) {
+		if ( $this->log_cron_register_task ) {
 			error_log( print_r( $invalidation_batch, true ) );
 		}
 		if ( ! $invalidation_batch || empty( $invalidation_batch ) ) {
-			if ( $this->debug ) {
+			if ( $this->log_cron_register_task ) {
 				error_log( '===== C3 Invalidation cron has been SKIPPED [No Target Item] ===' );
 			}
 			return false;
@@ -109,7 +109,7 @@ class Cron_Service {
 			'DistributionId'    => esc_attr( $distribution_id ),
 			'InvalidationBatch' => $invalidation_batch,
 		);
-		if ( $this->debug ) {
+		if ( $this->log_cron_register_task ) {
 			error_log( print_r( $query, true ) );
 		}
 
@@ -117,7 +117,7 @@ class Cron_Service {
 		 * Execute the invalidation.
 		 */
 		$result = $this->cf_service->create_invalidation( $query );
-		if ( $this->debug ) {
+		if ( $this->log_cron_register_task ) {
 			if ( is_wp_error( $result ) ) {
 				error_log( 'C3 Cron: Invalidation failed: ' . $result->get_error_message() );
 			} else {
@@ -125,7 +125,7 @@ class Cron_Service {
 			}
 		}
 		$this->transient_service->delete_invalidation_query();
-		if ( $this->debug ) {
+		if ( $this->log_cron_register_task ) {
 			error_log( '===== C3 Invalidation cron has been COMPLETED ===' );
 		}
 		return true;
