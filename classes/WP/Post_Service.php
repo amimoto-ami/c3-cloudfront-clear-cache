@@ -33,7 +33,9 @@ class Post_Service {
 			return array();
 		}
 
-		$post_ids = array_filter( array_map( 'absint', $post_ids ) );
+		$post_ids = array_filter( array_map( 'intval', $post_ids ), function( $id ) {
+			return $id > 0;
+		} );
 		if ( empty( $post_ids ) ) {
 			return array();
 		}

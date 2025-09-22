@@ -164,6 +164,115 @@ class Post_Service_Test extends \WP_UnitTestCase {
     }
 
     /**
+     * Test Case: Negative ID sanitization - should reject negative IDs completely
+     * 
+     * Overview:
+     * This test verifies that list_posts_by_ids properly rejects negative IDs
+     * and does not convert them to positive values (which would be a security issue).
+     * 
+     * Expected Behavior:
+     * - Negative IDs should be completely filtered out
+     * - No negative ID should be converted to positive (e.g., -1 should not become 1)
+     * - Only positive integer IDs should be processed
+     * - This prevents potential security issues where negative IDs could be converted
+     * 
+     * Test Methodology:
+     * 1. Test various negative ID scenarios
+     * 2. Test mixed positive/negative ID arrays
+     * 3. Verify no negative IDs are converted to positive
+     * 4. Ensure only valid positive IDs remain
+     */
+    public function test_list_posts_by_ids_rejects_negative_ids_completely() {
+        $post_service = new Post_Service();
+
+        // Test single negative ID
+        $result = $post_service->list_posts_by_ids(array(-1));
+        $this->assertEquals(array(), $result, 'Single negative ID should return empty array');
+
+        // Test multiple negative IDs
+        $result = $post_service->list_posts_by_ids(array(-1, -2, -3, -100));
+        $this->assertEquals(array(), $result, 'Multiple negative IDs should return empty array');
+
+        // Test mixed positive and negative IDs
+        $valid_post = $this->factory->post->create_and_get(array(
+            'post_status' => 'publish',
+        ));
+        $valid_post2 = $this->factory->post->create_and_get(array(
+            'post_status' => 'publish',
+        ));
+
+        $mixed_ids = array(
+            $valid_post->ID,  // valid positive
+            -1,               // negative (should be rejected)
+            $valid_post2->ID, // valid positive
+            -5,               // negative (should be rejected)
+            -10,              // negative (should be rejected)
+        );
+
+        $result = $post_service->list_posts_by_ids($mixed_ids);
+        
+        $this->assertCount(2, $result, 'Only positive IDs should be returned');
+        $returned_ids = array_map(function($post) { return $post->ID; }, $result);
+        $this->assertContains($valid_post->ID, $returned_ids);
+        $this->assertContains($valid_post2->ID, $returned_ids);
+        $this->assertNotContains(-1, $returned_ids, 'Negative ID should not be converted to positive');
+        $this->assertNotContains(1, $returned_ids, 'Negative ID -1 should not become positive ID 1');
+
+        // Test edge case: zero and negative
+        $result = $post_service->list_posts_by_ids(array(0, -1, -2));
+        $this->assertEquals(array(), $result, 'Zero and negative IDs should return empty array');
+
+        // Test large negative numbers
+        $result = $post_service->list_posts_by_ids(array(-999, -1000, -9999));
+        $this->assertEquals(array(), $result, 'Large negative numbers should return empty array');
+    }
+
+    /**
+     * Test Case: ID sanitization regression prevention - ensures absint() is not used
+     * 
+     * Overview:
+     * This test specifically prevents regression to using absint() which would
+     * convert negative IDs to positive IDs, creating a security vulnerability.
+     * 
+     * Expected Behavior:
+     * - Negative IDs must be completely rejected, not converted
+     * - The sanitization should use intval() + positive check, not absint()
+     * - This test ensures the security fix remains in place
+     * 
+     * Test Methodology:
+     * 1. Test that negative IDs are rejected (not converted)
+     * 2. Verify the sanitization logic works correctly
+     * 3. Ensure no false positives from ID conversion
+     */
+    public function test_list_posts_by_ids_prevents_absint_regression() {
+        $post_service = new Post_Service();
+
+        // Create a post with ID 1 to test if -1 gets converted to 1
+        $post_with_id_1 = $this->factory->post->create_and_get(array(
+            'post_status' => 'publish',
+        ));
+
+        // If absint() was used, -1 would become 1 and match the post
+        // With our fix, -1 should be rejected completely
+        $result = $post_service->list_posts_by_ids(array(-1));
+        $this->assertEquals(array(), $result, 'Negative ID -1 should be rejected, not converted to 1');
+
+        // Test with multiple negative IDs that could convert to existing positive IDs
+        $result = $post_service->list_posts_by_ids(array(-1, -2, -3));
+        $this->assertEquals(array(), $result, 'Multiple negative IDs should be rejected');
+
+        // Test mixed case where some negatives could convert to existing IDs
+        $existing_ids = array($post_with_id_1->ID);
+        $malicious_ids = array_merge($existing_ids, array(-1, -2, -3));
+        
+        $result = $post_service->list_posts_by_ids($malicious_ids);
+        
+        // Should only return the legitimate positive ID, not any converted negatives
+        $this->assertCount(1, $result);
+        $this->assertEquals($post_with_id_1->ID, $result[0]->ID);
+    }
+
+    /**
      * Test Case: Performance optimization - should use optimized query parameters
      * 
      * Overview:
