@@ -139,16 +139,88 @@ The following features are deprecated since v7.0.0 due to the removal of AWS SDK
 - The plugin no longer includes or requires AWS SDK autoloader
 - Remove any custom AWS SDK autoloader configurations
 
-## Local testing
+## Local Development
 
-### wp-env
+### Using wp-env for Development
 
-#### Unit test
+wp-env provides a Docker-based WordPress development environment that closely mirrors production. This is recommended for comprehensive development, testing, and debugging.
+
+#### Prerequisites
+- Node.js (v14 or higher)
+- Docker Desktop
+
+#### Setup and Usage
 
 ```bash
-$ yarn dev
-$ yarn test
+# Install dependencies
+$ npm install
+
+# Start the development environment
+$ npm run dev
+
+# Run unit tests
+$ npm run test
+
+# Stop the environment
+$ npm run wpenv stop
 ```
+
+#### Configuration
+The wp-env environment uses the configuration in `.wp-env.json`:
+- PHP 8.2
+- WordPress core (latest)
+- Plugin directory: `c3-cloudfront-clear-cache`
+- Test environment port: 8889
+
+#### Environment Variables
+Set up your AWS credentials for testing:
+
+```bash
+# In your shell or .env file
+export AWS_ACCESS_KEY_ID="your_access_key"
+export AWS_SECRET_ACCESS_KEY="your_secret_key"
+export C3_DISTRIBUTION_ID="your_distribution_id"
+```
+
+### Quick Testing with wp-now
+
+wp-now is a lightweight WordPress development environment that runs in your browser using WebAssembly. It's perfect for quick plugin testing and basic functionality verification.
+
+#### Prerequisites
+- Node.js (v18 or higher)
+
+#### Setup and Usage
+
+```bash
+# Install wp-now globally
+$ npm install -g @wp-now/wp-now
+
+# Navigate to your plugin directory
+$ cd /path/to/c3-cloudfront-clear-cache
+
+# Start wp-now (will create a .env file if it doesn't exist)
+$ wp-now start
+
+# Open your browser to http://localhost:8888
+```
+
+
+#### Limitations
+- No PHPUnit testing support
+- Limited to basic WordPress functionality testing
+- AWS API calls may be restricted (use mock data for testing)
+
+#### When to Use wp-now
+- Quick plugin activation testing
+- Basic functionality verification
+- UI/UX testing
+- Rapid prototyping
+
+#### When to Use wp-env
+- Full development workflow
+- Unit testing with PHPUnit
+- Production-like environment testing
+- Comprehensive debugging
 
 ### GitHub Action(WIP)
 Using act to execute the workflow in your local.
