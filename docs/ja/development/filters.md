@@ -477,6 +477,102 @@ public function test_subdirectory_installation_support() {
 3. **環境互換性**: 異なるデプロイメントシナリオでシームレスに動作
 4. **後方互換性**: 既存の`c3_invalidation_items`フィルターも継続して動作
 
+## デバッグ設定
+
+### デバッグ設定の移行（v7.3.0）
+
+バージョン7.3.0から、デバッグ設定はフィルターベースの設定からWordPress管理画面設定に移行され、より良いユーザー体験と簡単な管理を実現しました。
+
+#### 以前（v7.2.0以前）
+
+デバッグ設定はフィルターで制御されていました：
+
+```php
+// cronジョブログを有効化
+add_filter('c3_log_cron_register_task', '__return_true');
+
+// 無効化パラメータログを有効化
+add_filter('c3_log_invalidation_params', '__return_true');
+```
+
+#### 以降（v7.3.0以降）
+
+デバッグ設定はWordPress管理画面で管理されます：
+
+1. WordPress管理画面で **設定 > 表示設定** に移動
+2. **C3 CloudFront Debug Settings** までスクロール
+3. 必要なデバッグオプションを有効化
+
+#### 新しい定数
+
+デバッグ設定へのプログラムアクセスには以下の定数が利用可能です：
+
+```php
+// デバッグ設定オプション名
+C3_CloudFront_Cache_Controller\Constants::DEBUG_OPTION_NAME
+
+// cronログ設定キー
+C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_CRON_REGISTER_TASK
+
+// 無効化ログ設定キー
+C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_INVALIDATION_PARAMS
+```
+
+#### プログラムによるデバッグ設定アクセス
+
+デバッグ設定にはプログラムでアクセスできます：
+
+```php
+// デバッグ設定を取得
+$debug_options = get_option(C3_CloudFront_Cache_Controller\Constants::DEBUG_OPTION_NAME, array());
+
+// cronログが有効かチェック
+$cron_logging_enabled = isset($debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_CRON_REGISTER_TASK]) 
+    ? $debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_CRON_REGISTER_TASK] 
+    : false;
+
+// 無効化ログが有効かチェック
+$invalidation_logging_enabled = isset($debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_INVALIDATION_PARAMS]) 
+    ? $debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_INVALIDATION_PARAMS] 
+    : false;
+```
+
+#### 後方互換性
+
+古いフィルターベースのデバッグ設定は後方互換性のために引き続き動作しますが、管理画面設定が優先されます：
+
+```php
+// これは引き続き動作するが、管理画面設定がオーバーライドする
+add_filter('c3_log_cron_register_task', '__return_true');
+
+// 管理画面設定値がフィルターより優先される
+$final_value = apply_filters('c3_log_cron_register_task', $admin_setting_value);
+```
+
+### デバッグログフィルター
+
+#### `c3_log_cron_register_task`
+
+cronジョブログを制御（レガシーフィルター、現在は管理画面設定で管理）。
+
+**フックタイプ:** フィルター  
+**バージョン:** 1.0.0  
+**パラメータ:**
+- `$enabled` (bool): cronログが有効かどうか
+
+**戻り値:** `bool` - cronログを有効化するかどうか
+
+#### `c3_log_invalidation_params`
+
+無効化パラメータログを制御（レガシーフィルター、現在は管理画面設定で管理）。
+
+**フックタイプ:** フィルター  
+**バージョン:** 1.0.0  
+**パラメータ:**
+- `$enabled` (bool): 無効化ログが有効かどうか
+
+**戻り値:** `bool` - 無効化ログを有効化するかどうか
+
 ## ベストプラクティス
 
 ### 1. パフォーマンスの考慮事項
@@ -502,6 +598,12 @@ public function test_subdirectory_installation_support() {
 - ステージング環境で最初にフィルターをテスト
 - CloudFront無効化コストを監視
 - デバッグのために`c3_before_invalidation`と`c3_after_invalidation`フックを使用
+
+### 5. デバッグ設定
+
+- 可能な限りWordPress管理画面インターフェースをデバッグ設定に使用
+- 高度なユースケースにはプログラムアクセスが利用可能
+- デバッグ設定のソースオブトゥルースとして管理画面設定を考慮
 
 ## 完全な例
 

@@ -189,6 +189,78 @@ define('C3_HTTP_TIMEOUT', 60); // 60秒に増加
 define('C3_HTTP_PROXY', 'http://proxy.example.com:8080');
 ```
 
+### 添付ファイルの問題
+
+#### 症状
+- 添付ファイル削除時に無効化が発生しない
+- 画像が削除後もキャッシュされている
+- 添付ファイルの無効化パスが作成されない
+
+#### 診断
+
+1. 添付ファイル無効化が動作しているかチェック：
+   ```bash
+   # テスト画像をアップロードしてから削除
+   # 無効化が発生するかチェック
+   wp c3 flush all
+   ```
+
+2. デバッグログを有効化してログをチェック：
+   ```bash
+   # WordPress管理画面でデバッグ設定を有効化
+   # 設定 > 表示設定 > C3 CloudFront Debug Settings
+   # "Log Invalidation Parameters" を有効化
+   ```
+
+3. 添付ファイルURL生成をテスト：
+   ```php
+   // テスト用にfunctions.phpに追加
+   add_action('delete_attachment', function($attachment_id) {
+       $url = wp_get_attachment_url($attachment_id);
+       error_log("添付ファイルURL: " . $url);
+   });
+   ```
+
+#### 解決策
+
+**添付ファイルURL生成の確認:**
+```php
+// wp_get_attachment_url()が有効なURLを返すことを確認
+add_action('delete_attachment', function($attachment_id) {
+    $url = wp_get_attachment_url($attachment_id);
+    if (!$url) {
+        error_log("添付ファイルID " . $attachment_id . " のURL取得に失敗");
+    }
+});
+```
+
+**カスタム添付ファイル無効化:**
+```php
+// 必要に応じて添付ファイル無効化をオーバーライド
+add_filter('c3_invalidation_items', function($items, $post) {
+    // 添付ファイル用のカスタムロジックを追加
+    if ($post && $post->post_type === 'attachment') {
+        $items[] = '/wp-content/uploads/*';
+    }
+    return $items;
+}, 10, 2);
+```
+
+**添付ファイル削除のデバッグ:**
+```php
+// 添付ファイル削除の詳細ログを追加
+add_action('delete_attachment', function($attachment_id) {
+    if (WP_DEBUG_LOG) {
+        $url = wp_get_attachment_url($attachment_id);
+        $parsed = parse_url($url);
+        error_log("C3 添付ファイル削除デバッグ:");
+        error_log("- 添付ファイルID: " . $attachment_id);
+        error_log("- URL: " . $url);
+        error_log("- パス: " . ($parsed['path'] ?? 'N/A'));
+    }
+});
+```
+
 ### パフォーマンスの問題
 
 #### 症状
@@ -244,16 +316,39 @@ define('WP_MEMORY_LIMIT', '256M');
 
 ### ログとデバッグ
 
-#### ログの有効化
+#### デバッグログの有効化
+
+**方法1: WordPress管理画面（v7.3.0以降推奨）**
+
+1. WordPress管理画面で **設定 > 表示設定** に移動
+2. **C3 CloudFront Debug Settings** までスクロール
+3. 必要なデバッグオプションを有効化：
+   - **Log Cron Register Task**: cronジョブのデバッグ用
+   - **Log Invalidation Parameters**: 無効化リクエストのデバッグ用
+
+**方法2: プログラム（レガシー）**
 
 ```php
 // wp-config.phpに追加
 define('WP_DEBUG', true);
 define('WP_DEBUG_LOG', true);
 
-// C3ログを有効化
+// C3ログを有効化（レガシー方法）
 add_filter('c3_log_invalidation_list', '__return_true');
 ```
+
+#### デバッグ設定の移行
+
+v7.3.0から、デバッグ設定はフィルターベースの設定からWordPress管理画面設定に移行されました：
+
+**以前（v7.2.0以前）**:
+```php
+add_filter('c3_log_cron_register_task', '__return_true');
+add_filter('c3_log_invalidation_params', '__return_true');
+```
+
+**以降（v7.3.0以降）**:
+デバッグ設定はWordPress管理画面の **設定 > 表示設定 > C3 CloudFront Debug Settings** で管理されます。
 
 #### ログの確認
 

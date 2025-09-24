@@ -237,6 +237,78 @@ wp cron event delete c3_process_cron
 wp c3 flush all
 ```
 
+### Attachment Issues
+
+#### Symptoms
+- Attachments not being invalidated when deleted
+- Images still cached after deletion
+- No invalidation paths created for attachments
+
+#### Diagnosis
+
+1. Check if attachment invalidation is working:
+   ```bash
+   # Upload a test image, then delete it
+   # Check if invalidation occurs
+   wp c3 flush all
+   ```
+
+2. Enable debug logging and check logs:
+   ```bash
+   # Enable debug settings in WordPress admin
+   # Go to Settings > Reading > C3 CloudFront Debug Settings
+   # Enable "Log Invalidation Parameters"
+   ```
+
+3. Test attachment URL generation:
+   ```php
+   // Add to functions.php for testing
+   add_action('delete_attachment', function($attachment_id) {
+       $url = wp_get_attachment_url($attachment_id);
+       error_log("Attachment URL: " . $url);
+   });
+   ```
+
+#### Solutions
+
+**Check Attachment URL Generation:**
+```php
+// Ensure wp_get_attachment_url() returns valid URLs
+add_action('delete_attachment', function($attachment_id) {
+    $url = wp_get_attachment_url($attachment_id);
+    if (!$url) {
+        error_log("Failed to get attachment URL for ID: " . $attachment_id);
+    }
+});
+```
+
+**Custom Attachment Invalidation:**
+```php
+// Override attachment invalidation if needed
+add_filter('c3_invalidation_items', function($items, $post) {
+    // Add custom logic for attachment invalidation
+    if ($post && $post->post_type === 'attachment') {
+        $items[] = '/wp-content/uploads/*';
+    }
+    return $items;
+}, 10, 2);
+```
+
+**Debug Attachment Deletion:**
+```php
+// Add detailed logging for attachment deletion
+add_action('delete_attachment', function($attachment_id) {
+    if (WP_DEBUG_LOG) {
+        $url = wp_get_attachment_url($attachment_id);
+        $parsed = parse_url($url);
+        error_log("C3 Attachment Deletion Debug:");
+        error_log("- Attachment ID: " . $attachment_id);
+        error_log("- URL: " . $url);
+        error_log("- Path: " . ($parsed['path'] ?? 'N/A'));
+    }
+});
+```
+
 ### Performance Issues
 
 #### Symptoms
@@ -289,15 +361,38 @@ add_filter('c3_invalidation_items', function($items, $post) {
 
 #### Enable Debug Logging
 
+**Method 1: WordPress Admin (Recommended for v7.3.0+)**
+
+1. Go to **Settings > Reading** in WordPress admin
+2. Scroll to **C3 CloudFront Debug Settings**
+3. Enable the desired debug options:
+   - **Log Cron Register Task**: For cron job debugging
+   - **Log Invalidation Parameters**: For invalidation request debugging
+
+**Method 2: Programmatic (Legacy)**
+
 ```php
 // Add to wp-config.php
 define('WP_DEBUG', true);
 define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);
 
-// Enable C3 logging
+// Enable C3 logging (legacy method)
 add_filter('c3_log_invalidation_list', '__return_true');
 ```
+
+#### Debug Settings Migration
+
+As of v7.3.0, debug settings have been moved from filter-based configuration to WordPress admin settings:
+
+**Before (v7.2.0 and earlier)**:
+```php
+add_filter('c3_log_cron_register_task', '__return_true');
+add_filter('c3_log_invalidation_params', '__return_true');
+```
+
+**After (v7.3.0 and later)**:
+Debug settings are now managed through **Settings > Reading > C3 CloudFront Debug Settings** in WordPress admin.
 
 #### Check Debug Logs
 
