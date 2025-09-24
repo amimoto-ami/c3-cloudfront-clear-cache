@@ -334,7 +334,7 @@ define('WP_DEBUG', true);
 define('WP_DEBUG_LOG', true);
 
 // C3ログを有効化（レガシー方法）
-add_filter('c3_log_invalidation_list', '__return_true');
+add_filter('c3_log_invalidation_params', '__return_true');
 ```
 
 #### デバッグ設定の移行

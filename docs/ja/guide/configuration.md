@@ -271,12 +271,12 @@ add_filter('c3_log_cron_invalidation_task', '__return_true');
 
 ### 利用可能なデバッグオプション
 
-**Log Cron Register Task（クローン登録タスクのログ）**
+#### Log Cron Register Task（cron登録タスクのログ）
 - cronジョブ操作の詳細ログを有効化
 - 無効化タスクがスケジュールされ実行される際のログを出力
 - cron関連の問題のトラブルシューティングに有用
 
-**Log Invalidation Parameters（無効化パラメータのログ）**
+#### Log Invalidation Parameters（無効化パラメータのログ）
 - 無効化リクエストの詳細ログを有効化
 - CloudFront APIリクエストとレスポンスをログ出力
 - 無効化失敗のデバッグに有用
@@ -300,7 +300,7 @@ add_filter('c3_log_invalidation_params', '__return_true');
 
 - **WordPressデバッグログ**: `wp-content/debug.log`
 - **サーバーエラーログ**: ホスティングプロバイダーのエラーログの場所を確認
-- **WP-CLI**: `wp log list` を使用して最近のログエントリを表示
+- **WP-CLI**: `tail -f /var/log/php-fpm/www-error.log` を使用して最近のログエントリを表示、または `wp package install wp-cli/logs-command` でWP-CLI logs拡張をインストールしてから `wp log list` を使用
 
 デバッグログ出力の例：
 ```

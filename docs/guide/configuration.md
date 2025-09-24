@@ -300,7 +300,7 @@ When debug settings are enabled, detailed logs are written to your WordPress err
 
 - **WordPress Debug Log**: `wp-content/debug.log`
 - **Server Error Log**: Check your hosting provider's error log location
-- **WP-CLI**: Use `wp log list` to view recent log entries
+- **WP-CLI**: Use `tail -f /var/log/php-fpm/www-error.log` to view recent log entries, or install the WP-CLI logs extension with `wp package install wp-cli/logs-command` to use `wp log list`
 
 Example debug log output:
 ```

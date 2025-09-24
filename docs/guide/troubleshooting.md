@@ -378,7 +378,7 @@ define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);
 
 // Enable C3 logging (legacy method)
-add_filter('c3_log_invalidation_list', '__return_true');
+add_filter('c3_log_invalidation_params', '__return_true');
 ```
 
 #### Debug Settings Migration
