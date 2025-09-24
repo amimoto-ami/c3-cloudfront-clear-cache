@@ -1,7 +1,13 @@
 {
   "devDependencies": {
     "@wordpress/env": "10.31.0",
-    "vitepress": "^1.6.3"
+    "vitepress": "^1.6.4"
+  },
+  "overrides": {
+    "esbuild": "^0.25.0",
+    "vite": {
+      "esbuild": "^0.25.0"
+    }
   },
   "name": "trunk",
   "version": "7.2.0",
