@@ -477,6 +477,102 @@ public function test_subdirectory_installation_support() {
 3. **Environment Compatibility**: Works seamlessly across different deployment scenarios
 4. **Backward Compatibility**: Existing `c3_invalidation_items` filter continues to work
 
+## Debug Settings
+
+### Debug Settings Migration (v7.3.0)
+
+As of version 7.3.0, debug settings have been moved from filter-based configuration to WordPress admin settings for better user experience and easier management.
+
+#### Before (v7.2.0 and earlier)
+
+Debug settings were controlled via filters:
+
+```php
+// Enable cron job logging
+add_filter('c3_log_cron_register_task', '__return_true');
+
+// Enable invalidation parameter logging
+add_filter('c3_log_invalidation_params', '__return_true');
+```
+
+#### After (v7.3.0 and later)
+
+Debug settings are now managed through WordPress admin:
+
+1. Go to **Settings > Reading** in WordPress admin
+2. Scroll to **C3 CloudFront Debug Settings**
+3. Enable the desired debug options
+
+#### New Constants
+
+The following constants are available for programmatic access to debug settings:
+
+```php
+// Debug settings option name
+C3_CloudFront_Cache_Controller\Constants::DEBUG_OPTION_NAME
+
+// Cron logging setting key
+C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_CRON_REGISTER_TASK
+
+// Invalidation logging setting key
+C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_INVALIDATION_PARAMS
+```
+
+#### Programmatic Debug Settings Access
+
+You can still access debug settings programmatically:
+
+```php
+// Get debug settings
+$debug_options = get_option(C3_CloudFront_Cache_Controller\Constants::DEBUG_OPTION_NAME, array());
+
+// Check if cron logging is enabled
+$cron_logging_enabled = isset($debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_CRON_REGISTER_TASK]) 
+    ? $debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_CRON_REGISTER_TASK] 
+    : false;
+
+// Check if invalidation logging is enabled
+$invalidation_logging_enabled = isset($debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_INVALIDATION_PARAMS]) 
+    ? $debug_options[C3_CloudFront_Cache_Controller\Constants::DEBUG_LOG_INVALIDATION_PARAMS] 
+    : false;
+```
+
+#### Backward Compatibility
+
+The old filter-based debug settings still work for backward compatibility, but the admin settings take precedence:
+
+```php
+// This still works but admin settings override it
+add_filter('c3_log_cron_register_task', '__return_true');
+
+// Admin setting value takes precedence over filter
+$final_value = apply_filters('c3_log_cron_register_task', $admin_setting_value);
+```
+
+### Debug Logging Filters
+
+#### `c3_log_cron_register_task`
+
+Control cron job logging (legacy filter, now managed via admin settings).
+
+**Hook Type:** Filter  
+**Since:** 1.0.0  
+**Parameters:**
+- `$enabled` (bool): Whether cron logging is enabled
+
+**Return:** `bool` - Whether to enable cron logging
+
+#### `c3_log_invalidation_params`
+
+Control invalidation parameter logging (legacy filter, now managed via admin settings).
+
+**Hook Type:** Filter  
+**Since:** 1.0.0  
+**Parameters:**
+- `$enabled` (bool): Whether invalidation logging is enabled
+
+**Return:** `bool` - Whether to enable invalidation logging
+
 ## Best Practices
 
 ### 1. Performance Considerations
@@ -502,6 +598,12 @@ public function test_subdirectory_installation_support() {
 - Test your filters in a staging environment first
 - Monitor CloudFront invalidation costs
 - Use the `c3_before_invalidation` and `c3_after_invalidation` hooks for debugging
+
+### 5. Debug Settings
+
+- Use the WordPress admin interface for debug settings when possible
+- Programmatic access is available for advanced use cases
+- Consider the admin settings as the source of truth for debug configuration
 
 ## Complete Example
 

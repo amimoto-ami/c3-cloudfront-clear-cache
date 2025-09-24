@@ -23,6 +23,9 @@ features:
   - icon: 🎯
     title: Targeted Invalidation
     details: Invalidate specific paths instead of clearing entire cache
+  - icon: 📎
+    title: Attachment Support
+    details: Automatic cache invalidation when attachments are deleted
   - icon: ⚙️
     title: Highly Configurable
     details: Customize invalidation behavior with filters and hooks
@@ -35,6 +38,9 @@ features:
   - icon: 📊
     title: Logging & Monitoring
     details: Comprehensive logging for debugging and monitoring
+  - icon: 🐛
+    title: Debug Tools
+    details: Built-in debug settings for troubleshooting and monitoring
 ---
 
 ## Quick Start

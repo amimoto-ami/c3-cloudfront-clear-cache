@@ -259,6 +259,69 @@ add_filter('c3_log_invalidation_list', '__return_true');
 add_filter('c3_log_cron_invalidation_task', '__return_true');
 ```
 
+## Debug Settings
+
+The plugin includes built-in debug settings accessible through WordPress admin to help troubleshoot issues and monitor operations.
+
+### Accessing Debug Settings
+
+1. Go to **Settings > Reading** in WordPress admin
+2. Scroll down to **C3 CloudFront Debug Settings**
+3. Enable the desired debug options
+
+### Available Debug Options
+
+**Log Cron Register Task**
+- Enables detailed logging for cron job operations
+- Logs when invalidation tasks are scheduled and executed
+- Useful for troubleshooting cron-related issues
+
+**Log Invalidation Parameters**
+- Enables detailed logging of invalidation requests
+- Logs CloudFront API requests and responses
+- Useful for debugging invalidation failures
+
+### Debug Settings Migration
+
+As of v7.3.0, debug settings have been moved from filter-based configuration to WordPress admin settings:
+
+**Before (v7.2.0 and earlier)**:
+```php
+add_filter('c3_log_cron_register_task', '__return_true');
+add_filter('c3_log_invalidation_params', '__return_true');
+```
+
+**After (v7.3.0 and later)**:
+Debug settings are now managed through **Settings > Reading > C3 CloudFront Debug Settings** in WordPress admin.
+
+### Debug Log Output
+
+When debug settings are enabled, detailed logs are written to your WordPress error log. Check the following locations:
+
+- **WordPress Debug Log**: `wp-content/debug.log`
+- **Server Error Log**: Check your hosting provider's error log location
+- **WP-CLI**: Use `tail -f /var/log/php-fpm/www-error.log` to view recent log entries, or install the WP-CLI logs extension with `wp package install wp-cli/logs-command` to use `wp log list`
+
+Example debug log output:
+```
+===== C3 CRON Job registration [START] ===
+C3 Invalidation Started - Query: Array
+(
+    [DistributionId] => E1234567890123
+    [InvalidationBatch] => Array
+    (
+        [Paths] => Array
+        (
+            [Items] => Array
+            (
+                [0] => /sample-post/
+            )
+        )
+    )
+)
+===== C3 Invalidation cron has been COMPLETED ===
+```
+
 ## Troubleshooting Configuration
 
 ### Common Issues

@@ -259,6 +259,69 @@ add_filter('c3_log_invalidation_list', '__return_true');
 add_filter('c3_log_cron_invalidation_task', '__return_true');
 ```
 
+## デバッグ設定
+
+プラグインには、問題のトラブルシューティングと操作の監視に役立つ組み込みデバッグ設定が含まれています。
+
+### デバッグ設定へのアクセス
+
+1. WordPress管理画面で **設定 > 表示設定** に移動
+2. **C3 CloudFront Debug Settings** までスクロール
+3. 必要なデバッグオプションを有効化
+
+### 利用可能なデバッグオプション
+
+#### Log Cron Register Task（cron登録タスクのログ）
+- cronジョブ操作の詳細ログを有効化
+- 無効化タスクがスケジュールされ実行される際のログを出力
+- cron関連の問題のトラブルシューティングに有用
+
+#### Log Invalidation Parameters（無効化パラメータのログ）
+- 無効化リクエストの詳細ログを有効化
+- CloudFront APIリクエストとレスポンスをログ出力
+- 無効化失敗のデバッグに有用
+
+### デバッグ設定の移行
+
+v7.3.0から、デバッグ設定はフィルターベースの設定からWordPress管理画面設定に移行されました：
+
+**以前（v7.2.0以前）**:
+```php
+add_filter('c3_log_cron_register_task', '__return_true');
+add_filter('c3_log_invalidation_params', '__return_true');
+```
+
+**以降（v7.3.0以降）**:
+デバッグ設定はWordPress管理画面の **設定 > 表示設定 > C3 CloudFront Debug Settings** で管理されます。
+
+### デバッグログの出力
+
+デバッグ設定が有効になっている場合、詳細なログがWordPressエラーログに書き込まれます。以下の場所を確認してください：
+
+- **WordPressデバッグログ**: `wp-content/debug.log`
+- **サーバーエラーログ**: ホスティングプロバイダーのエラーログの場所を確認
+- **WP-CLI**: `tail -f /var/log/php-fpm/www-error.log` を使用して最近のログエントリを表示、または `wp package install wp-cli/logs-command` でWP-CLI logs拡張をインストールしてから `wp log list` を使用
+
+デバッグログ出力の例：
+```
+===== C3 CRON Job registration [START] ===
+C3 Invalidation Started - Query: Array
+(
+    [DistributionId] => E1234567890123
+    [InvalidationBatch] => Array
+    (
+        [Paths] => Array
+        (
+            [Items] => Array
+            (
+                [0] => /sample-post/
+            )
+        )
+    )
+)
+===== C3 Invalidation cron has been COMPLETED ===
+```
+
 ## 設定のトラブルシューティング
 
 ### 一般的な問題

@@ -13,6 +13,37 @@ The plugin automatically invalidates CloudFront cache in these scenarios:
 - **Trashing a post**: Invalidates the post URL and archives
 - **Changing post status**: Invalidates relevant URLs based on the transition
 
+### Attachment Management
+
+The plugin automatically invalidates CloudFront cache when attachments (images, documents, etc.) are deleted:
+
+- **Deleting an attachment**: Automatically creates invalidation paths for the deleted file
+- **Wildcard patterns**: Uses wildcard patterns to ensure all related files are invalidated
+- **No manual intervention required**: Works automatically without additional configuration
+
+#### How Attachment Invalidation Works
+
+When an attachment is deleted:
+
+1. The plugin detects the `delete_attachment` WordPress action
+2. Retrieves the attachment URL using `wp_get_attachment_url()`
+3. Extracts the file path and creates a wildcard pattern
+4. Automatically invalidates the CloudFront cache for the pattern
+
+#### Example
+
+For an image file `/wp-content/uploads/2024/01/photo.jpg`:
+- **Invalidation path**: `/wp-content/uploads/2024/01/photo*`
+- **Covers**: All variations like `photo-150x150.jpg`, `photo-300x200.jpg`, etc.
+
+#### Supported File Types
+
+The attachment invalidation works with all WordPress attachment types:
+- Images (JPG, PNG, GIF, WebP, etc.)
+- Documents (PDF, DOC, DOCX, etc.)
+- Videos and audio files
+- Any file uploaded through WordPress media library
+
 ### Supported Post Types
 
 By default, the plugin works with:
