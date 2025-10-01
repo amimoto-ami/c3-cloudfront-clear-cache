@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@wordpress/env": "10.31.0",
+    "@wordpress/env": "10.32.0",
     "vitepress": "^1.6.4"
   },
   "overrides": {
