@@ -62,17 +62,22 @@ class Invalidation_Batch_Service {
 	 *
 	 * @param \WP_Post $post WP post object.
 	 */
-	public function set_post( $post ) {
-		/**
-		 * To get the trashed post's permalink.
-		 *
-		 * @see https://github.com/amimoto-ami/c3-cloudfront-clear-cache/pull/54/files
-		 */
-		if ( 'trash' === $post->post_status ) {
-			// For trashed post, get the permalink when it was published.
-			$post->post_status = 'publish';
+	public function set_post( \WP_Post $post ) {
+		// Clone and normalize so permalink can be derived without mutating the original.
+		$normalized_post = clone $post;
+		$original_post_name = $normalized_post->post_name;
+
+		if ( 'publish' !== $normalized_post->post_status ) {
+			$normalized_post->post_status = 'publish';
+			if ( preg_match( '/__trashed(-\d+)?$/', (string) $normalized_post->post_name ) ) {
+				$normalized_post->post_name = preg_replace( '/__trashed(-\d+)?$/', '', (string) $normalized_post->post_name );
+			}
+			if ( empty( $normalized_post->post_name ) ) {
+				$normalized_post->post_name = $original_post_name ?: sanitize_title( (string) $normalized_post->post_title );
+			}
 		}
-		$this->post->set_post( $post );
+
+		$this->post->set_post( $normalized_post );
 	}
 
 	/**
@@ -85,7 +90,10 @@ class Invalidation_Batch_Service {
 		if ( $post ) {
 			$this->set_post( $post );
 		}
-		$invalidation_batch->put_invalidation_path( $this->post->get_permalink() . '*' );
+		$permalink = $this->post->get_invalidation_permalink();
+		if ( ! is_wp_error( $permalink ) && $permalink ) {
+			$invalidation_batch->put_invalidation_path( $permalink . '*' );
+		}
 		$term_links = $this->post->get_the_post_term_links();
 		foreach ( $term_links as $key => $url ) {
 			$invalidation_batch->put_invalidation_path( $url );

@@ -10,7 +10,7 @@
     }
   },
   "name": "trunk",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "main": "index.js",
   "directories": {
     "test": "tests"
