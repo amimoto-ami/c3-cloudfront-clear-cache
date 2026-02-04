@@ -48,6 +48,46 @@ class Post {
 	}
 
 	/**
+	 * Get a permalink suitable for CloudFront invalidation.
+	 *
+	 * When a post is not published (e.g. draft), WordPress may return a preview/plain permalink
+	 * like `/?p=123`. In that case the invalidation path becomes `/` and the single permalink
+	 * cache is not cleared. This method attempts to retrieve a "sample" (pretty) permalink.
+	 *
+	 * @return \WP_Error|string|false
+	 */
+	public function get_invalidation_permalink() {
+		if ( ! $this->post ) {
+			return new \WP_Error( 'Post is required' );
+		}
+
+		$post      = $this->post;
+		$permalink = get_permalink( $post );
+
+		// If the permalink looks like a plain/preview URL, try to retrieve a sample (pretty) permalink.
+		if ( is_string( $permalink ) ) {
+			$path = parse_url( $permalink, PHP_URL_PATH );
+			$looks_plain = ( ! $path || '/' === $path || false !== strpos( $permalink, '?p=' ) );
+
+			if ( $looks_plain && function_exists( 'get_post_permalink' ) ) {
+				$sample_permalink = get_post_permalink( $post, false, true );
+				if ( is_string( $sample_permalink ) && '' !== $sample_permalink ) {
+					$permalink = $sample_permalink;
+				}
+			}
+
+			if ( $looks_plain && function_exists( 'get_sample_permalink' ) && isset( $post->ID ) ) {
+				$sample = get_sample_permalink( (int) $post->ID );
+				if ( is_array( $sample ) && isset( $sample[0] ) && is_string( $sample[0] ) && '' !== $sample[0] ) {
+					$permalink = $sample[0];
+				}
+			}
+		}
+
+		return $permalink;
+	}
+
+	/**
 	 * Parse the url
 	 *
 	 * @param string $url Target URL.

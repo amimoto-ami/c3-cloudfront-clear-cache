@@ -54,8 +54,8 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             }
             return $items;
         }, 10, 2 );
-        
-        // ケース1: 上書きされるべきケース
+
+        // Case 1: Item should be overwritten by filter.
         $post1 = $this->factory->post->create_and_get( array(
             'post_status' => 'publish',
             'post_name' => 'should-overwritten',
@@ -68,8 +68,8 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             ),
             'Quantity' => 1
         ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
-        
-        // ケース2: 上書きされないケース
+
+        // Case 2: Item should not be overwritten.
         $post2 = $this->factory->post->create_and_get( array(
             'post_status' => 'publish',
             'post_name' => 'should-not-overwritten',
@@ -101,6 +101,31 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
         ) , $result[ 'InvalidationBatch' ][ 'Paths' ] );
     }
 
+    public function test_get_the_published_to_draft_post_invalidation_paths() {
+        $post_id = $this->factory->post->create( array(
+            'post_status' => 'publish',
+            'post_name'   => 'published-to-draft',
+            'post_type'   => 'post',
+        ) );
+
+        wp_update_post( array(
+            'ID'          => $post_id,
+            'post_status' => 'draft',
+        ) );
+
+        $post = get_post( $post_id );
+
+        $target = new AWS\Invalidation_Batch_Service();
+        $result = $target->create_batch_by_post( 'localhost', 'EXXX', $post );
+        $this->assertEquals( array(
+            'Items' => array(
+                'localhost',
+                '/published-to-draft/*',
+            ),
+            'Quantity' => 2
+        ), $result[ 'InvalidationBatch' ][ 'Paths' ] );
+    }
+
     public function test_get_invalidation_path_for_all() {
         $target = new AWS\Invalidation_Batch_Service();
         $result = $target->create_batch_for_all( 'EXXXX' );
@@ -113,7 +138,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
     }
 
     public function test_create_batch_by_posts() {
-        // ケース1: 1つの投稿
+        // Case 1: Single post.
         $post1 = $this->factory->post->create_and_get( array(
             'post_status' => 'publish',
             'post_name' => 'hello-world',
@@ -128,8 +153,8 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             ],
             "Quantity" => 2
         ], $result[ 'InvalidationBatch' ][ 'Paths' ]);
-        
-        // ケース2: 複数の投稿
+
+        // Case 2: Multiple posts.
         $post2 = $this->factory->post->create_and_get( array(
             'post_status' => 'publish',
             'post_name' => 'see-you',
@@ -138,7 +163,7 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
             'post_status' => 'trash',
             'post_name' => 'good-bye',
         ) );
-        
+
         $result = $target->create_batch_by_posts( 'localhost', 'EXXXX', [$post2, $post3] );
         $this->assertEquals([
             "Items" => [
@@ -152,17 +177,17 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 
     /**
      * Test Case: c3_invalidation_post_batch_home_path filter hook functionality
-     * 
+     *
      * Overview:
      * This test verifies that the c3_invalidation_post_batch_home_path filter hook
      * correctly allows customization of the home path during single post invalidation.
-     * 
+     *
      * Expected Behavior:
      * - The filter should receive the original home path and post object as parameters
      * - When the post slug matches 'custom-home', the filter should return '/custom-homepage/'
      * - The invalidation batch should contain both the custom home path and the post-specific path
      * - Other posts should not be affected by this filter condition
-     * 
+     *
      * Test Method:
      * 1. Register a filter that modifies home path for posts with slug 'custom-home'
      * 2. Create a test post with the matching slug 'custom-home'
@@ -197,17 +222,17 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 
     /**
      * Test Case: c3_invalidation_posts_batch_home_path filter hook functionality
-     * 
+     *
      * Overview:
      * This test verifies that the c3_invalidation_posts_batch_home_path filter hook
      * correctly allows customization of the home path during multiple posts invalidation.
-     * 
+     *
      * Expected Behavior:
      * - The filter should receive the original home path and array of post objects as parameters
      * - When more than 1 post is being processed, the filter should return '/bulk-update-homepage/'
      * - The invalidation batch should contain the custom home path plus individual post paths
      * - Single post batches should not trigger this filter condition
-     * 
+     *
      * Test Method:
      * 1. Register a filter that modifies home path when processing multiple posts (count > 1)
      * 2. Create two test posts with different slugs ('post-one' and 'post-two')
@@ -247,17 +272,17 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 
     /**
      * Test Case: c3_invalidation_manual_batch_all_path filter hook functionality
-     * 
+     *
      * Overview:
      * This test verifies that the c3_invalidation_manual_batch_all_path filter hook
      * correctly allows customization of the path pattern used for manual "clear all cache" operations.
-     * 
+     *
      * Expected Behavior:
      * - The filter should receive the default all-clear path pattern ('/*') as a parameter
      * - The filter should be able to return a custom path pattern for clearing all cache
      * - The invalidation batch should contain only the custom path pattern
      * - This provides more granular control over manual cache clearing operations
-     * 
+     *
      * Test Method:
      * 1. Register a filter that replaces the default '/*' pattern with '/custom-all-path/*'
      * 2. Call create_batch_for_all() method to trigger manual all-cache clearing
@@ -283,18 +308,18 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 
     /**
      * Test Case: WordPress subdirectory installation support
-     * 
+     *
      * Overview:
      * This test verifies that the new path adjustment hooks correctly handle WordPress
      * installations in subdirectories by automatically including subdirectory paths
      * in invalidation requests through WordPress's standard home_url() function.
-     * 
+     *
      * Expected Behavior:
      * - When WordPress is installed in a subdirectory (e.g., /blog/), home_url() should return the subdirectory path
      * - The c3_invalidation_post_batch_home_path filter should receive the subdirectory path automatically
      * - Invalidation batches should include both the subdirectory home path and post-specific paths
      * - The plugin should work seamlessly without manual configuration for subdirectory installations
-     * 
+     *
      * Test Method:
      * 1. Mock WordPress home_url() to simulate a subdirectory installation (/blog/)
      * 2. Register a filter to verify the subdirectory path is correctly passed to the hook
@@ -335,17 +360,17 @@ class Invalidation_Batch_Service_Test extends \WP_UnitTestCase {
 
     /**
      * Test Case: Subdirectory-specific path customization
-     * 
+     *
      * Overview:
      * This test verifies that developers can customize invalidation paths specifically
      * for subdirectory installations using the new hooks, allowing for environment-specific
      * or subdirectory-specific cache invalidation strategies.
-     * 
+     *
      * Expected Behavior:
      * - Developers should be able to detect subdirectory installations in their filters
      * - Custom paths can be returned that are specific to the subdirectory environment
      * - The hooks should work correctly with both subdirectory and root installations
-     * 
+     *
      * Test Method:
      * 1. Create a filter that detects subdirectory installations and returns custom paths
      * 2. Test with both subdirectory and root installation scenarios
