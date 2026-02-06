@@ -3,8 +3,8 @@ Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartosz
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
-Tested up to: 6.8.1
-Stable tag: 7.3.0
+Tested up to: 6.9.1
+Stable tag: 7.3.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
