@@ -97,6 +97,13 @@ This plugin now uses a custom AWS CloudFront implementation instead of the offic
 
 == Changelog ==
 
+= 7.3.1 =
+* [Fix]
+  - Improved cache invalidation handling for posts transitioning between published and draft states, ensuring proper cache clearing during state changes
+  - Enhanced URL detection for more reliable CloudFront invalidation across different URL formats
+* [Improvements]
+  - Extended support for WordPress subdirectory installations to ensure proper cache path handling
+
 = 7.2.0 =
 * [Feature] Add 3 new path adjustment hooks for more granular invalidation control:
   - `c3_invalidation_post_batch_home_path` - Customize home path for single post invalidation
