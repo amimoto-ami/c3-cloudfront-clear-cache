@@ -3,8 +3,8 @@ Contributors: amimotoami,hideokamoto,megumithemes,wokamoto,miyauchi,hnle,bartosz
 Donate link: http://wp-kyoto.net/
 Tags: AWS,CDN,CloudFront
 Requires at least: 4.9.0
-Tested up to: 6.8.1
-Stable tag: 7.3.0
+Tested up to: 6.9.1
+Stable tag: 7.3.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -96,6 +96,13 @@ If post published,this plugin post invalidation request to CloudFront.
 This plugin now uses a custom AWS CloudFront implementation instead of the official AWS SDK to reduce dependencies and improve performance.
 
 == Changelog ==
+
+= 7.3.1 =
+* [Fix]
+  - Improved cache invalidation handling for posts transitioning between published and draft states, ensuring proper cache clearing during state changes
+  - Enhanced URL detection for more reliable CloudFront invalidation across different URL formats
+* [Improvements]
+  - Extended support for WordPress subdirectory installations to ensure proper cache path handling
 
 = 7.2.0 =
 * [Feature] Add 3 new path adjustment hooks for more granular invalidation control:
