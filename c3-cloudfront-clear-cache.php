@@ -31,6 +31,14 @@ function c3_init() {
 	new C3_CloudFront_Cache_Controller\Views\Settings();
 	new C3_CloudFront_Cache_Controller\Views\Debug_Settings();
 	new WP\Fixtures();
+
+	// Add filters for instance role detection, allowing overrides via constants for testing or specific environments.
+	add_filter( 'c3_has_ec2_instance_role', function( $has_ec2_instance_role = false ) {
+		return defined( 'C3_USE_EC2_INSTANCE_ROLE' ) ? C3_USE_EC2_INSTANCE_ROLE : $has_ec2_instance_role;
+	});
+	add_filter( 'c3_has_ecs_task_role', function( $has_ecs_task_role = false ) {
+		return defined( 'C3_USE_ECS_TASK_ROLE' ) ? C3_USE_ECS_TASK_ROLE : $has_ecs_task_role;
+	});
 }
 c3_init();
 
