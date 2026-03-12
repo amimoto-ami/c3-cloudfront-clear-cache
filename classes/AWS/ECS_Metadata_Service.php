@@ -74,8 +74,13 @@ class ECS_Metadata_Service {
 	 * @return array|null
 	 */
 	private function fetch_credentials( $headers = array() ) {
+		$relative_uri = getenv( 'AWS_CONTAINER_CREDENTIALS_RELATIVE_URI' );
+		if ( ! $relative_uri ) {
+			return null;
+		}
+
 		$response = wp_remote_request(
-			$this->metadata_endpoint . getenv('AWS_CONTAINER_CREDENTIALS_RELATIVE_URI'),
+			$this->metadata_endpoint . $relative_uri,
 			array(
 				'method'  => 'GET',
 				'headers' => $headers,
@@ -109,8 +114,13 @@ class ECS_Metadata_Service {
 	 * @return bool
 	 */
 	public function is_ecs_task() {
+		$relative_uri = getenv( 'AWS_CONTAINER_CREDENTIALS_RELATIVE_URI' );
+		if ( ! $relative_uri ) {
+			return false;
+		}
+
 		$response = wp_remote_request(
-			$this->metadata_endpoint . getenv('AWS_CONTAINER_CREDENTIALS_RELATIVE_URI'),
+			$this->metadata_endpoint . $relative_uri,
 			array(
 				'method'  => 'GET',
 				'timeout' => $this->timeout,

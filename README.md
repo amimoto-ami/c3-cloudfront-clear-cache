@@ -39,6 +39,8 @@ define( 'C3_USE_ECS_TASK_ROLE', true );
 
 These constants are useful when automatic metadata-based detection is not sufficient, or when you want to make the role-based credential source explicit in a specific environment.
 
+If both constants are set to `true`, the plugin currently checks EC2 Instance Role credentials before ECS Task Role credentials, so EC2 will take precedence.
+
 ## Filters
 
 ### Change Invalidation interval
