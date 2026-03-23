@@ -97,6 +97,13 @@ This plugin now uses a custom AWS CloudFront implementation instead of the offic
 
 == Changelog ==
 
+= 7.3.2 =
+* [Fix]
+  - Exclude `.cursor` and `.github` from WordPress.org distribution package to prevent packaging conflicts
+* [Maintenance]
+  - Improve release workflow settings for WordPress.org asset/readme sync stability
+  - Update release documentation for branch strategy and version consistency checks
+
 = 7.3.1 =
 * [Fix]
   - Improved cache invalidation handling for posts transitioning between published and draft states, ensuring proper cache clearing during state changes
