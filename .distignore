@@ -7,8 +7,12 @@
 .eslintrc
 .git
 .gitignore
+.github
+.github/
 .gitlab-ci.yml
 .travis.yml
+.cursor
+.cursor/
 .DS_Store
 Thumbs.db
 behat.yml
