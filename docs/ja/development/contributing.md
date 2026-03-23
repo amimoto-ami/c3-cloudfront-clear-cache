@@ -57,6 +57,36 @@ git commit -m "feat: add your feature description"
 git push origin feature/your-feature-name
 ```
 
+### 重要: 開発ブランチは必ず `develop` から作成する
+
+開発を開始する際は、必ず `develop` から作業ブランチを作成してください。
+機能追加・不具合修正の作業ブランチを `master` から作成しないでください。
+
+## メンテナー向けリリース注意事項
+
+### WordPress.org パッケージングのためのバージョン整合
+
+リリース前に、以下2ファイルのバージョンを必ず揃えて更新してください。
+
+- `readme.txt`（`Stable tag`）
+- `c3-cloudfront-clear-cache.php`（`Version`）
+
+この2つが不一致だと、WordPress.org の SVN 側でプラグインが期待どおりにパッケージされない場合があります。
+
+### バージョン更新スクリプト
+
+以下を利用できます。
+
+```bash
+./bin/update-version.sh 7.3.2
+```
+
+このスクリプトは次のファイルを更新します。
+
+- `package.json`
+- `c3-cloudfront-clear-cache.php`
+- `readme.txt`（`Stable tag` のみ）
+
 ## テスト
 
 ### テストの実行
@@ -109,6 +139,7 @@ wp-env run tests composer run phpcbf
 
 ## リソース
 
+- [Contributing（公開ドキュメント）](https://amimoto-ami.github.io/c3-cloudfront-clear-cache/development/contributing.html)
 - [WordPress Plugin Developer Handbook](https://developer.wordpress.org/plugins/)
 - [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/)
 - [AWS CloudFront API Documentation](https://docs.aws.amazon.com/cloudfront/latest/APIReference/)
