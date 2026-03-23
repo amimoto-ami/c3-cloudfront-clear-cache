@@ -228,3 +228,91 @@ Using act to execute the workflow in your local.
 ```bash
 $ act -P ubuntu-latest=shivammathur/node:latest
 ```
+
+## Release Procedure
+
+### 0) Start development from `develop`
+
+Always create your working branch from `develop`:
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b bugfix/your-topic
+```
+
+### 1) Update plugin version locally
+
+Use the version update script:
+
+```bash
+./bin/update-version.sh 7.3.2
+```
+
+This script updates:
+
+- `package.json`
+- `c3-cloudfront-clear-cache.php` (plugin header `Version`)
+- `readme.txt` (`Stable tag` only)
+
+It can also create a local commit and local Git tag interactively.
+The script does not push to GitHub automatically.
+
+### 2) Important consistency rule for WordPress.org packaging
+
+Before deploying, ensure these values are aligned:
+
+- `c3-cloudfront-clear-cache.php` -> `Version`
+- `readme.txt` -> `Stable tag`
+
+If these values are inconsistent, WordPress.org SVN may not package the plugin as expected.
+In particular, make sure both `readme.txt` and `c3-cloudfront-clear-cache.php` are updated together for each release.
+
+### 3) Deploy plugin to WordPress.org (tag push)
+
+Workflow: `.github/workflows/push-deploy.yml` (`Deploy to WordPress.org`)
+
+Trigger: push a Git tag.
+
+```bash
+git tag v7.3.2
+git push origin v7.3.2
+```
+
+This triggers `10up/action-wordpress-plugin-deploy` and deploys plugin code to WordPress.org.
+
+### 4) Sync readme/assets to WordPress.org (master push)
+
+Workflow: `.github/workflows/push-asset-readme-update.yml` (`Plugin asset/readme update`)
+
+Trigger: push to `master`.
+
+Use this when updating:
+
+- `readme.txt`
+- files in `.wordpress-org/` (plugin banner/icon images)
+
+### 5) CI test workflow
+
+Workflow: `.github/workflows/test.yml` (`Test plugin`)
+
+Trigger: `push` and `pull_request`
+
+Current test matrix:
+
+- PHP 7.4 + WordPress 6.7
+- PHP 8.2 + WordPress 6.7
+
+### 6) Documentation deploy workflow
+
+Workflow: `.github/workflows/docs.yml` (`Deploy Documentation`)
+
+Purpose: build and deploy documentation to GitHub Pages (primarily on `master`).
+
+### 7) Dependabot updates
+
+Dependabot helps keep dependency versions up to date by creating automated update PRs.
+
+## Reference
+
+- Contributing guide: https://amimoto-ami.github.io/c3-cloudfront-clear-cache/development/contributing.html
