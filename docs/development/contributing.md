@@ -57,6 +57,36 @@ git commit -m "feat: add your feature description"
 git push origin feature/your-feature-name
 ```
 
+### Important: always branch from `develop`
+
+When starting development, always create your branch from `develop`.
+Do not branch from `master` for feature or bugfix work.
+
+## Release Notes for Maintainers
+
+### Version consistency for WordPress.org packaging
+
+Before release, update version numbers consistently in both files:
+
+- `readme.txt` (`Stable tag`)
+- `c3-cloudfront-clear-cache.php` (`Version`)
+
+If these versions are not aligned, WordPress.org SVN may not package the plugin as expected.
+
+### Version update helper script
+
+You can use:
+
+```bash
+./bin/update-version.sh 7.3.2
+```
+
+This script updates:
+
+- `package.json`
+- `c3-cloudfront-clear-cache.php`
+- `readme.txt` (`Stable tag` only)
+
 ## Testing
 
 ### Running Tests
@@ -109,6 +139,7 @@ Brief description of changes
 
 ## Resources
 
+- [Contributing (published docs)](https://amimoto-ami.github.io/c3-cloudfront-clear-cache/development/contributing.html)
 - [WordPress Plugin Developer Handbook](https://developer.wordpress.org/plugins/)
 - [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/)
 - [AWS CloudFront API Documentation](https://docs.aws.amazon.com/cloudfront/latest/APIReference/)
