@@ -31,6 +31,7 @@ $access_key          = isset( $plugin_options ) && isset( $plugin_options[ Const
 $secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::SECRET_KEY ] ) ? $plugin_options[ Constants::SECRET_KEY ] : null;
 
 $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
+$has_ecs_task_role     = apply_filters( 'c3_has_ecs_task_role', false );
 ?>
 <h3><?php _e( 'General Settings', $text_domain ); ?></h3>
 <form method="post" action="options.php">
@@ -56,7 +57,7 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 				?>
 			</td>
 		</tr>
-		<?php if ( ! $has_ec2_instance_role ) { ?>
+		<?php if ( ! ( $has_ec2_instance_role || $has_ecs_task_role ) ) { ?>
 			<tr>
 				<td>
 					<?php _e( 'AWS Access Key', $text_domain ); ?>

@@ -101,6 +101,7 @@ class CloudFront_Service {
 			);
 		}
 
+		// If credentials are not provided, try to get them from instance metadata if running on AWS.
 		if ( $this->should_use_instance_role() ) {
 			$metadata_service = new EC2_Metadata_Service();
 			$instance_creds   = $metadata_service->get_instance_credentials();
@@ -110,6 +111,20 @@ class CloudFront_Service {
 					'key'    => $instance_creds['key'],
 					'secret' => $instance_creds['secret'],
 					'token'  => $instance_creds['token'],
+				);
+			}
+		}
+
+		// If credentials are not provided, try to get them from task metadata if running on ECS.
+		if ( $this->should_use_task_role() ) {
+			$metadata_service = new ECS_Metadata_Service();
+			$task_creds       = $metadata_service->get_credentials();
+
+			if ( $task_creds ) {
+				return array(
+					'key'    => $task_creds['key'],
+					'secret' => $task_creds['secret'],
+					'token'  => $task_creds['token'],
 				);
 			}
 		}
@@ -129,6 +144,20 @@ class CloudFront_Service {
 
 		$metadata_service = new EC2_Metadata_Service();
 		return $metadata_service->is_ec2_instance();
+	}
+
+	/**
+	 * Check if should use ECS task role
+	 *
+	 * @return bool
+	 */
+	private function should_use_task_role() {
+		if ( $this->hook_service->apply_filters( 'c3_has_ecs_task_role', false ) ) {
+			return true;
+		}
+
+		$metadata_service = new ECS_Metadata_Service();
+		return $metadata_service->is_ecs_task();
 	}
 
 	/**

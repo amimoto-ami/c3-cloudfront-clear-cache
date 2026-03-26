@@ -22,6 +22,25 @@ The plugin can be configured by defining the following environment variables:
 - `C3_DISTRIBUTION_ID`
 - `C3_HTTP_TIMEOUT` (optional) - HTTP timeout in seconds (default: 30)
 
+### Role-based AWS credentials
+
+If you use AWS role-based credentials instead of static access keys, you can force the plugin to treat the environment as using an EC2 Instance Role or an ECS Task Role by defining one of the following constants in `wp-config.php`:
+
+- `C3_USE_EC2_INSTANCE_ROLE`
+- `C3_USE_ECS_TASK_ROLE`
+
+Example:
+
+```php
+define( 'C3_USE_EC2_INSTANCE_ROLE', true );
+// or
+define( 'C3_USE_ECS_TASK_ROLE', true );
+```
+
+These constants are useful when automatic metadata-based detection is not sufficient, or when you want to make the role-based credential source explicit in a specific environment.
+
+If both constants are set to `true`, the plugin currently checks EC2 Instance Role credentials before ECS Task Role credentials, so EC2 will take precedence.
+
 ## Filters
 
 ### Change Invalidation interval
