@@ -32,9 +32,10 @@ class Constants {
 	const C3_INVALIDATION = 'c3_invalidation';
 	const OPTION_NAME     = 'c3_settings';
 
-	const DISTRIBUTION_ID = 'distribution_id';
-	const ACCESS_KEY      = 'access_key';
-	const SECRET_KEY      = 'secret_key';
+	const DISTRIBUTION_ID        = 'distribution_id';
+	const DISTRIBUTION_TENANT_ID = 'distribution_tenant_id';
+	const ACCESS_KEY             = 'access_key';
+	const SECRET_KEY             = 'secret_key';
 
 	const DEBUG_OPTION_NAME = 'c3_debug_settings';
 	const DEBUG_LOG_CRON_REGISTER_TASK = 'log_cron_register_task';

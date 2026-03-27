@@ -31,6 +31,27 @@ Create an IAM policy with these minimum permissions:
 }
 ```
 
+### IAM Permissions for Distribution Tenants
+
+If you're using CloudFront Distribution Tenants (multi-tenant distributions), use these permissions instead:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudfront:CreateInvalidationForDistributionTenant",
+                "cloudfront:GetInvalidationForDistributionTenant",
+                "cloudfront:ListInvalidationsForDistributionTenant"
+            ],
+            "Resource": "arn:aws:cloudfront::*:distribution-tenant/YOUR_DISTRIBUTION_TENANT_ID"
+        }
+    ]
+}
+```
+
 ## Configuration Methods
 
 ### Method 1: EC2 Instance Role (Recommended for AWS EC2)
@@ -107,6 +128,9 @@ For enhanced security, you can define constants in your `wp-config.php` file:
 define( 'AWS_ACCESS_KEY_ID', 'your_access_key_here' );
 define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key_here' );
 define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
+
+// Optional: For multi-tenant CloudFront distributions
+define( 'C3_DISTRIBUTION_TENANT_ID', 'your_distribution_tenant_id' );
 ```
 
 #### For Different Hosting Environments
@@ -118,7 +142,31 @@ define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
 define( 'AWS_ACCESS_KEY_ID', 'your_access_key_here' );
 define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key_here' );
 define( 'C3_DISTRIBUTION_ID', 'your_cloudfront_distribution_id' );
+
+// Optional: For multi-tenant distributions
+define( 'C3_DISTRIBUTION_TENANT_ID', 'your_distribution_tenant_id' );
 ```
+
+### Distribution Tenant Configuration
+
+CloudFront Distribution Tenants allow multiple tenants to share a single CloudFront distribution while maintaining isolation. When you configure a Distribution Tenant ID, the plugin automatically uses tenant-specific APIs:
+
+- `cloudfront:CreateInvalidationForDistributionTenant` instead of `cloudfront:CreateInvalidation`
+- `cloudfront:GetInvalidationForDistributionTenant` instead of `cloudfront:GetInvalidation`
+- `cloudfront:ListInvalidationsForDistributionTenant` instead of `cloudfront:ListInvalidations`
+
+You can configure the Distribution Tenant ID through:
+
+1. **WordPress Admin**: Settings > CloudFront Settings > CloudFront Distribution Tenant ID
+2. **wp-config.php**: `define( 'C3_DISTRIBUTION_TENANT_ID', 'your_tenant_id' );`
+3. **Filter**: Use the `c3_setting` filter to programmatically set the value
+
+::: tip When to Use Distribution Tenants
+Distribution Tenants are useful when:
+- You have multiple WordPress sites sharing a single CloudFront distribution
+- You want to isolate cache invalidation operations per tenant
+- You're using CloudFront's multi-tenant architecture
+:::
 
 ::: tip Environment-Specific Considerations
 - **AWS EC2**: **Strongly recommended** to use EC2 instance roles for maximum security

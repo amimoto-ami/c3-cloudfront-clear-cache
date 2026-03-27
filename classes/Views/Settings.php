@@ -105,6 +105,7 @@ class Settings {
 	function filter_and_escape( $args ) {
 		$allow_keys = array(
 			Constants::DISTRIBUTION_ID,
+			Constants::DISTRIBUTION_TENANT_ID,
 			Constants::ACCESS_KEY,
 			Constants::SECRET_KEY,
 		);

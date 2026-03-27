@@ -72,7 +72,20 @@ Alternatively, you can define constants in `wp-config.php` for enhanced security
 define( 'AWS_ACCESS_KEY_ID', 'your_access_key' );
 define( 'AWS_SECRET_ACCESS_KEY', 'your_secret_key' );
 define( 'C3_DISTRIBUTION_ID', 'your_distribution_id' );
+
+// Optional: For multi-tenant CloudFront distributions
+define( 'C3_DISTRIBUTION_TENANT_ID', 'your_tenant_id' );
 ```
+
+### Distribution Tenant Support
+
+For multi-tenant CloudFront distributions, you can optionally configure a Distribution Tenant ID. When set, the plugin uses tenant-specific CloudFront APIs:
+
+- `cloudfront:CreateInvalidationForDistributionTenant`
+- `cloudfront:GetInvalidationForDistributionTenant`
+- `cloudfront:ListInvalidationsForDistributionTenant`
+
+This can be configured via the admin settings or by defining `C3_DISTRIBUTION_TENANT_ID` in your `wp-config.php`.
 
 ## Why C3 CloudFront Cache Controller?
 

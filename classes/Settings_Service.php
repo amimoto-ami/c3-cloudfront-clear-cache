@@ -83,17 +83,18 @@ class Settings_Service {
 	 * @param string $distribution_id CloudFront distribution id.
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
+	 * @param string $distribution_tenant_id CloudFront distribution tenant id (optional).
 	 * @return \WP_Error|null
 	 */
-	public function update_options( string $distribution_id, ?string $access_key = null, ?string $secret_key = null ) {
-		// CloudFront API call.
-		$error = $this->cf_service->try_to_call_aws_api( $distribution_id, $access_key, $secret_key );
+	public function update_options( string $distribution_id, ?string $access_key = null, ?string $secret_key = null, ?string $distribution_tenant_id = null ) {
+		// CloudFront API call - use tenant-specific validation if tenant ID is provided.
+		$error = $this->cf_service->try_to_call_aws_api( $distribution_id, $access_key, $secret_key, $distribution_tenant_id );
 		if ( is_wp_error( $error ) ) {
 			return $error;
 		}
 
 		// Save.
-		$this->options_service->update_options( $distribution_id, $access_key, $secret_key );
+		$this->options_service->update_options( $distribution_id, $access_key, $secret_key, $distribution_tenant_id );
 
 		return null;
 	}

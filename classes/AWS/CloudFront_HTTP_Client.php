@@ -192,6 +192,107 @@ class CloudFront_HTTP_Client {
 	}
 
 	/**
+	 * Create CloudFront invalidation for a distribution tenant
+	 *
+	 * Uses cloudfront:CreateInvalidationForDistributionTenant permission.
+	 *
+	 * @param string $distribution_tenant_id CloudFront distribution tenant ID.
+	 * @param array  $paths Array of paths to invalidate.
+	 * @return array|WP_Error API response or error.
+	 */
+	public function create_invalidation_for_distribution_tenant( $distribution_tenant_id, $paths ) {
+		$caller_reference = uniqid( 'c3-' . time() . '-' );
+		$path             = "/{$this->api_version}/distribution-tenant/{$distribution_tenant_id}/invalidation";
+
+		$xml_payload = $this->build_invalidation_xml( $caller_reference, $paths );
+
+		$headers = array(
+			'Content-Type' => 'application/xml',
+		);
+
+		$signed_headers = $this->signature_service->sign_request(
+			'POST',
+			$this->endpoint,
+			$path,
+			$xml_payload,
+			$headers
+		);
+
+		$response = wp_remote_request(
+			"https://{$this->endpoint}{$path}",
+			array(
+				'method'  => 'POST',
+				'headers' => $signed_headers,
+				'body'    => $xml_payload,
+				'timeout' => $this->timeout,
+			)
+		);
+
+		return $this->handle_response( $response );
+	}
+
+	/**
+	 * List CloudFront invalidations for a distribution tenant
+	 *
+	 * Uses cloudfront:ListInvalidationsForDistributionTenant permission.
+	 *
+	 * @param string $distribution_tenant_id CloudFront distribution tenant ID.
+	 * @param int    $max_items Maximum number of items to return.
+	 * @return array|WP_Error API response or error.
+	 */
+	public function list_invalidations_for_distribution_tenant( $distribution_tenant_id, $max_items = 25 ) {
+		$path = "/{$this->api_version}/distribution-tenant/{$distribution_tenant_id}/invalidation";
+		if ( $max_items > 0 ) {
+			$path .= "?MaxItems={$max_items}";
+		}
+
+		$signed_headers = $this->signature_service->sign_request(
+			'GET',
+			$this->endpoint,
+			$path
+		);
+
+		$response = wp_remote_request(
+			"https://{$this->endpoint}{$path}",
+			array(
+				'method'  => 'GET',
+				'headers' => $signed_headers,
+				'timeout' => $this->timeout,
+			)
+		);
+
+		return $this->handle_response( $response );
+	}
+
+	/**
+	 * Get CloudFront invalidation details for a distribution tenant
+	 *
+	 * @param string $distribution_tenant_id CloudFront distribution tenant ID.
+	 * @param string $invalidation_id Invalidation ID.
+	 * @return array|WP_Error API response or error.
+	 */
+	public function get_invalidation_for_distribution_tenant( $distribution_tenant_id, $invalidation_id ) {
+		$path = "/{$this->api_version}/distribution-tenant/{$distribution_tenant_id}/invalidation/{$invalidation_id}";
+
+		$signed_headers = $this->signature_service->sign_request(
+			'GET',
+			$this->endpoint,
+			$path
+		);
+
+		$response = wp_remote_request(
+			"https://{$this->endpoint}{$path}",
+			array(
+				'method'  => 'GET',
+				'headers' => $signed_headers,
+				'timeout' => $this->timeout,
+			)
+		);
+
+		return $this->handle_response( $response );
+	}
+
+	/**
 	 * Build XML payload for invalidation request
 	 *
 	 * @param string $caller_reference Unique caller reference.

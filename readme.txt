@@ -64,6 +64,29 @@ This plugin send following page url to CloudFront Invalidation API.
 
 **Note:** The `cloudfront:GetInvalidation` permission is required for viewing detailed invalidation information. If this permission is not granted, the detail view feature will be disabled gracefully without affecting other plugin functionality.
 
+== AWS IAM Policy for Distribution Tenants ==
+
+If you're using CloudFront Distribution Tenants (multi-tenant distributions), use these permissions instead:
+
+`
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "cloudfront:GetDistribution",
+                "cloudfront:GetDistributionConfig",
+                "cloudfront:CreateInvalidationForDistributionTenant",
+                "cloudfront:GetInvalidationForDistributionTenant",
+                "cloudfront:ListInvalidationsForDistributionTenant"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+`
+
 ## Adding your configuration through env vars
 
 The plugin can be configured by defining the following variables:
@@ -71,6 +94,7 @@ The plugin can be configured by defining the following variables:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `C3_DISTRIBUTION_ID`
+- `C3_DISTRIBUTION_TENANT_ID` (optional) - For multi-tenant CloudFront distributions
 
 You can put these variables like the code into the wp-config.php
 
@@ -78,7 +102,10 @@ You can put these variables like the code into the wp-config.php
 define( 'AWS_ACCESS_KEY_ID', '' );
 define( 'AWS_SECRET_ACCESS_KEY', '' );
 define( 'C3_DISTRIBUTION_ID', '' );
+define( 'C3_DISTRIBUTION_TENANT_ID', '' ); // Optional: for multi-tenant distributions
 `
+
+When `C3_DISTRIBUTION_TENANT_ID` is set, the plugin uses tenant-specific CloudFront APIs (`cloudfront:CreateInvalidationForDistributionTenant`, `cloudfront:GetInvalidationForDistributionTenant`, and `cloudfront:ListInvalidationsForDistributionTenant`) instead of the standard distribution APIs.
 
 == Cookie ==
 This plugin set a Cookie named `wordpress_loginuser_last_visit` to the user.

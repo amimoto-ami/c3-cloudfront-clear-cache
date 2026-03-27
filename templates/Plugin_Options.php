@@ -20,15 +20,17 @@ if ( $env->is_amimoto_managed() ) {
 	return;
 }
 
-$env_distribution_id = $env->get_distribution_id();
-$env_access_key      = $env->get_aws_access_key();
-$env_secret_key      = $env->get_aws_secret_key();
-$text_domain         = Constants::text_domain();
-$options             = new Options();
-$plugin_options      = $options->get_options();
-$distribution_id     = isset( $plugin_options ) && isset( $plugin_options[ Constants::DISTRIBUTION_ID ] ) ? $plugin_options[ Constants::DISTRIBUTION_ID ] : null;
-$access_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::ACCESS_KEY ] ) ? $plugin_options[ Constants::ACCESS_KEY ] : null;
-$secret_key          = isset( $plugin_options ) && isset( $plugin_options[ Constants::SECRET_KEY ] ) ? $plugin_options[ Constants::SECRET_KEY ] : null;
+$env_distribution_id        = $env->get_distribution_id();
+$env_distribution_tenant_id = $env->get_distribution_tenant_id();
+$env_access_key             = $env->get_aws_access_key();
+$env_secret_key             = $env->get_aws_secret_key();
+$text_domain                = Constants::text_domain();
+$options                    = new Options();
+$plugin_options             = $options->get_options();
+$distribution_id            = isset( $plugin_options ) && isset( $plugin_options[ Constants::DISTRIBUTION_ID ] ) ? $plugin_options[ Constants::DISTRIBUTION_ID ] : null;
+$distribution_tenant_id     = isset( $plugin_options ) && isset( $plugin_options[ Constants::DISTRIBUTION_TENANT_ID ] ) ? $plugin_options[ Constants::DISTRIBUTION_TENANT_ID ] : null;
+$access_key                 = isset( $plugin_options ) && isset( $plugin_options[ Constants::ACCESS_KEY ] ) ? $plugin_options[ Constants::ACCESS_KEY ] : null;
+$secret_key                 = isset( $plugin_options ) && isset( $plugin_options[ Constants::SECRET_KEY ] ) ? $plugin_options[ Constants::SECRET_KEY ] : null;
 
 $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 ?>
@@ -51,6 +53,29 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 				<?php
 				if ( isset( $env_distribution_id ) ) {
 					echo '<p><small>' . __( 'Already defined it in the code.', $text_domain ) . '</small></p>';
+				}
+
+				?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<?php _e( 'CloudFront Distribution Tenant ID', $text_domain ); ?>
+				<br /><small><?php _e( '(Optional)', $text_domain ); ?></small>
+			</td>
+			<td>
+				<input
+					class='regular-text code'
+					type="text"
+					name="<?php echo isset( $env_distribution_tenant_id ) ? Constants::OPTION_NAME . '[dummy_tenant]' : Constants::OPTION_NAME . '[' . Constants::DISTRIBUTION_TENANT_ID . ']'; ?>"
+					value="<?php echo esc_attr( isset( $env_distribution_tenant_id ) ? $env_distribution_tenant_id : $distribution_tenant_id ); ?>"
+					<?php echo isset( $env_distribution_tenant_id ) ? 'disabled' : ''; ?>
+				/>
+				<?php
+				if ( isset( $env_distribution_tenant_id ) ) {
+					echo '<p><small>' . __( 'Already defined it in the code.', $text_domain ) . '</small></p>';
+				} else {
+					echo '<p><small>' . __( 'Required for multi-tenant CloudFront distributions.', $text_domain ) . '</small></p>';
 				}
 
 				?>

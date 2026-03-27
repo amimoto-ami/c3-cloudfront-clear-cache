@@ -82,6 +82,18 @@ class Environment {
 	}
 
 	/**
+	 * Get the distribution tenant id if defined
+	 *
+	 * @return string|null
+	 */
+	public function get_distribution_tenant_id() {
+		if ( defined( 'C3_DISTRIBUTION_TENANT_ID' ) ) {
+			return C3_DISTRIBUTION_TENANT_ID;
+		}
+		return null;
+	}
+
+	/**
 	 * Get the access_key field
 	 *
 	 * @return string

@@ -133,14 +133,15 @@ class CloudFront_Service {
 
 	/**
 	 * Check the plugin option parameter.
-	 * Calling GetDistribution API to check these parameters.
+	 * Calling GetDistribution API or tenant-specific API to check these parameters.
 	 *
 	 * @param string $distribution_id CloudFront distribution id.
 	 * @param string $access_key AWS access key id.
 	 * @param string $secret_key AWS secret access key id.
+	 * @param string $distribution_tenant_id CloudFront distribution tenant id (optional).
 	 * @return \WP_Error|null  Return WP_Error if AWS API returns any error.
 	 */
-	public function try_to_call_aws_api( string $distribution_id, ?string $access_key = null, ?string $secret_key = null ) {
+	public function try_to_call_aws_api( string $distribution_id, ?string $access_key = null, ?string $secret_key = null, ?string $distribution_tenant_id = null ) {
 		$credentials = $this->get_credentials( $access_key, $secret_key );
 		if ( ! $credentials ) {
 			return new \WP_Error( 'C3 Auth Error', 'AWS credentials are not available.' );
@@ -148,15 +149,28 @@ class CloudFront_Service {
 
 		$session_token = isset( $credentials['token'] ) ? $credentials['token'] : null;
 		$client        = new CloudFront_HTTP_Client( $credentials['key'], $credentials['secret'], null, $session_token );
-		$result        = $client->get_distribution( $distribution_id );
+
+		// Use tenant-specific API for validation when tenant ID is provided
+		// This allows users with tenant-only IAM policies to validate their configuration
+		if ( $distribution_tenant_id ) {
+			$result          = $client->list_invalidations_for_distribution_tenant( $distribution_tenant_id, 1 );
+			$identifier      = $distribution_tenant_id;
+			$identifier_type = 'distribution tenant';
+			$not_found_error = 'NoSuchDistributionTenant';
+		} else {
+			$result          = $client->get_distribution( $distribution_id );
+			$identifier      = $distribution_id;
+			$identifier_type = 'distribution';
+			$not_found_error = 'NoSuchDistribution';
+		}
 
 		if ( is_wp_error( $result ) ) {
 			$error_message = $result->get_error_message();
 			$error_code    = $result->get_error_code();
 
 			if ( $error_code === 'cloudfront_api_error' ) {
-				if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
-					$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront Distribution ID: {$distribution_id} is not found." );
+				if ( strpos( $error_message, $not_found_error ) !== false ) {
+					$e = new \WP_Error( 'C3 Auth Error', "Can not find CloudFront " . ucfirst( $identifier_type ) . " ID: {$identifier} is not found." );
 				} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
 					$e = new \WP_Error( 'C3 Auth Error', 'AWS Access Key or AWS Secret Key is invalid.' );
 				} else {
@@ -249,6 +263,30 @@ class CloudFront_Service {
 	}
 
 	/**
+	 * Get the target CloudFront distribution tenant id (optional)
+	 *
+	 * @return string|null distribution tenant id or null if not configured
+	 */
+	public function get_distribution_tenant_id() {
+		/**
+		 * Try to find the id from the defined values.
+		 */
+		$from_defined_value = $this->env->get_distribution_tenant_id();
+		if ( $from_defined_value ) {
+			return $from_defined_value;
+		}
+
+		/**
+		 * Then, load the wp_option table to get the saved id
+		 */
+		$options = $this->options_service->get_options();
+		if ( $options && isset( $options['distribution_tenant_id'] ) && $options['distribution_tenant_id'] ) {
+			return $options['distribution_tenant_id'];
+		}
+		return null;
+	}
+
+	/**
 	 * Create Invalidation request to AWS
 	 *
 	 * @param mixed $params Invalidation request.
@@ -260,16 +298,23 @@ class CloudFront_Service {
 				return $client;
 			}
 
-		$distribution_id = $params['DistributionId'];
-		$paths           = $params['InvalidationBatch']['Paths']['Items'];
+			$distribution_id        = $params['DistributionId'];
+			$distribution_tenant_id = $this->get_distribution_tenant_id();
+			$paths                  = $params['InvalidationBatch']['Paths']['Items'];
 
-		$this->debug_logger->log_invalidation_request( array(
-			'distribution_id' => $distribution_id,
-			'paths' => $paths,
-			'full_params' => $params,
-		) );
+			$this->debug_logger->log_invalidation_request( array(
+				'distribution_id'        => $distribution_id,
+				'distribution_tenant_id' => $distribution_tenant_id,
+				'paths'                  => $paths,
+				'full_params'            => $params,
+			) );
 
-		$result = $client->create_invalidation( $distribution_id, $paths );
+			// Use distribution tenant API if tenant ID is configured
+			if ( $distribution_tenant_id ) {
+				$result = $client->create_invalidation_for_distribution_tenant( $distribution_tenant_id, $paths );
+			} else {
+				$result = $client->create_invalidation( $distribution_id, $paths );
+			}
 			return $result;
 		} catch ( \Exception $e ) {
 			$e = new \WP_Error( 'C3 Invalidation Error', $e->getMessage() );
@@ -292,11 +337,20 @@ class CloudFront_Service {
 				return new \WP_Error( 'C3 List Invalidations Error', 'Failed to create CloudFront client: ' . $client->get_error_message() );
 			}
 
-			$distribution_id = $this->get_distribution_id();
-			error_log( 'C3 CloudFront: Listing invalidations for distribution: ' . $distribution_id );
+			$distribution_id        = $this->get_distribution_id();
+			$distribution_tenant_id = $this->get_distribution_tenant_id();
+			$identifier             = $distribution_tenant_id ?: $distribution_id;
+			$identifier_type        = $distribution_tenant_id ? 'distribution tenant' : 'distribution';
+			error_log( 'C3 CloudFront: Listing invalidations for ' . $identifier_type . ': ' . $identifier );
 
 			$max_items = $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 );
-			$result    = $client->list_invalidations( $distribution_id, $max_items );
+
+			// Use distribution tenant API if tenant ID is configured
+			if ( $distribution_tenant_id ) {
+				$result = $client->list_invalidations_for_distribution_tenant( $distribution_tenant_id, $max_items );
+			} else {
+				$result = $client->list_invalidations( $distribution_id, $max_items );
+			}
 
 			if ( is_wp_error( $result ) ) {
 				$error_message = $result->get_error_message();
@@ -307,11 +361,11 @@ class CloudFront_Service {
 				}
 
 				if ( $error_code === 'cloudfront_api_error' ) {
-					if ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
+					if ( strpos( $error_message, 'NoSuchDistribution' ) !== false || strpos( $error_message, 'NoSuchDistributionTenant' ) !== false ) {
 						if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-							error_log( 'C3 CloudFront: Distribution not found: ' . $distribution_id );
+							error_log( 'C3 CloudFront: ' . ucfirst( $identifier_type ) . ' not found: ' . $identifier );
 						}
-						return new \WP_Error( 'C3 List Invalidations Error', "CloudFront Distribution ID: {$distribution_id} not found." );
+						return new \WP_Error( 'C3 List Invalidations Error', "CloudFront " . ucfirst( $identifier_type ) . " ID: {$identifier} not found." );
 					} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
 						return new \WP_Error( 'C3 List Invalidations Error', 'AWS Access Key or AWS Secret Key is invalid.' );
 					} else {
@@ -364,20 +418,30 @@ class CloudFront_Service {
 				return new \WP_Error( 'C3 Get Invalidation Error', 'Failed to create CloudFront client: ' . $client->get_error_message() );
 			}
 
-			$distribution_id = $this->get_distribution_id();
-			$result = $client->get_invalidation( $distribution_id, $invalidation_id );
+			$distribution_id        = $this->get_distribution_id();
+			$distribution_tenant_id = $this->get_distribution_tenant_id();
+			$identifier             = $distribution_tenant_id ? $distribution_tenant_id : $distribution_id;
+			$identifier_type        = $distribution_tenant_id ? 'distribution tenant' : 'distribution';
+
+			// Use distribution tenant API if tenant ID is configured
+			if ( $distribution_tenant_id ) {
+				$result = $client->get_invalidation_for_distribution_tenant( $distribution_tenant_id, $invalidation_id );
+			} else {
+				$result = $client->get_invalidation( $distribution_id, $invalidation_id );
+			}
 
 			if ( is_wp_error( $result ) ) {
 				$error_message = $result->get_error_message();
-				$error_code = $result->get_error_code();
+				$error_code    = $result->get_error_code();
 
 				if ( $error_code === 'cloudfront_api_error' ) {
 					if ( strpos( $error_message, 'AccessDenied' ) !== false ) {
-						return new \WP_Error( 'C3 Get Invalidation Error', 'Insufficient permissions to view invalidation details. Please ensure your IAM policy includes cloudfront:GetInvalidation permission.' );
+						$permission = $distribution_tenant_id ? 'cloudfront:GetInvalidationForDistributionTenant' : 'cloudfront:GetInvalidation';
+						return new \WP_Error( 'C3 Get Invalidation Error', 'Insufficient permissions to view invalidation details. Please ensure your IAM policy includes ' . $permission . ' permission.' );
 					} elseif ( strpos( $error_message, 'NoSuchInvalidation' ) !== false ) {
 						return new \WP_Error( 'C3 Get Invalidation Error', 'Invalidation not found.' );
-					} elseif ( strpos( $error_message, 'NoSuchDistribution' ) !== false ) {
-						return new \WP_Error( 'C3 Get Invalidation Error', "CloudFront Distribution ID: {$distribution_id} not found." );
+					} elseif ( strpos( $error_message, 'NoSuchDistribution' ) !== false || strpos( $error_message, 'NoSuchDistributionTenant' ) !== false ) {
+						return new \WP_Error( 'C3 Get Invalidation Error', "CloudFront " . ucfirst( $identifier_type ) . " ID: {$identifier} not found." );
 					} elseif ( strpos( $error_message, 'InvalidClientTokenId' ) !== false || strpos( $error_message, 'SignatureDoesNotMatch' ) !== false ) {
 						return new \WP_Error( 'C3 Get Invalidation Error', 'AWS Access Key or AWS Secret Key is invalid.' );
 					}

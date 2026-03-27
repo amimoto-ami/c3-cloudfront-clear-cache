@@ -81,9 +81,10 @@ class Options_Service {
 	 * @param string $distribution_id The CloudFront Distribution ID.
 	 * @param string $access_key AWS Access Key.
 	 * @param string $secret_key AWS Secret Key.
+	 * @param string $distribution_tenant_id The CloudFront Distribution Tenant ID (optional).
 	 * @throws \Exception Update option failed.
 	 */
-	public function update_options( string $distribution_id, ?string $access_key = null, ?string $secret_key = null ) {
+	public function update_options( string $distribution_id, ?string $access_key = null, ?string $secret_key = null, ?string $distribution_tenant_id = null ) {
 		$options = array(
 			'distribution_id' => $distribution_id,
 		);
@@ -93,6 +94,9 @@ class Options_Service {
 		}
 		if ( $secret_key ) {
 			$options['secret_key'] = $secret_key;
+		}
+		if ( $distribution_tenant_id ) {
+			$options['distribution_tenant_id'] = $distribution_tenant_id;
 		}
 
 		$this->options->update_options( $options );
@@ -110,15 +114,22 @@ class Options_Service {
 		 * These defined parameters are using first.
 		 */
 		$results = array(
-			'distribution_id' => $this->env->get_distribution_id(),
-			'access_key'      => $this->env->get_aws_access_key(),
-			'secret_key'      => $this->env->get_aws_secret_key(),
+			'distribution_id'        => $this->env->get_distribution_id(),
+			'distribution_tenant_id' => $this->env->get_distribution_tenant_id(),
+			'access_key'             => $this->env->get_aws_access_key(),
+			'secret_key'             => $this->env->get_aws_secret_key(),
 		);
 
 		/**
-		 * If all parameters are fulfilled, should use it.
+		 * If all required parameters are fulfilled, should use it.
+		 * Note: distribution_tenant_id is optional, so we only check for the core required params.
 		 */
-		if ( count( $results ) === count( array_filter( $results ) ) ) {
+		$required_params = array(
+			'distribution_id' => $results['distribution_id'],
+			'access_key'      => $results['access_key'],
+			'secret_key'      => $results['secret_key'],
+		);
+		if ( count( $required_params ) === count( array_filter( $required_params ) ) ) {
 			return $results;
 		}
 
@@ -130,9 +141,10 @@ class Options_Service {
 			return $this->hook_service->apply_filters(
 				$filter_name,
 				array(
-					'distribution_id' => $results['distribution_id'],
-					'access_key'      => null,
-					'secret_key'      => null,
+					'distribution_id'        => $results['distribution_id'],
+					'distribution_tenant_id' => $results['distribution_tenant_id'],
+					'access_key'             => null,
+					'secret_key'             => null,
 				)
 			);
 		}
@@ -145,6 +157,9 @@ class Options_Service {
 			if ( isset( $options['distribution_id'] ) ) {
 				$results['distribution_id'] = $options['distribution_id'];
 			}
+			if ( isset( $options['distribution_tenant_id'] ) ) {
+				$results['distribution_tenant_id'] = $options['distribution_tenant_id'];
+			}
 			if ( isset( $options['access_key'] ) ) {
 				$results['access_key'] = $options['access_key'];
 			}
@@ -153,7 +168,13 @@ class Options_Service {
 			}
 		}
 
-		if ( 0 === count( array_filter( $results ) ) ) {
+		// Filter out empty values but keep distribution_tenant_id even if null (it's optional)
+		$core_results = array(
+			'distribution_id' => $results['distribution_id'],
+			'access_key'      => $results['access_key'],
+			'secret_key'      => $results['secret_key'],
+		);
+		if ( 0 === count( array_filter( $core_results ) ) ) {
 			$results = null;
 		}
 		return $this->hook_service->apply_filters( $filter_name, $results );

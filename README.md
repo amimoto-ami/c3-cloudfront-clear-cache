@@ -20,7 +20,44 @@ The plugin can be configured by defining the following environment variables:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `C3_DISTRIBUTION_ID`
+- `C3_DISTRIBUTION_TENANT_ID` (optional) - For multi-tenant CloudFront distributions
 - `C3_HTTP_TIMEOUT` (optional) - HTTP timeout in seconds (default: 30)
+
+### Distribution Tenant Support
+
+For multi-tenant CloudFront distributions, you can optionally configure a Distribution Tenant ID. When set, the plugin will use the tenant-specific CloudFront APIs:
+
+- `cloudfront:CreateInvalidationForDistributionTenant` instead of `cloudfront:CreateInvalidation`
+- `cloudfront:GetInvalidationForDistributionTenant` instead of `cloudfront:GetInvalidation`
+- `cloudfront:ListInvalidationsForDistributionTenant` instead of `cloudfront:ListInvalidations`
+
+```php
+// Add to wp-config.php
+define( 'C3_DISTRIBUTION_TENANT_ID', 'your_tenant_id' );
+```
+
+You can also configure this through the WordPress admin settings (Settings > CloudFront Settings).
+
+**Note:** When using Distribution Tenants, ensure your IAM policy includes the tenant-specific permissions:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "cloudfront:GetDistribution",
+                "cloudfront:GetDistributionConfig",
+                "cloudfront:CreateInvalidationForDistributionTenant",
+                "cloudfront:GetInvalidationForDistributionTenant",
+                "cloudfront:ListInvalidationsForDistributionTenant"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+```
 
 ## Filters
 
