@@ -4,9 +4,9 @@
     "vitepress": "^1.6.4"
   },
   "overrides": {
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.27.0",
     "vite": {
-      "esbuild": "^0.25.0"
+      "esbuild": "^0.27.0"
     }
   },
   "name": "trunk",
