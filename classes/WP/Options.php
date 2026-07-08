@@ -33,7 +33,8 @@ class Options {
 	 * @param mixed $params Plugin options.
 	 */
 	public function update_options( $params ) {
-		return update_option( Constants::OPTION_NAME, $params );
+		// Contains AWS credentials: do not autoload it on every request.
+		return update_option( Constants::OPTION_NAME, $params, false );
 	}
 
 	/**

@@ -293,7 +293,9 @@ class CloudFront_Service {
 			}
 
 			$distribution_id = $this->get_distribution_id();
-			error_log( 'C3 CloudFront: Listing invalidations for distribution: ' . $distribution_id );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'C3 CloudFront: Listing invalidations for distribution: ' . $distribution_id );
+			}
 
 			$max_items = $this->hook_service->apply_filters( 'c3_max_invalidation_logs', 25 );
 			$result    = $client->list_invalidations( $distribution_id, $max_items );
@@ -327,20 +329,26 @@ class CloudFront_Service {
 			}
 
 			if ( isset( $result['Quantity'] ) && $result['Quantity'] > 0 && isset( $result['Items']['InvalidationSummary'] ) ) {
-				error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
-				
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( 'C3 CloudFront: Found ' . $result['Quantity'] . ' invalidations' );
+				}
+
 				// InvalidationSummaryが単一のオブジェクトの場合は配列に変換
 				$invalidations = $result['Items']['InvalidationSummary'];
 				if ( ! is_array( $invalidations ) || ( isset( $invalidations[0] ) === false && isset( $invalidations['Id'] ) ) ) {
 					// 単一のオブジェクトの場合は配列にラップ
 					$invalidations = array( $invalidations );
 				}
-				
-				error_log( 'C3 CloudFront: Processed invalidations data: ' . print_r( $invalidations, true ) );
+
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( 'C3 CloudFront: Processed invalidations data: ' . print_r( $invalidations, true ) );
+				}
 				return $invalidations;
 			}
 
-			error_log( 'C3 CloudFront: No invalidations found' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'C3 CloudFront: No invalidations found' );
+			}
 			return array();
 		} catch ( \Exception $e ) {
 			error_log( 'C3 CloudFront: Exception in list_invalidations: ' . $e->__toString() );

@@ -81,11 +81,12 @@ class Invalidation_Batch {
 	 * Get the invalidation batch
 	 */
 	public function get_invalidation_batch() {
+		$items = $this->get_invalidation_path_items();
 		return array(
 			'CallerReference' => uniqid(),
 			'Paths'           => array(
-				'Items'    => $this->items,
-				'Quantity' => count( $this->items ),
+				'Items'    => $items,
+				'Quantity' => count( $items ),
 			),
 		);
 	}

@@ -292,7 +292,8 @@ class CloudFront_HTTP_Client {
 
 		libxml_use_internal_errors( true );
 		
-		$xml = simplexml_load_string( $xml_string, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET | LIBXML_NOENT );
+		// LIBXML_NOENT is intentionally omitted: it enables entity substitution (XXE vector).
+		$xml = simplexml_load_string( $xml_string, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET );
 		
 		if ( $xml === false ) {
 			$errors = libxml_get_errors();
