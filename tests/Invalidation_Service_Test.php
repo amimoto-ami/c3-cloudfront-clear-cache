@@ -142,6 +142,11 @@ class Invalidation_Service_Test extends \WP_UnitTestCase {
                 ),
             ],
             [
+                /**
+                 * A '/*' query can now reach here when a batch collapses to '/*'
+                 * (over the path limit), so it must be scheduled instead of
+                 * being silently dropped.
+                 */
                 array(
                     'Paths' => array(
                         'Items' => array(
@@ -150,7 +155,8 @@ class Invalidation_Service_Test extends \WP_UnitTestCase {
                     )
                 ),
                 array(
-                    'should_registered' => false
+                    'should_registered' => true,
+                    'timestamp' => time() + MINUTE_IN_SECONDS * 1
                 ),
             ],
             [

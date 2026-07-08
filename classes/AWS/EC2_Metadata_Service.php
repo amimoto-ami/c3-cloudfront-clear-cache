@@ -58,7 +58,7 @@ class EC2_Metadata_Service {
 		}
 
 		$credentials = $this->get_credentials_v2();
-		if ( ! $credentials ) {
+		if ( ! $credentials && $this->use_imdsv1_fallback() ) {
 			$credentials = $this->get_credentials_v1();
 		}
 
@@ -92,6 +92,18 @@ class EC2_Metadata_Service {
 	 */
 	private function get_credentials_v1() {
 		return $this->fetch_credentials();
+	}
+
+	/**
+	 * Whether the token-less IMDSv1 fallback is allowed.
+	 *
+	 * IMDSv1 weakens SSRF defense-in-depth; disable it with:
+	 * add_filter( 'c3_use_imdsv1_fallback', '__return_false' );
+	 *
+	 * @return bool
+	 */
+	private function use_imdsv1_fallback() {
+		return (bool) apply_filters( 'c3_use_imdsv1_fallback', true );
 	}
 
 	/**
@@ -191,6 +203,9 @@ class EC2_Metadata_Service {
 		}
 
 		// If IMDSv2 fails, fall back to IMDSv1
+		if ( ! $this->use_imdsv1_fallback() ) {
+			return false;
+		}
 		$response = wp_remote_request(
 			$this->metadata_endpoint . '/latest/meta-data/',
 			array(

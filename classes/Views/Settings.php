@@ -100,20 +100,36 @@ class Settings {
 	/**
 	 * Filter the saving option's request
 	 *
+	 * The credential fields are rendered empty on the settings page, so an
+	 * empty submitted value means "keep the stored credential" rather than
+	 * "delete it". Use WP-CLI (`wp c3 update`) to clear a stored credential.
+	 *
 	 * @param mixed $args form parameter.
 	 */
 	function filter_and_escape( $args ) {
-		$allow_keys = array(
+		$allow_keys      = array(
 			Constants::DISTRIBUTION_ID,
 			Constants::ACCESS_KEY,
 			Constants::SECRET_KEY,
 		);
-		$items      = array();
+		$credential_keys = array(
+			Constants::ACCESS_KEY,
+			Constants::SECRET_KEY,
+		);
+		$existing        = get_option( Constants::OPTION_NAME, array() );
+		$items           = array();
 		foreach ( $allow_keys as $key ) {
 			if ( ! array_key_exists( $key, $args ) ) {
 				continue;
 			}
-			$items[ $key ] = esc_attr( $args[ $key ] );
+			$value = sanitize_text_field( (string) $args[ $key ] );
+			if ( '' === $value && in_array( $key, $credential_keys, true ) ) {
+				if ( is_array( $existing ) && isset( $existing[ $key ] ) && '' !== $existing[ $key ] ) {
+					$items[ $key ] = $existing[ $key ];
+				}
+				continue;
+			}
+			$items[ $key ] = $value;
 		}
 		return $items;
 	}

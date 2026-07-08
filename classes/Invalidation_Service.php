@@ -170,10 +170,14 @@ class Invalidation_Service {
 			return;
 		}
 
-		$invalidation_target = $_POST['invalidation_target'];
+		if ( ! current_user_can( 'cloudfront_clear_cache' ) ) {
+			return;
+		}
+
+		$invalidation_target = sanitize_text_field( wp_unslash( $_POST['invalidation_target'] ?? '' ) );
 
 		try {
-			if ( ! isset( $invalidation_target ) ) {
+			if ( '' === $invalidation_target ) {
 				throw new \Error( 'invalidation_target is required' );
 			}
 			if ( 'all' === $invalidation_target ) {
@@ -205,7 +209,7 @@ class Invalidation_Service {
 	 */
 	public function register_cron_event( $query ) {
 		$this->debug_logger->log_cron_registration_start();
-		if ( ! isset( $query['Paths'] ) || ! isset( $query['Paths']['Items'] ) || $query['Paths']['Items'][0] === '/*' ) {
+		if ( ! isset( $query['Paths'] ) || ! isset( $query['Paths']['Items'] ) || 0 === count( $query['Paths']['Items'] ) ) {
 			$this->debug_logger->log_cron_registration_skip( '===== C3 CRON Job registration [SKIP | NO ITEM] ===' );
 			return false;
 		}
@@ -442,8 +446,8 @@ class Invalidation_Service {
 			wp_die( 'Insufficient permissions' );
 		}
 
-		$invalidation_id = sanitize_text_field( $_POST['invalidation_id'] ?? '' );
-		if ( empty( $invalidation_id ) ) {
+		$invalidation_id = sanitize_text_field( wp_unslash( $_POST['invalidation_id'] ?? '' ) );
+		if ( empty( $invalidation_id ) || ! preg_match( '/^[A-Z0-9]+$/i', $invalidation_id ) ) {
 			wp_send_json_error( 'Invalid invalidation ID' );
 		}
 
