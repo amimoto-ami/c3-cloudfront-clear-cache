@@ -95,12 +95,16 @@ class Invalidation_Batch_Service {
 			$invalidation_batch->put_invalidation_path( $permalink . '*' );
 		}
 		$term_links = $this->post->get_the_post_term_links();
-		foreach ( $term_links as $key => $url ) {
-			$invalidation_batch->put_invalidation_path( $url );
+		if ( ! is_wp_error( $term_links ) ) {
+			foreach ( $term_links as $key => $url ) {
+				$invalidation_batch->put_invalidation_path( $url );
+			}
 		}
 		$archive_links = $this->post->get_the_post_type_archive_links();
-		foreach ( $archive_links as $key => $url ) {
-			$invalidation_batch->put_invalidation_path( $url );
+		if ( ! is_wp_error( $archive_links ) ) {
+			foreach ( $archive_links as $key => $url ) {
+				$invalidation_batch->put_invalidation_path( $url );
+			}
 		}
 		$invalidation_batch->apply_invalidation_item_filter( $post );
 		return $invalidation_batch;

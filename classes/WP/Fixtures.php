@@ -114,6 +114,7 @@ class Fixtures {
 				'expires'  => $expires,
 				'samesite' => 'None',
 				'secure'   => true,
+				'httponly' => true,
 				'path'     => $cookie_path,
 			);
 			setcookie( $key, $value, $args );

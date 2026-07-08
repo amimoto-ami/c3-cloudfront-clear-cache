@@ -172,6 +172,10 @@ if ( is_wp_error( $histories ) ) {
 
 <script>
 jQuery(document).ready(function($) {
+	function c3EscapeHtml(value) {
+		return $('<div>').text(String(value)).html();
+	}
+
 	$('.c3-view-details').on('click', function() {
 		var invalidationId = $(this).data('invalidation-id');
 		var modal = $('#c3-invalidation-details-modal');
@@ -189,27 +193,27 @@ jQuery(document).ready(function($) {
 				var data = response.data;
 				var html = '<div class="c3-detail-row">' +
 					'<div class="c3-detail-label"><?php _e( 'Invalidation ID', $text_domain ); ?>:</div>' +
-					'<div class="c3-detail-value">' + data.Id + '</div>' +
+					'<div class="c3-detail-value">' + c3EscapeHtml(data.Id) + '</div>' +
 					'</div>' +
 					'<div class="c3-detail-row">' +
 					'<div class="c3-detail-label"><?php _e( 'Status', $text_domain ); ?>:</div>' +
-					'<div class="c3-detail-value">' + data.Status + '</div>' +
+					'<div class="c3-detail-value">' + c3EscapeHtml(data.Status) + '</div>' +
 					'</div>' +
 					'<div class="c3-detail-row">' +
 					'<div class="c3-detail-label"><?php _e( 'Create Time', $text_domain ); ?>:</div>' +
-					'<div class="c3-detail-value">' + data.CreateTime + '</div>' +
+					'<div class="c3-detail-value">' + c3EscapeHtml(data.CreateTime) + '</div>' +
 					'</div>';
-				
+
 				if (data.InvalidationBatch && data.InvalidationBatch.CallerReference) {
 					html += '<div class="c3-detail-row">' +
 						'<div class="c3-detail-label"><?php _e( 'Caller Reference', $text_domain ); ?>:</div>' +
-						'<div class="c3-detail-value">' + data.InvalidationBatch.CallerReference + '</div>' +
+						'<div class="c3-detail-value">' + c3EscapeHtml(data.InvalidationBatch.CallerReference) + '</div>' +
 						'</div>';
 				}
-				
+
 				if (data.InvalidationBatch && data.InvalidationBatch.Paths && data.InvalidationBatch.Paths.Items) {
 					html += '<div class="c3-detail-row">' +
-						'<div class="c3-detail-label"><?php _e( 'Invalidated Paths', $text_domain ); ?> (' + data.InvalidationBatch.Paths.Quantity + '):</div>' +
+						'<div class="c3-detail-label"><?php _e( 'Invalidated Paths', $text_domain ); ?> (' + c3EscapeHtml(data.InvalidationBatch.Paths.Quantity) + '):</div>' +
 						'<div class="c3-paths-list">';
 					
 					var items = Array.isArray(data.InvalidationBatch.Paths.Items) 
@@ -218,10 +222,10 @@ jQuery(document).ready(function($) {
 					
 					items.forEach(function(pathItem) {
 						if (typeof pathItem === 'string') {
-							html += '<div>' + pathItem + '</div>';
+							html += '<div>' + c3EscapeHtml(pathItem) + '</div>';
 						} else if (pathItem && typeof pathItem === 'object' && pathItem.Path && Array.isArray(pathItem.Path)) {
 							pathItem.Path.forEach(function(actualPath) {
-								html += '<div>' + actualPath + '</div>';
+								html += '<div>' + c3EscapeHtml(actualPath) + '</div>';
 							});
 						} else if (pathItem && typeof pathItem === 'object') {
 							var pathString = '';
@@ -232,7 +236,7 @@ jQuery(document).ready(function($) {
 								var value = pathItem[key];
 								if (Array.isArray(value)) {
 									value.forEach(function(actualPath) {
-										html += '<div>' + actualPath + '</div>';
+										html += '<div>' + c3EscapeHtml(actualPath) + '</div>';
 									});
 									return;
 								} else {
@@ -241,9 +245,9 @@ jQuery(document).ready(function($) {
 							} else {
 								pathString = String(pathItem);
 							}
-							html += '<div>' + pathString + '</div>';
+							html += '<div>' + c3EscapeHtml(pathString) + '</div>';
 						} else {
-							html += '<div>' + String(pathItem) + '</div>';
+							html += '<div>' + c3EscapeHtml(pathItem) + '</div>';
 						}
 					});
 					
@@ -252,7 +256,7 @@ jQuery(document).ready(function($) {
 				
 				content.html(html);
 			} else {
-				content.html('<div class="c3-error">' + response.data + '</div>');
+				content.html('<div class="c3-error">' + c3EscapeHtml(response.data) + '</div>');
 			}
 		}).fail(function() {
 			content.html('<div class="c3-error"><?php _e( 'Failed to load invalidation details.', $text_domain ); ?></div>');

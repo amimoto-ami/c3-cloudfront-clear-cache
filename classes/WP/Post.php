@@ -143,13 +143,13 @@ class Post {
 	}
 
 	/**
-	 * Load the post's term links
+	 * Load the post's post type archive links
 	 *
-	 * @throws \WP_Error If no post provided, should throw it.
+	 * @return \WP_Error|string[] Return WP_Error if no post provided.
 	 */
 	public function get_the_post_type_archive_links() {
 		if ( ! $this->post ) {
-			throw new \WP_Error( 'Post is required' );
+			return new \WP_Error( 'Post is required' );
 		}
 		$post = $this->post;
 		$url  = $this->parse_url( get_post_type_archive_link( $post->post_type ) );

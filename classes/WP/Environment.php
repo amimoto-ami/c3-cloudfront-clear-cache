@@ -28,6 +28,14 @@ class Environment {
 	 * @since 6.0.0
 	 */
 	public function is_amimoto_managed() {
+		/**
+		 * The X-Amimoto-Managed header is client-controlled, so it must not be
+		 * trusted on its own. Require a server-side marker (IS_AMIMOTO or
+		 * AMIMOTO_CDN_ID defined in the code) before honoring it.
+		 */
+		if ( ! $this->is_amimoto() && ! $this->has_managed_cdn() ) {
+			return false;
+		}
 		if ( isset( $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ) && $_SERVER['HTTP_X_AMIMOTO_MANAGED'] ) {
 			return true;
 		}

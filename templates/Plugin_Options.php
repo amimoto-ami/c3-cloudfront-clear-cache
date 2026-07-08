@@ -66,7 +66,9 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 						class='regular-text code'
 						type="password"
 						name="<?php echo isset( $env_access_key ) ? Constants::OPTION_NAME . '[dummy1]' : Constants::OPTION_NAME . '[' . Constants::ACCESS_KEY . ']'; ?>"
-						value="<?php echo esc_attr( isset( $env_access_key ) ? $env_access_key : $access_key ); ?>"
+						value=""
+						autocomplete="off"
+						placeholder="<?php echo isset( $access_key ) && '' !== $access_key ? esc_attr__( 'Saved. Leave blank to keep the current value.', $text_domain ) : ''; ?>"
 						<?php echo isset( $env_access_key ) ? 'disabled' : ''; ?>
 					/>
 					<?php
@@ -86,7 +88,9 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 						class='regular-text code'
 						type="password"
 						name="<?php echo isset( $env_secret_key ) ? Constants::OPTION_NAME . '[dummy2]' : Constants::OPTION_NAME . '[' . Constants::SECRET_KEY . ']'; ?>"
-						value="<?php echo esc_attr( isset( $env_secret_key ) ? $env_secret_key : $secret_key ); ?>"
+						value=""
+						autocomplete="off"
+						placeholder="<?php echo isset( $secret_key ) && '' !== $secret_key ? esc_attr__( 'Saved. Leave blank to keep the current value.', $text_domain ) : ''; ?>"
 						<?php echo isset( $env_secret_key ) ? 'disabled' : ''; ?>
 					/>
 					<?php
@@ -100,7 +104,7 @@ $has_ec2_instance_role = apply_filters( 'c3_has_ec2_instance_role', false );
 		<?php } ?>
 	</tbody></table>
 	<?php
-	if ( ! isset( $env_distribution_id ) || ! isset( $env_secret_key ) || ! isset( $env_secret_key ) ) {
+	if ( ! isset( $env_distribution_id ) || ! isset( $env_access_key ) || ! isset( $env_secret_key ) ) {
 		settings_fields( Constants::MENU_ID );
 		submit_button();
 	}
